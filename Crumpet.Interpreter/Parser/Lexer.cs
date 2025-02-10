@@ -9,30 +9,32 @@ public class Lexer<T> : ILexer<T> where T : Enum
 {
     private readonly List<TokenRule<T>> m_rules = new List<TokenRule<T>>();
     private readonly string m_source;
+    private readonly HashSet<T> m_ignoreList;
 
     private int m_head = 0;
     private int m_lineNumber = 0;
     private int m_columnNumber = 0;
     
-    public Lexer(string source)
+    public Lexer(string source, params IEnumerable<T> ignoreList)
     {
         m_source = source;
-        
+        m_ignoreList = new HashSet<T>(ignoreList);
+
         foreach (TokenRule<T> rule in GetTokenRules())
         {
             m_rules.Add(rule);
         }
     }
     
-    public IEnumerator<Token<T>> Tokenize()
+    public IEnumerable<Token<T>> Tokenize()
     {
-        while(m_head != m_source.Length - 1)
+        // m_head gets the length of a section added - will equal m_source.Length when at the end
+        while(m_head < m_source.Length)
         {
             // have to re-create on each loop due to yield
             // shouldn't negate effects of using span though
             ReadOnlySpan<char> source = m_source.AsSpan();
             TokenSearchResult? result = FindNextToken(source.Slice(m_head));
-            
 
             // if no 
             if (result == null)
@@ -56,45 +58,51 @@ public class Lexer<T> : ILexer<T> where T : Enum
 
             // increase 
             m_head += result.Length;
-
+            
             // return this token for the enumeration
-            yield return result.Token;
+            // but only if it's not in the ignore list
+            // if it is then just go onto the next loop
+            if (!m_ignoreList.Contains(result.Token.TokenId))
+                yield return result.Token;
         }
     }
 
     private TokenSearchResult? FindNextToken(ReadOnlySpan<char> searchArea)
     {
-        int searchDepth = 1;
-        while (searchDepth <= searchArea.Length)
+        foreach (TokenRule<T> rule in m_rules)
         {
-            foreach (TokenRule<T> rule in m_rules)
+            bool found = false;
+            int length = 0;
+            // using EnumerateMatches allows for a ReadOnlySpan to be used
+            foreach (ValueMatch match in rule.Regex.EnumerateMatches(searchArea))
             {
-                ReadOnlySpan<char> seekArea = searchArea.Slice(0, searchDepth);
-                
-                // have to use the string version as the span version does not return Match
-                string matchString = seekArea.ToString();
-                Match match = rule.Regex.Match(matchString);
-                
-                // if the match was a success on the entirety of the seeking area
-                if (match.Success && match.Index == 0 && match.Length == searchDepth)
+                if (match.Index == 0)
                 {
-                    return new TokenSearchResult(
-                        new Token<T>(
-                            rule.TokenId, 
-                            matchString,
-                            m_lineNumber,
-                            new Range(
-                                m_columnNumber, 
-                                m_columnNumber + searchDepth
-                            )),
-                        rule,
-                        searchDepth
-                    );
+                    length = match.Length;
+                    found = true;
+                    break;
                 }
             }
-
-            // search deeper
-            searchDepth++;
+                
+            // if a match was found then return it
+            // otherwise fail down and exit
+            if (found)
+            {
+                string matchString = searchArea.Slice(0, length).ToString();
+                
+                return new TokenSearchResult(
+                    new Token<T>(
+                        rule.TokenId, 
+                        matchString,
+                        m_lineNumber,
+                        new Range(
+                            m_columnNumber, 
+                            m_columnNumber + length
+                        )),
+                    rule,
+                    length
+                );
+            }
         }
 
         // failed to find any token, cry about it and return null

@@ -4,7 +4,7 @@
 
 namespace Crumpet.Interpreter.Language;
 
-public enum CrumpetTokens : byte
+public enum CrumpetToken : byte
 {
     [Token("\\(")]
     LPARAN = 0,
@@ -47,7 +47,8 @@ public enum CrumpetTokens : byte
     [Token("\\;")]
     SEMICOLON = 12,
     
-    [Token("\\s+")]
+    // cannot use \s as newline will not be detected then
+    [Token("[\\t ]+")]
     WHITESPACE = 13,
     
     // \r?\n
@@ -55,8 +56,7 @@ public enum CrumpetTokens : byte
     NEWLINE = 14,
     
     // \/\/.*
-    // is newline is also used as a comment will consume a newline
-    [Token("\\/\\/.*", IsComment = true, IsNewline = true)]
+    [Token("\\/\\/.*", IsComment = true)]
     COMMENT = 15,
     
     // alphanumeric but does not start with a number

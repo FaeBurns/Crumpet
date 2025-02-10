@@ -2,5 +2,5 @@
 
 public interface ILexer<T> where T : Enum
 {
-    IEnumerator<Token<T>> Tokenize();
+    IEnumerable<Token<T>> Tokenize();
 }
