@@ -29,7 +29,7 @@ typeDeclarationField
             ;
             
 statementBody
-            : LBRACK {statement} RBRACK
+            : LBRACK statement* RBRACK
             ;
 
 statement    
@@ -41,6 +41,7 @@ statement
             
 expressionStatement
             : expression? SEMICOLON
+            ;
 
 flowStatement
             : ( 'continue' | 'break' | ( 'return' expression? ) ) SEMICOLON
@@ -54,27 +55,18 @@ iterationStatement
             : 'while' LPARAN expression RPARAN statementBody
             ;
             
-typeDefinition
-            : 'struct' IDENTIFIER LBRACK {type IDENTIFIER SEMICOLON} RBRACK
-            
 type
             : IDENTIFIER
-            | IDENTIFIER {PERIOD IDENTIFIER}
-            
-functionCall
-            : IDENTIFIER LPARAN parameter? (COMMA, argument)* RPARAN
+            | IDENTIFIER (PERIOD IDENTIFIER)*
             ;
-            
-parameter
-            : type expression
-            ;
-            
-(* actually the top most expression type *)
+      
+      
+// actually the top most expression type
 expression
             : assignmentExpression
             ;
             
-(* topmost expression type? *)
+// topmost expression type?
 unaryExpression
             : expressionWithPostfix
             ;
@@ -83,15 +75,15 @@ expressionWithPostfix
             :  primaryExpression (LINDEX argumentExpressionList RINDEX)?
             ;
             
-(* usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value *)
+// usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value
 primaryExpression
             : IDENTIFIER
             | literalConstant
             | LPARAN expression RPARAN
             ;
             
-(* or expression or (unary = self) *)
-(* use or here as this takes oop precidence *)
+// or expression or (unary = self) 
+// use or here as this takes oop precidence
 assignmentExpression
             : orExpression
             | unaryExpression EQUALS assignmentExpression
@@ -108,32 +100,81 @@ literalConstant
             | BOOL
             ;
             
-(* conditional/mathematical expressions *)
-(* order of operations: OR < AND < XOR < EQUALITY < RELATION < SUM < MULT*)
+// conditional/mathematical expressions
+// order of operations: OR < AND < XOR < EQUALITY < RELATION < SUM < MULT
 orExpression
-            : andExpression ((OR OR) andExpression)?
+            : andExpression ('||' andExpression)?
             ;
 
 andExpression
-            : exclusiveOrExpression ((AND AND) exclusiveOrExpression)?
+            : exclusiveOrExpression ('&&' exclusiveOrExpression)?
             ;
 
 exclusiveOrExpression
-            : equalityExpression ((NOT OR) equalityExpression)?
+            : equalityExpression ('^' equalityExpression)?
             ; 
 
 equalityExpression
-            : relationExpression (((EQUAL EQUAL) | (NOT EQUAL)) relationExpression)?
+            : relationExpression (('==' | '!=') relationExpression)?
             ;
             
-relationalExpression
-            : sumExpression (( LESS | (LESS EQUAL) | (GREATER EQUAL) | EQUAL ) sumExpression)?
+relationExpression
+            : sumExpression (( '<' | '<=' | '>=' | '>' ) sumExpression)?
+            ;
 
 sumExpression
-            : multExpression ((PLUS | MINUS) multExpression)? 
+            : multExpression (('+' | '-') multExpression)? 
             ;
 
 multExpression
-            : unaryExpression (( MULT | DIVIDE ) unaryExpression)?
+            : unaryExpression (( '*' | '/' ) unaryExpression)?
             ;
-(* end conditional/mathematical region *)
+// end conditional/mathematical expressions
+
+// terminals
+
+IDENTIFIER
+            : IdentifierAlpha (IdentifierAlpha | Digit)*
+            ;
+            
+fragment IdentifierAlpha
+            : [a-zA-Z_]
+            ;
+            
+fragment Digit
+            : [0-9] 
+            ;
+            
+fragment DigitNonZero
+            : [1-9]
+            ;
+            
+LPARAN: '(' ;
+RPARAN: ')' ;
+LBRACK: '{' ;
+RBRACK: '}' ;
+LINDEX: '[' ;
+RINDEX: ']' ;
+COMMA: ',' ;
+SEMICOLON: ';' ;
+PERIOD: '.' ;
+EQUALS: '=' ;
+
+BOOL
+            : 'true' | 'false' 
+            ;
+
+INT
+            : DigitNonZero Digit*
+            ;
+
+FLOAT // requires at least one digit
+            : Digit+ '.' Digit+ 
+            ;
+            
+STRING
+            : '"' CHARACTER* '"' 
+            ;
+            
+fragment CHARACTER
+            : . ;
