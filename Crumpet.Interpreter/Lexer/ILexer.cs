@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Interpreter.Lexer;
 
 public interface ILexer<T> where T : Enum
 {

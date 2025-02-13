@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Crumpet.Interpreter\Crumpet.Interpreter.csproj" />
+      <ProjectReference Include="..\Crumpet.Language\Crumpet.Language.csproj" />
     </ItemGroup>
 
 </Project>

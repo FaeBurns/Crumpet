@@ -1,0 +1,139 @@
+﻿// https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
+
+grammar crumpet;
+    
+root_program        
+            : EOF
+            | declaration* EOF
+            ;
+                
+declaration 
+            : functionDeclaration
+            | typeDeclaration
+            ;
+                
+functionDeclaration
+            : 'func' type IDENTIFIER LPARAN *parameter* RPARAN statementBody
+            ;
+            
+parameter
+            : type IDENTIFIER COMMA?
+            ;
+            
+typeDeclaration
+            : 'struct' IDENTIFIER LBRACK typeDeclarationField* RBRACK
+            ;
+            
+typeDeclarationField
+            : type IDENTIFIER SEMICOLON
+            ;
+            
+statementBody
+            : LBRACK {statement} RBRACK
+            ;
+
+statement    
+            : expressionStatement
+            | ifStatement
+            | iterationStatement
+            | flowStatement
+            ;
+            
+expressionStatement
+            : expression? SEMICOLON
+
+flowStatement
+            : ( 'continue' | 'break' | ( 'return' expression? ) ) SEMICOLON
+            ;        
+
+ifStatement  
+            : 'if' LPARAN expression RPARAN statementBody ('else' statementBody)?
+            ;
+
+iterationStatement  
+            : 'while' LPARAN expression RPARAN statementBody
+            ;
+            
+typeDefinition
+            : 'struct' IDENTIFIER LBRACK {type IDENTIFIER SEMICOLON} RBRACK
+            
+type
+            : IDENTIFIER
+            | IDENTIFIER {PERIOD IDENTIFIER}
+            
+functionCall
+            : IDENTIFIER LPARAN parameter? (COMMA, argument)* RPARAN
+            ;
+            
+parameter
+            : type expression
+            ;
+            
+(* actually the top most expression type *)
+expression
+            : assignmentExpression
+            ;
+            
+(* topmost expression type? *)
+unaryExpression
+            : expressionWithPostfix
+            ;
+            
+expressionWithPostfix
+            :  primaryExpression (LINDEX argumentExpressionList RINDEX)?
+            ;
+            
+(* usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value *)
+primaryExpression
+            : IDENTIFIER
+            | literalConstant
+            | LPARAN expression RPARAN
+            ;
+            
+(* or expression or (unary = self) *)
+(* use or here as this takes oop precidence *)
+assignmentExpression
+            : orExpression
+            | unaryExpression EQUALS assignmentExpression
+            ;
+            
+argumentExpressionList
+            : expression (COMMA expression)*
+            ;
+            
+literalConstant
+            : STRING
+            | INT
+            | FLOAT
+            | BOOL
+            ;
+            
+(* conditional/mathematical expressions *)
+(* order of operations: OR < AND < XOR < EQUALITY < RELATION < SUM < MULT*)
+orExpression
+            : andExpression ((OR OR) andExpression)?
+            ;
+
+andExpression
+            : exclusiveOrExpression ((AND AND) exclusiveOrExpression)?
+            ;
+
+exclusiveOrExpression
+            : equalityExpression ((NOT OR) equalityExpression)?
+            ; 
+
+equalityExpression
+            : relationExpression (((EQUAL EQUAL) | (NOT EQUAL)) relationExpression)?
+            ;
+            
+relationalExpression
+            : sumExpression (( LESS | (LESS EQUAL) | (GREATER EQUAL) | EQUAL ) sumExpression)?
+
+sumExpression
+            : multExpression ((PLUS | MINUS) multExpression)? 
+            ;
+
+multExpression
+            : unaryExpression (( MULT | DIVIDE ) unaryExpression)?
+            ;
+(* end conditional/mathematical region *)

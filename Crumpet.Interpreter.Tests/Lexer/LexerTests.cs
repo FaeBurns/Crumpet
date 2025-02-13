@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using Crumpet.Interpreter.Exceptions;
-using Crumpet.Interpreter.Language;
-using Crumpet.Interpreter.Parser;
-using NUnit.Framework.Internal;
+﻿using Crumpet.Interpreter.Exceptions;
+using Crumpet.Language;
+using Crumpet.Interpreter.Lexer;
 
-namespace Crumpet.Interpreter.Tests.Parser;
+namespace Crumpet.Interpreter.Tests.Lexer;
 
 [TestFixture]
 public class LexerTests

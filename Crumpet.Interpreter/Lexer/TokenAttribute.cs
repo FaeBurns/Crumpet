@@ -1,7 +1,7 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Interpreter.Lexer;
 
 [AttributeUsage(AttributeTargets.Field)]
-internal sealed class TokenAttribute : Attribute
+public sealed class TokenAttribute : Attribute
 {
     public string Regex { get; }
 
