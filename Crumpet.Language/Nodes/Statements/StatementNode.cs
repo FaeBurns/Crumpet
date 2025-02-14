@@ -33,6 +33,10 @@ public class StatementNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition("statement",
             new NonTerminalConstraint("flowStatement"), 
             GetNodeConstructor<StatementNodeFlowVariant>());
+        
+        yield return new NonTerminalDefinition("statement",
+            new NonTerminalConstraint("initializationStatement"), 
+            GetNodeConstructor<StatementNodeInitializationVariant>());
     }
 }
 
@@ -40,7 +44,7 @@ public class StatementNodeExpressionVariant : StatementNode
 {
     public ExpressionNode? Expression { get; }
     
-    public StatementNodeExpressionVariant(ExpressionNode? expression) : base(expression)
+    protected StatementNodeExpressionVariant(ExpressionNode? expression) : base(expression)
     {
         Expression = expression;
     }
@@ -73,5 +77,15 @@ public class StatementNodeFlowVariant : StatementNode
     protected StatementNodeFlowVariant(FlowStatementNode flowStatement) : base(flowStatement)
     {
         FlowStatement = flowStatement;
+    }
+}
+
+public class StatementNodeInitializationVariant : StatementNode
+{
+    public InitializationStatementNode InitializationStatement { get; }
+
+    protected StatementNodeInitializationVariant(InitializationStatementNode initializationStatement) : base(initializationStatement)
+    {
+        InitializationStatement = initializationStatement;
     }
 }

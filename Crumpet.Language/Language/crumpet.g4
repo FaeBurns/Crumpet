@@ -49,6 +49,7 @@ statement
             | ifStatement
             | iterationStatement
             | flowStatement
+            | initializationStatement
             ;
 
 // done
@@ -64,6 +65,11 @@ ifStatement
 // done
 iterationStatement  
             : 'while' LPARAN expression RPARAN statementBody
+            ;
+         
+// done   
+initializationStatement
+            : IDENTIFIER IDENTIFIER SEMICOLON
             ;
        
 // done
