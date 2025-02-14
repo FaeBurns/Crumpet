@@ -2,80 +2,95 @@
 
 grammar crumpet;
     
+// done
 root_program        
-            : EOF
-            | declaration* EOF
+            : declaration*
             ;
-                
+            
+// done
 declaration 
             : functionDeclaration
             | typeDeclaration
             ;
-                
+
+// done               
 functionDeclaration
-            : 'func' type IDENTIFIER LPARAN *parameter* RPARAN statementBody
+            : 'func' type IDENTIFIER LPARAN parameterList* RPARAN statementBody
+            ;
+
+// done
+parameterList
+            : parameter (COMMA parameter)*
             ;
             
+// done
 parameter
-            : type IDENTIFIER COMMA?
+            : type IDENTIFIER
             ;
             
+// done
 typeDeclaration
             : 'struct' IDENTIFIER LBRACK typeDeclarationField* RBRACK
             ;
             
+// done
 typeDeclarationField
             : type IDENTIFIER SEMICOLON
             ;
-            
+          
+// done  
 statementBody
             : LBRACK statement* RBRACK
             ;
 
+// done
 statement    
-            : expressionStatement
+            : expression? SEMICOLON
             | ifStatement
             | iterationStatement
             | flowStatement
             ;
-            
-expressionStatement
-            : expression? SEMICOLON
-            ;
 
+// done
 flowStatement
             : ( 'continue' | 'break' | ( 'return' expression? ) ) SEMICOLON
             ;        
 
+// done
 ifStatement  
             : 'if' LPARAN expression RPARAN statementBody ('else' statementBody)?
             ;
 
+// done
 iterationStatement  
             : 'while' LPARAN expression RPARAN statementBody
             ;
-            
+       
+// done
 type
-            : IDENTIFIER
-            | IDENTIFIER (PERIOD IDENTIFIER)*
+            : IDENTIFIER (PERIOD IDENTIFIER)*
             ;
       
       
 // actually the top most expression type
+// done
 expression
             : assignmentExpression
             ;
             
 // topmost expression type?
+// done
 unaryExpression
             : expressionWithPostfix
             ;
             
+// done
 expressionWithPostfix
             :  primaryExpression (LINDEX argumentExpressionList RINDEX)?
             ;
             
 // usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value
+// done
 primaryExpression
             : IDENTIFIER
             | literalConstant
@@ -83,16 +98,19 @@ primaryExpression
             ;
             
 // or expression or (unary = self) 
-// use or here as this takes oop precidence
+// use or here as this takes order of operations precidence
+// done
 assignmentExpression
             : orExpression
             | unaryExpression EQUALS assignmentExpression
             ;
-            
+
+// done
 argumentExpressionList
             : expression (COMMA expression)*
             ;
-            
+
+// done            
 literalConstant
             : STRING
             | INT
@@ -102,30 +120,37 @@ literalConstant
             
 // conditional/mathematical expressions
 // order of operations: OR < AND < XOR < EQUALITY < RELATION < SUM < MULT
+// done
 orExpression
             : andExpression ('||' andExpression)?
             ;
 
+// done
 andExpression
             : exclusiveOrExpression ('&&' exclusiveOrExpression)?
             ;
 
+// done
 exclusiveOrExpression
             : equalityExpression ('^' equalityExpression)?
             ; 
 
+// done
 equalityExpression
             : relationExpression (('==' | '!=') relationExpression)?
             ;
             
+// done
 relationExpression
             : sumExpression (( '<' | '<=' | '>=' | '>' ) sumExpression)?
             ;
 
+// done
 sumExpression
             : multExpression (('+' | '-') multExpression)? 
             ;
 
+// done
 multExpression
             : unaryExpression (( '*' | '/' ) unaryExpression)?
             ;
