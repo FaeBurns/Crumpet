@@ -23,6 +23,7 @@
 
     <ItemGroup>
       <Folder Include="Examples\" />
+      <Folder Include="Parser\Nodes\" />
     </ItemGroup>
 
     <ItemGroup>

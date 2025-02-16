@@ -9,6 +9,10 @@ namespace Crumpet.Language;
 
 public enum CrumpetToken : byte
 {
+    // \/\/.*
+    [Token("\\/\\/.*", IsComment = true)]
+    COMMENT,
+    
     [Token("\\(")]
     LPARAN,
     
@@ -95,10 +99,6 @@ public enum CrumpetToken : byte
     // \r?\n
     [Token("\\r?\\n", IsNewline = true)]
     NEWLINE,
-    
-    // \/\/.*
-    [Token("\\/\\/.*", IsComment = true)]
-    COMMENT,
     
     // alphanumeric but does not start with a number
     [Token("[a-zA-Z]+[a-zA-Z0-9]*")]

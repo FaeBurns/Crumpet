@@ -10,8 +10,4 @@
       <ProjectReference Include="..\Crumpet.Interpreter\Crumpet.Interpreter.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="NodeConstraints\" />
-    </ItemGroup>
-
 </Project>
