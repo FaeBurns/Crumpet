@@ -1,8 +1,13 @@
 ﻿namespace Crumpet.Interpreter.Parser.NodeConstraints;
 
-public class OneOrMoreConstraint : MultiNodeConstraint
+public class OneOrMoreConstraint : ContainsSingleConstraint
 {
-    public OneOrMoreConstraint(params IEnumerable<NodeConstraint> constraints) : base(constraints, true)
+    public OneOrMoreConstraint(NodeConstraint constraint) : base(constraint, true)
     {
+    }
+
+    public override string ToString()
+    {
+        return Constraint.ToString() + "+";
     }
 }

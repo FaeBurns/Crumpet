@@ -1,11 +1,21 @@
 ﻿namespace Crumpet.Interpreter.Parser.NodeConstraints;
 
-public class NonTerminalConstraint : NodeConstraint
+public abstract class NonTerminalConstraint : NodeConstraint
 {
-    public string NonTerminalName { get; }
+    public Type NonTerminalType { get; }
 
-    public NonTerminalConstraint(string nonTerminalName) : base(true)
+    protected NonTerminalConstraint(Type nonTerminalType) : base(true)
     {
-        NonTerminalName = nonTerminalName;
+        NonTerminalType = nonTerminalType;
     }
+
+    public override string ToString()
+    {
+        return NonTerminalType.Name.Replace("Node", String.Empty);
+    }
+}
+
+public class NonTerminalConstraint<T> : NonTerminalConstraint
+{
+    public NonTerminalConstraint() : base(typeof(T)) { }
 }

@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes.Expressions;
@@ -20,17 +21,17 @@ public class RelationExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("relationExpression",
+        yield return new NonTerminalDefinition<RelationExpressionNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("sumExpression"),
+                new NonTerminalConstraint<SumExpressionNode>(),
                 new OptionalConstraint(
                     new SequenceConstraint(
                         new OrConstraint(
-                            new RawTerminalConstraint("<", true),
-                            new RawTerminalConstraint("<=", true),
-                            new RawTerminalConstraint(">=", true),
-                            new RawTerminalConstraint(">", true)),
-                        new NonTerminalConstraint("sumExpression")))),
+                            new CrumpetTerminalConstraint(CrumpetToken.LESS),
+                            new CrumpetTerminalConstraint(CrumpetToken.LESS_OR_EQUAL),
+                            new CrumpetTerminalConstraint(CrumpetToken.GREATER_OR_EQUAL),
+                            new CrumpetTerminalConstraint(CrumpetToken.GREATER)),
+                        new NonTerminalConstraint<SumExpressionNode>()))),
             GetNodeConstructor<ExclusiveOrExpressionNode>());
     }
 }

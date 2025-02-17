@@ -6,4 +6,6 @@ public static class ExceptionConstants
     public const string PARSER_UNKOWN_TERMINAL = "Could not find terminal named \"{0}\"";
     public const string PARSER_UNKOWN_NONTERMINAL = "Could not find non-terminal named \"{0}\"";
     public const string PARSER_INVALID_FACTORY_ELEMENT = "Type returned from factory \"{0}\" does not implement required interface \"{1}\"";
+    public const string NO_NODES_REGISTERED = "No nodes registered when trying to build node tree";
+    public const string INVALID_NODE_NAME = "Could not find a node with name \"{0}\"";
 }

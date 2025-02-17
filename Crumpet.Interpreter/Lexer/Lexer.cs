@@ -119,20 +119,13 @@ public class Lexer<T> : ILexer<T> where T : Enum
 
         foreach (T tokenValue in orderedTokenTypes)
         {
-            TokenAttribute tokenAttribute = GetEnumAttribute<TokenAttribute>(tokenValue);
+            TokenAttribute tokenAttribute = tokenValue.GetEnumAttribute<TokenAttribute>();
             
             Regex regex = new Regex(tokenAttribute.Regex, RegexOptions.Compiled);
             rules.Add(new TokenRule<T>(tokenValue, regex, tokenAttribute));
         }
 
         return rules;
-    }
-    
-    private static TAttribute GetEnumAttribute<TAttribute>(Enum enumVal) where TAttribute : Attribute
-    {
-        Type type = enumVal.GetType();
-        MemberInfo[] memberInfos = type.GetMember(Enum.GetName(enumVal.GetType(), enumVal)!);
-        return memberInfos[0].GetCustomAttribute<TAttribute>()!;
     }
     
     private class TokenSearchResult

@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -17,13 +18,13 @@ public class AndExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("andExpression", 
+        yield return new NonTerminalDefinition<AndExpressionNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("exclusiveOrExpression"),
+                new NonTerminalConstraint<ExclusiveOrExpressionNode>(),
                 new OptionalConstraint(
                     new SequenceConstraint(
-                        new RawTerminalConstraint("&&"),
-                        new NonTerminalConstraint("exclusiveOrExpression")))),
+                        new CrumpetRawTerminalConstraint(CrumpetToken.AND_AND),
+                        new NonTerminalConstraint<ExclusiveOrExpressionNode>()))),
             GetNodeConstructor<AndExpressionNode>());
     }
 }

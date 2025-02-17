@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -17,13 +18,13 @@ public class OrExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("orExpression", 
+        yield return new NonTerminalDefinition<OrExpressionNode>( 
             new SequenceConstraint(
-                new NonTerminalConstraint("andExpression"),
+                new NonTerminalConstraint<AndExpressionNode>(),
                 new OptionalConstraint(
                     new SequenceConstraint(
-                        new RawTerminalConstraint("||"),
-                        new NonTerminalConstraint("andExpression")))),
+                        new CrumpetRawTerminalConstraint(CrumpetToken.OR),
+                        new NonTerminalConstraint<AndExpressionNode>()))),
             GetNodeConstructor<OrExpressionNode>());
     }
 }

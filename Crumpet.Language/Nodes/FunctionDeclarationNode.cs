@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Statements;
 using Crumpet.Language.Nodes.Terminals;
 
@@ -23,15 +24,15 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("functionDeclaration",
+        yield return new NonTerminalDefinition<FunctionDeclarationNode>(
             new SequenceConstraint(
-                new RawTerminalConstraint("func"),
-                new NonTerminalConstraint("type"),
-                new NamedTerminalConstraint("identifier"),
-                new RawTerminalConstraint("("),
-                new ZeroOrMoreConstraint(new NamedTerminalConstraint("parameterList")),
-                new RawTerminalConstraint(")"),
-                new NamedTerminalConstraint("statementBody")),
+                new CrumpetRawTerminalConstraint(CrumpetToken.KW_FUNC),
+                new NonTerminalConstraint<TypeNode>(),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<ParameterListNode>()),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
+                new NonTerminalConstraint<StatementBodyNode>()),
             GetNodeConstructor<FunctionDeclarationNode>());
     }
 }

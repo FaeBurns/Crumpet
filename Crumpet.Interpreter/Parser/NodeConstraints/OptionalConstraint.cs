@@ -1,11 +1,14 @@
 ﻿namespace Crumpet.Interpreter.Parser.NodeConstraints;
 
-public class OptionalConstraint : NodeConstraint
+public class OptionalConstraint : ContainsSingleConstraint
 {
-    public NodeConstraint Inner { get; }
 
-    public OptionalConstraint(NodeConstraint inner) : base(true)
+    public OptionalConstraint(NodeConstraint constraint) : base(constraint, true)
     {
-        Inner = inner;
+    }
+
+    public override string ToString()
+    {
+        return Constraint.ToString() + "?";
     }
 }

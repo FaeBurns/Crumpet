@@ -15,8 +15,8 @@ public class DeclarationNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("declaration", new NonTerminalConstraint("functionDeclaration"), GetNodeConstructor<DeclarationNodeFunctionVariant>());
-        yield return new NonTerminalDefinition("declaration", new NonTerminalConstraint("typeDeclaration"), GetNodeConstructor<DeclarationNodeTypeVariant>());
+        yield return new NonTerminalDefinition<DeclarationNode>(new NonTerminalConstraint<FunctionDeclarationNode>(), GetNodeConstructor<DeclarationNodeFunctionVariant>());
+        yield return new NonTerminalDefinition<DeclarationNode>(new NonTerminalConstraint<TypeDeclarationNode>(), GetNodeConstructor<DeclarationNodeTypeVariant>());
     }
 }
 

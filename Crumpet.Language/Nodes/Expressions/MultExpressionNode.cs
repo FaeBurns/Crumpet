@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes.Expressions;
@@ -20,15 +21,15 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("multExpression",
+        yield return new NonTerminalDefinition<MultExpressionNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("unaryExpression"),
+                new NonTerminalConstraint<UnaryExpressionNode>(),
                 new OptionalConstraint(
                     new SequenceConstraint(
                         new OrConstraint(
-                            new RawTerminalConstraint("*", true),
-                            new RawTerminalConstraint("/", true)),
-                        new NonTerminalConstraint("unaryExpression")))),
+                            new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY, true),
+                            new CrumpetTerminalConstraint(CrumpetToken.DIVIDE, true)),
+                        new NonTerminalConstraint<UnaryExpressionNode>()))),
             GetNodeConstructor<ExclusiveOrExpressionNode>());
     }
 }

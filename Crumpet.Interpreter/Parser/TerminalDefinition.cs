@@ -2,16 +2,14 @@
 
 namespace Crumpet.Interpreter.Parser;
 
-public sealed class TerminalDefinition
+public sealed class TerminalDefinition<T> where T : Enum
 {
-    public string Name { get; }
-    public string Regex { get; }
+    public T Token { get; }
     public ConstructorInfo Constructor { get; }
 
-    public TerminalDefinition(string name, string regex, ConstructorInfo constructor)
+    public TerminalDefinition(T token, ConstructorInfo constructor)
     {
-        Name = name;
-        Regex = regex;
+        Token = token;
         Constructor = constructor;
     }
 }

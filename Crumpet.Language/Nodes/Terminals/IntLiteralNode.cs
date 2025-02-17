@@ -3,7 +3,7 @@ using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class IntLiteralNode : TerminalNode, ITerminalNodeFactory
+public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
     public int IntLiteral { get; }
     
@@ -12,8 +12,8 @@ public class IntLiteralNode : TerminalNode, ITerminalNodeFactory
         IntLiteral = Convert.ToInt32(terminal);
     }
 
-    public static IEnumerable<TerminalDefinition> GetTerminals()
+    public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()
     {
-        yield return new TerminalDefinition("intLiteral", "-?[0-9]+", GetNodeConstructor<IntLiteralNode>());
+        yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.INT, GetNodeConstructor<IntLiteralNode>());
     }
 }

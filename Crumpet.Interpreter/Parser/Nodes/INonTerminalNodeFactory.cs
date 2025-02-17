@@ -5,7 +5,7 @@ public interface INonTerminalNodeFactory
      static abstract IEnumerable<NonTerminalDefinition> GetNonTerminals();
 }
 
-public interface ITerminalNodeFactory
+public interface ITerminalNodeFactory<T> where T : Enum
 {
-     static abstract IEnumerable<TerminalDefinition> GetTerminals();
+     static abstract IEnumerable<TerminalDefinition<T>> GetTerminals();
 }

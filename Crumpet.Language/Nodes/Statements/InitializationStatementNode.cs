@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Statements;
 
@@ -8,11 +9,11 @@ public class InitializationStatementNode : NonTerminalNode, INonTerminalNodeFact
 {
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("initializationStatement",
+        yield return new NonTerminalDefinition<InitializationStatementNode>(
             new SequenceConstraint(
-                new NamedTerminalConstraint("identifier"),
-                new NamedTerminalConstraint("identifier"),
-                new RawTerminalConstraint(";")),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<InitializationStatementNode>());
     }
 }

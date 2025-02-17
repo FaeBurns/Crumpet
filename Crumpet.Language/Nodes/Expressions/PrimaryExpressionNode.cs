@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes.Expressions;
@@ -21,14 +22,14 @@ public class PrimaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("primaryExpression", new NamedTerminalConstraint("identifier"), GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant>());
+        yield return new NonTerminalDefinition<PrimaryExpressionNode>(new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER), GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant>());
         
-        yield return new NonTerminalDefinition("primaryExpression", new NonTerminalConstraint("literalConstant"), GetNodeConstructor<PrimaryExpressionNodeLiteralConstantVariant>());
+        yield return new NonTerminalDefinition<PrimaryExpressionNode>(new NonTerminalConstraint<LiteralConstantNode>(), GetNodeConstructor<PrimaryExpressionNodeLiteralConstantVariant>());
         
-        yield return new NonTerminalDefinition("primaryExpression", new SequenceConstraint(
-            new RawTerminalConstraint("("),
-            new NonTerminalConstraint("expression"),
-            new RawTerminalConstraint(")")
+        yield return new NonTerminalDefinition<PrimaryExpressionNode>(new SequenceConstraint(
+            new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
+            new NonTerminalConstraint<ExpressionNode>(),
+            new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN)
             ),
             GetNodeConstructor<PrimaryExpressionNodeNestedExpressionVariant>());
     }

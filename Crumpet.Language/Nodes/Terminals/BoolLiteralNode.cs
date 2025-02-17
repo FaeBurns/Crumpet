@@ -3,7 +3,7 @@ using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class BoolLiteralNode : TerminalNode, ITerminalNodeFactory
+public class BoolLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
     public bool BoolLiteral { get; }
     
@@ -12,8 +12,8 @@ public class BoolLiteralNode : TerminalNode, ITerminalNodeFactory
         BoolLiteral = Convert.ToBoolean(terminal);
     }
 
-    public static IEnumerable<TerminalDefinition> GetTerminals()
+    public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()
     {
-        yield return new TerminalDefinition("boolLiteral", "true|false", GetNodeConstructor<BoolLiteralNode>());
+        yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.BOOL, GetNodeConstructor<BoolLiteralNode>());
     }
 }

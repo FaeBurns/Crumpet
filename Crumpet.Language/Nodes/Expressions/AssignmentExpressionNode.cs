@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -12,13 +13,13 @@ public abstract class AssignmentExpressionNode : NonTerminalNode, INonTerminalNo
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("assignmentExpression", new NonTerminalConstraint("orExpression"), GetNodeConstructor<AssignmentExpressionNodePassthroughVariant>());
+        yield return new NonTerminalDefinition<AssignmentExpressionNode>(new NonTerminalConstraint<OrExpressionNode>(), GetNodeConstructor<AssignmentExpressionNodePassthroughVariant>());
 
-        yield return new NonTerminalDefinition("assignmentExpression",
+        yield return new NonTerminalDefinition<AssignmentExpressionNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("unaryExpression"),
-                new RawTerminalConstraint("="),
-                new NonTerminalConstraint("assignmentExpression")
+                new NonTerminalConstraint<UnaryExpressionNode>(),
+                new CrumpetRawTerminalConstraint(CrumpetToken.EQUALS),
+                new NonTerminalConstraint<AssignmentExpressionNode>()
             ), GetNodeConstructor<AssignmentExpressionNodeAssignmentVariant>());
     }
 }

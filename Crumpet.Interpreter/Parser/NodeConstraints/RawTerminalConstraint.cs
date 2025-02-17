@@ -1,11 +1,8 @@
 ﻿namespace Crumpet.Interpreter.Parser.NodeConstraints;
 
-public class RawTerminalConstraint : NodeConstraint
+public class RawTerminalConstraint<T> : TerminalConstraint<T> where T : Enum
 {
-    public string Terminal { get; }
-
-    public RawTerminalConstraint(string terminal, bool includeInConstructor = false) : base(includeInConstructor)
+    public RawTerminalConstraint(T token) : base(token, false)
     {
-        Terminal = terminal;
     }
 }

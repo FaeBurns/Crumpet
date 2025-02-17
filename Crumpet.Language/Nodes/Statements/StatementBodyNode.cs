@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Statements;
 
@@ -16,11 +17,11 @@ public class StatementBodyNode : NonTerminalNode, INonTerminalNodeFactory
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("statementBody",
+        yield return new NonTerminalDefinition<StatementBodyNode>(
             new SequenceConstraint(
-                new RawTerminalConstraint("{"),
-                new ZeroOrMoreConstraint(new NonTerminalConstraint("statement")),
-                new RawTerminalConstraint("}")),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK),
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<StatementNode>()),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK)),
             GetNodeConstructor<StatementBodyNode>());
     }
 }

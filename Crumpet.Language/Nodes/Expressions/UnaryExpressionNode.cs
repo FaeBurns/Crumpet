@@ -15,8 +15,8 @@ public class UnaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("unaryExpression",
-            new NonTerminalConstraint("expressionWithPostfix"),
+        yield return new NonTerminalDefinition<UnaryExpressionNode>(
+            new NonTerminalConstraint<ExpressionWithPostfixNode>(),
             GetNodeConstructor<UnaryExpressionNode>());
     }
 }

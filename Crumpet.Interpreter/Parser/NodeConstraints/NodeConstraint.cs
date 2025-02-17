@@ -8,4 +8,6 @@ public abstract class NodeConstraint
     {
         IncludeInConstructor = includeInConstructor;
     }
+
+    public abstract override string ToString();
 }

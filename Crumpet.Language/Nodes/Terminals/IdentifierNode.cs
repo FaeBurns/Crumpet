@@ -3,14 +3,14 @@ using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class IdentifierNode : TerminalNode, ITerminalNodeFactory
+public class IdentifierNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
     public IdentifierNode(string terminal) : base(terminal)
     {
     }
     
-    public static IEnumerable<TerminalDefinition> GetTerminals()
+    public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()
     {
-        yield return new TerminalDefinition("identifier", "[a-zA-Z_]+[a-zA-Z0-9_]*", GetNodeConstructor<IdentifierNode>());
+        yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.IDENTIFIER, GetNodeConstructor<IdentifierNode>());
     }
 }

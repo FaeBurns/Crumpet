@@ -17,8 +17,8 @@ public class RootNonTerminalNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("root_program",
-            new ZeroOrMoreConstraint(new NonTerminalConstraint("declaration")), 
+        yield return new NonTerminalDefinition<RootNonTerminalNode>(
+            new ZeroOrMoreConstraint(new NonTerminalConstraint<DeclarationNode>()), 
             GetNodeConstructor<RootNonTerminalNode>());
     }
 }

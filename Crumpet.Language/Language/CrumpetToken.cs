@@ -1,6 +1,4 @@
-﻿
-
-// ReSharper disable UseVerbatimString
+﻿// ReSharper disable UseVerbatimString
 // ReSharper disable IdentifierTypo
 
 using Crumpet.Interpreter.Lexer;
@@ -31,8 +29,44 @@ public enum CrumpetToken : byte
     [Token("\\]")]
     RINDEX,
     
-    [Token("toast|scrape|burn|while|for|if|else|void|int|float|string|bool|func|break|continue|return")]
-    KEYWORD,
+    [Token("toast")]
+    KW_TOAST,
+    
+    [Token("scrape")]
+    KW_SCRAPE,
+    
+    [Token("burn")]
+    KW_BURN,
+    
+    [Token("while")]
+    KW_WHILE,
+    
+    [Token("for")]
+    KW_FOR,
+    
+    [Token("if")]
+    KW_IF,
+    
+    [Token("else")]
+    KW_ELSE,
+    
+    [Token("void")]
+    KW_VOID,
+    
+    [Token("struct")]
+    KW_STRUCT,
+    
+    [Token("func")]
+    KW_FUNC,
+    
+    [Token("break")]
+    KW_BREAK,
+    
+    [Token("continue")]
+    KW_CONTINUE,
+    
+    [Token("return")]
+    KW_RETURN,
     
     [Token("-?[0-9]+\\.[0-9]+")]
     FLOAT,
@@ -47,6 +81,9 @@ public enum CrumpetToken : byte
     [Token("\\\".*\\\"")]
     STRING,
     
+    [Token("\\^")]
+    XOR,
+    
     [Token("\\*")]
     MULTIPLY,
     
@@ -56,8 +93,14 @@ public enum CrumpetToken : byte
     [Token("<")]
     LESS,
     
+    [Token("==")]
+    EQUALS_EQUALS,
+    
     [Token("=")]
     EQUALS,
+    
+    [Token("!=")]
+    NOT_EQUALS,
     
     [Token("!")]
     NOT,    
@@ -86,10 +129,13 @@ public enum CrumpetToken : byte
     [Token("\\;")]
     SEMICOLON,
     
+    [Token("\\&\\&")]
+    AND_AND,
+    
     [Token("\\&")]
     AND,
     
-    [Token("\\|")]
+    [Token("\\|\\|")]
     OR,
     
     // cannot use \s as newline will not be detected then

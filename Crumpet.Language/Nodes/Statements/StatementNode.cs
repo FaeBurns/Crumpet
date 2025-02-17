@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Expressions;
 
 namespace Crumpet.Language.Nodes.Statements;
@@ -16,26 +17,26 @@ public class StatementNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("statement", 
+        yield return new NonTerminalDefinition<StatementNode>( 
             new SequenceConstraint(
-                new OptionalConstraint(new NonTerminalConstraint("expression")),
-                new RawTerminalConstraint(";")),
+                new OptionalConstraint(new NonTerminalConstraint<ExpressionNode>()),
+                new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<StatementNodeExpressionVariant>());
 
-        yield return new NonTerminalDefinition("statement",
-            new NonTerminalConstraint("ifStatement"), 
+        yield return new NonTerminalDefinition<StatementNode>(
+            new NonTerminalConstraint<IfStatementNode>(), 
             GetNodeConstructor<StatementNodeIfVariant>());
         
-        yield return new NonTerminalDefinition("statement",
-            new NonTerminalConstraint("iterationStatement"), 
+        yield return new NonTerminalDefinition<StatementNode>(
+            new NonTerminalConstraint<IterationStatementNode>(), 
             GetNodeConstructor<StatementNodeIterationVariant>());
         
-        yield return new NonTerminalDefinition("statement",
-            new NonTerminalConstraint("flowStatement"), 
+        yield return new NonTerminalDefinition<StatementNode>(
+            new NonTerminalConstraint<FlowStatementNode>(), 
             GetNodeConstructor<StatementNodeFlowVariant>());
         
-        yield return new NonTerminalDefinition("statement",
-            new NonTerminalConstraint("initializationStatement"), 
+        yield return new NonTerminalDefinition<StatementNode>(
+            new NonTerminalConstraint<InitializationStatementNode>(), 
             GetNodeConstructor<StatementNodeInitializationVariant>());
     }
 }

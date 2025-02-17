@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes;
@@ -16,10 +17,10 @@ public abstract class LiteralConstantNode : NonTerminalNode, INonTerminalNodeFac
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("literalConstant", new NamedTerminalConstraint("stringLiteral"), GetNodeConstructor<LiteralConstantNodeStringVariant>());
-        yield return new NonTerminalDefinition("literalConstant", new NamedTerminalConstraint("intLiteral"), GetNodeConstructor<LiteralConstantNodeIntVariant>());
-        yield return new NonTerminalDefinition("literalConstant", new NamedTerminalConstraint("floatLiteral"), GetNodeConstructor<LiteralConstantNodeFloatVariant>());
-        yield return new NonTerminalDefinition("literalConstant", new NamedTerminalConstraint("boolLiteral"), GetNodeConstructor<LiteralConstantNodeBoolVariant>());
+        yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.STRING), GetNodeConstructor<LiteralConstantNodeStringVariant>());
+        yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.INT), GetNodeConstructor<LiteralConstantNodeIntVariant>());
+        yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.FLOAT), GetNodeConstructor<LiteralConstantNodeFloatVariant>());
+        yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.BOOL), GetNodeConstructor<LiteralConstantNodeBoolVariant>());
     }
 }
 

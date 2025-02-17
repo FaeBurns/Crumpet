@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes;
@@ -18,13 +19,13 @@ public class TypeDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("typeDeclaration",
+        yield return new NonTerminalDefinition<TypeDeclarationNode>(
             new SequenceConstraint(
-                new RawTerminalConstraint("struct"),
-                new NamedTerminalConstraint("identifier"),
-                new RawTerminalConstraint("{"),
-                new ZeroOrMoreConstraint(new NamedTerminalConstraint("typeDeclarationField")),
-                new RawTerminalConstraint("}")),
+                new CrumpetRawTerminalConstraint(CrumpetToken.KW_STRUCT),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK),
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<TypeDeclarationFieldNode>()),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK)),
             GetNodeConstructor<DeclarationNode>());
     }
 

@@ -20,8 +20,8 @@ public class ExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("expression",
-            new NonTerminalConstraint("assignmentExpression"),
+        yield return new NonTerminalDefinition<ExpressionNode>(
+            new NonTerminalConstraint<AssignmentExpressionNode>(),
             GetNodeConstructor<ExpressionNode>());
     }
 }

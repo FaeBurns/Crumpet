@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes;
 
@@ -15,13 +16,13 @@ public class ParameterListNode : NonTerminalNode, INonTerminalNodeFactory
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("parameterList",
+        yield return new NonTerminalDefinition<ParameterListNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("parameter"),
+                new NonTerminalConstraint<ParameterNode>(),
                 new ZeroOrMoreConstraint(
                     new SequenceConstraint(
-                        new RawTerminalConstraint(","),
-                        new NonTerminalConstraint("parameter")))),
+                        new CrumpetRawTerminalConstraint(CrumpetToken.COMMA),
+                        new NonTerminalConstraint<ParameterNode>()))),
             GetNodeConstructor<ParameterListNode>());
     }
 

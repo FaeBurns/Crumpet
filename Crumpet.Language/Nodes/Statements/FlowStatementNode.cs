@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Expressions;
 using Crumpet.Language.Nodes.Terminals;
 
@@ -19,16 +20,16 @@ public class FlowStatementNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("flowStatement",
+        yield return new NonTerminalDefinition<FlowStatementNode>(
             new SequenceConstraint(
                 new OrConstraint(
-                    new RawTerminalConstraint("continue", true),
-                    new RawTerminalConstraint("break", true),
+                    new CrumpetTerminalConstraint(CrumpetToken.KW_CONTINUE),
+                    new CrumpetTerminalConstraint(CrumpetToken.KW_BREAK),
                     new SequenceConstraint(
-                        new RawTerminalConstraint("return", true),
+                        new CrumpetTerminalConstraint(CrumpetToken.KW_RETURN),
                         new OptionalConstraint(
-                            new NonTerminalConstraint("expression")))),
-                new RawTerminalConstraint(";")), 
+                            new NonTerminalConstraint<ExpressionNode>()))),
+                new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)), 
             GetNodeConstructor<FlowStatementNode>());
     }
 }

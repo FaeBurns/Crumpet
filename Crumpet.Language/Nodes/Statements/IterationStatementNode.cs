@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Expressions;
 
 namespace Crumpet.Language.Nodes.Statements;
@@ -18,13 +19,13 @@ public class IterationStatementNode : NonTerminalNode, INonTerminalNodeFactory
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("iterationStatement", 
+        yield return new NonTerminalDefinition<IterationStatementNode>( 
             new SequenceConstraint(
-                new RawTerminalConstraint("while"),
-                new RawTerminalConstraint("("),
-                new NonTerminalConstraint("expression"),
-                new RawTerminalConstraint(")"),
-                new NonTerminalConstraint("statementBody")),
+                new CrumpetRawTerminalConstraint(CrumpetToken.KW_WHILE),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
+                new NonTerminalConstraint<ExpressionNode>(),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
+                new NonTerminalConstraint<StatementBodyNode>()),
             GetNodeConstructor<IterationStatementNode>());
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -23,13 +24,13 @@ public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFacto
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("argumentExpressionList",
+        yield return new NonTerminalDefinition<ArgumentExpressionListNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("expression"),
+                new NonTerminalConstraint<ExpressionNode>(),
                 new ZeroOrMoreConstraint(
                     new SequenceConstraint(
-                        new RawTerminalConstraint(","),
-                        new NonTerminalConstraint("expression")))),
+                        new CrumpetRawTerminalConstraint(CrumpetToken.COMMA),
+                        new NonTerminalConstraint<ExpressionNode>()))),
             GetNodeConstructor<ArgumentExpressionListNode>());
     }
 }

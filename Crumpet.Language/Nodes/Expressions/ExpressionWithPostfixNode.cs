@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Language.Nodes.Constraints;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -23,13 +24,13 @@ public class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalNodeFactor
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition("expressionWithPostfix",
+        yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint("primaryExpression"),
+                new NonTerminalConstraint<PrimaryExpressionNode>(),
                 new OptionalConstraint(new SequenceConstraint(
-                    new RawTerminalConstraint("["),
-                    new NonTerminalConstraint("argumentExpressionList"),
-                    new RawTerminalConstraint("]")))),
+                    new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
+                    new NonTerminalConstraint<ArgumentExpressionListNode>(),
+                    new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX)))),
             GetNodeConstructor<ExpressionWithPostfixNode>());
     }
 }

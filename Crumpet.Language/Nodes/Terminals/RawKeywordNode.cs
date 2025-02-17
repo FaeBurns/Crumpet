@@ -2,7 +2,7 @@
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class RawKeywordNode : TerminalNode
+public class RawKeywordNode : TerminalNode<CrumpetToken>
 {
     public RawKeywordNode(string terminal) : base(terminal)
     {

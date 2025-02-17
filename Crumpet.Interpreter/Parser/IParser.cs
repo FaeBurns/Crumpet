@@ -1,6 +1,6 @@
 ﻿namespace Crumpet.Interpreter.Parser;
 
-public interface IParser<TToken, TNode>
+public interface IParser
 {
     
 }
