@@ -1,12 +1,30 @@
-﻿namespace Crumpet.Interpreter.Parser.Nodes;
+﻿using Crumpet.Interpreter.Lexer;
+using Crumpet.Interpreter.Parser.NodeConstraints;
 
-public abstract class TerminalNode<T> : ASTNode where T : Enum
+namespace Crumpet.Interpreter.Parser.Nodes;
+
+public class TerminalNode<T> : ASTNode where T : Enum
 {
-    protected TerminalNode(string terminal)
+    public Token<T> Token { get; }
+    public string Terminal { get; }
+
+    public TerminalNode(Token<T> token)
     {
-        Terminal = terminal;
+        Token = token;
+        Terminal = token.Value;
     }
-    
-    public TerminalDefinition<T> TriggeredConstraint { get; internal set; } = null!;
-    public string Terminal { get; internal set; }
+
+    public TerminalConstraint<T> TriggeredConstraint { get; internal set; } = null!;
+
+    public override string ToString()
+    {
+        return $"{{{Token.TokenId}}}:{{{Terminal}}}";
+    }
+
+    public override IEnumerable<object> TransformForConstructor()
+    {
+        if (TriggeredConstraint.IncludeInConstructor)
+            return [this];
+        return Array.Empty<object>();
+    }
 }

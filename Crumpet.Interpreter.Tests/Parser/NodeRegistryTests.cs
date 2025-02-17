@@ -7,7 +7,7 @@ using Crumpet.Language.Nodes.Statements;
 namespace Crumpet.Interpreter.Tests.Parser;
 
 [TestFixture]
-public class NodeRegistry
+public class NodeRegistryTests
 {
     private ASTNodeRegistry<CrumpetToken> RegisterNodes()
     {

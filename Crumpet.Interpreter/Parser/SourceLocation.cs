@@ -1,12 +1,12 @@
 ﻿namespace Crumpet.Interpreter.Parser;
 
-public class NodeLocation
+public class SourceLocation
 {
-    public NodeLocation()
+    public SourceLocation()
     {
     }
     
-    public NodeLocation(int startOffset, int endOffset, int startLine, int endLine, int startColumn, int endColumn)
+    public SourceLocation(int startOffset, int endOffset, int startLine, int endLine, int startColumn, int endColumn)
     {
         StartOffset = startOffset;
         EndOffset = endOffset;

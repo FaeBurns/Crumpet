@@ -5,6 +5,9 @@ namespace Crumpet.Interpreter.Parser;
 
 public class NonTerminalDefinition
 {
+    /// <summary>
+    /// The type of the non-terminal node
+    /// </summary>
     public Type Type { get; }
     public NodeConstraint Constraint { get; }
     public ConstructorInfo Constructor { get; }

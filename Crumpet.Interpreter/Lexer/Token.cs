@@ -1,21 +1,20 @@
-﻿namespace Crumpet.Interpreter.Lexer;
+﻿using Crumpet.Interpreter.Parser;
+
+namespace Crumpet.Interpreter.Lexer;
 
 public class Token<T> where T : Enum
 {
-    public Token(T tokenId, string value, int lineNumber, Range lineTextRange)
+    public Token(T tokenId, string value, SourceLocation location)
     {
         TokenId = tokenId;
         Value = value;
         
-        LineNumber = lineNumber;
-        LineTextRange = lineTextRange;
+        Location = location;
     }
     
     public T TokenId { get; }
 
     public string Value { get; }
     
-    public Range LineTextRange { get; }
-    
-    public int LineNumber { get; }
+    public SourceLocation Location { get; }
 }

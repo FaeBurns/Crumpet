@@ -1,0 +1,18 @@
+﻿struct testType{
+    int one;
+    bool two;
+    string three;
+    float four;
+}
+
+func int main(){
+    testType testInstance;
+    foo(testInstance);
+}
+
+func testType foo(testType){
+    testType.one = 1;
+    testType.two = false;
+    testType.three = "test";
+    testType.four = 4.0;
+}

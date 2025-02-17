@@ -26,5 +26,12 @@ public abstract class NonTerminalNode : ASTNode
     }
     
     protected virtual IEnumerable<ASTNode?> EnumerateChildrenDerived() { yield break; }
+    
+    public override IEnumerable<object> TransformForConstructor()
+    {
+        // all nodes should just return themselves
+        return [this];
+    }
+    
     public NonTerminalDefinition TriggeredConstraint { get; internal set; } = null!;
 }

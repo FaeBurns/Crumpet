@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Parser;
+﻿using Crumpet.Interpreter.Lexer;
+using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
@@ -7,9 +8,9 @@ public class BoolLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<
 {
     public bool BoolLiteral { get; }
     
-    public BoolLiteralNode(string terminal) : base(terminal)
+    public BoolLiteralNode(Token<CrumpetToken> token) : base(token)
     {
-        BoolLiteral = Convert.ToBoolean(terminal);
+        BoolLiteral = Convert.ToBoolean(token.Value);
     }
 
     public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()

@@ -2,17 +2,16 @@
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
 using Crumpet.Language.Nodes.Constraints;
-using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
 public class RelationExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public SumExpressionNode Primary { get; }
-    public RawKeywordNode Sugar { get; }
+    public TerminalNode<CrumpetToken> Sugar { get; }
     public SumExpressionNode? Secondary { get; }
 
-    public RelationExpressionNode(SumExpressionNode primary, RawKeywordNode sugar, SumExpressionNode secondary) : base(primary, sugar, secondary)
+    public RelationExpressionNode(SumExpressionNode primary, TerminalNode<CrumpetToken> sugar, SumExpressionNode secondary) : base(primary, sugar, secondary)
     {
         Primary = primary;
         Sugar = sugar;

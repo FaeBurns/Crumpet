@@ -3,16 +3,15 @@ using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;
 using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Expressions;
-using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes.Statements;
 
 public class FlowStatementNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public RawKeywordNode Keyword { get; }
+    public TerminalNode<CrumpetToken> Keyword { get; }
     public ExpressionNode? Expression { get; }
 
-    public FlowStatementNode(RawKeywordNode keyword, ExpressionNode? expression) : base(keyword, expression)
+    public FlowStatementNode(TerminalNode<CrumpetToken> keyword, ExpressionNode? expression) : base(keyword, expression)
     {
         Keyword = keyword;
         Expression = expression;

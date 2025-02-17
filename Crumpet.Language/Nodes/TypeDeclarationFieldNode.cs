@@ -26,4 +26,9 @@ public class TypeDeclarationFieldNode : NonTerminalNode, INonTerminalNodeFactory
                 new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<TypeDeclarationFieldNode>());
     }
+
+    public override string ToString()
+    {
+        return $"{Name}: {Type}";
+    }
 }

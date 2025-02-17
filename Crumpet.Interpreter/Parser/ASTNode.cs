@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using Crumpet.Interpreter.Exceptions;
+using Crumpet.Interpreter.Parser.Elements;
 using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Interpreter.Parser;
 
-public class ASTNode
+public abstract class ASTNode : ParserElement
 {
-    public NodeLocation Location { get; set; } = new NodeLocation();
+    public SourceLocation Location { get; set; } = new SourceLocation();
 
     protected static ConstructorInfo GetNodeConstructor<T>() where T : ASTNode
     {

@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using Crumpet.Interpreter.Exceptions;
+using Crumpet.Interpreter.Parser;
 
 namespace Crumpet.Interpreter.Lexer;
 
@@ -40,6 +41,10 @@ public class Lexer<T> : ILexer<T> where T : Enum
             {
                 throw new InvalidTokenException(m_lineNumber, m_columnNumber);
             }
+
+            result.Token.Location.StartLine = m_lineNumber;
+            result.Token.Location.StartColumn = m_columnNumber;
+            result.Token.Location.StartOffset = m_head;
             
             // check if rule is one that will result in a line break
             // anything with the newline flag should
@@ -57,6 +62,12 @@ public class Lexer<T> : ILexer<T> where T : Enum
 
             // increase 
             m_head += result.Length;
+            
+            // set end of token location
+            // column number should revert back to the end of the previous line if it's ending at the start of the current one
+            result.Token.Location.EndLine = m_lineNumber;
+            result.Token.Location.EndColumn = m_columnNumber == 0 ? (result.Token.Location.StartColumn + result.Length) : m_columnNumber;
+            result.Token.Location.EndOffset = m_head;
             
             // return this token for the enumeration
             // but only if it's not in the ignore list
@@ -93,11 +104,7 @@ public class Lexer<T> : ILexer<T> where T : Enum
                     new Token<T>(
                         rule.TokenId, 
                         matchString,
-                        m_lineNumber,
-                        new Range(
-                            m_columnNumber, 
-                            m_columnNumber + length
-                        )),
+                        new SourceLocation()),
                     rule,
                     length
                 );

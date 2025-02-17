@@ -4,7 +4,7 @@ public abstract class ContainsSingleConstraint : NodeConstraint
 {
     public NodeConstraint Constraint { get; }
 
-    protected ContainsSingleConstraint(NodeConstraint constraint, bool includeInConstructor) : base(includeInConstructor)
+    protected ContainsSingleConstraint(NodeConstraint constraint)
     {
         Constraint = constraint;
     }

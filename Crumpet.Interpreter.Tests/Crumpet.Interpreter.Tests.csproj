@@ -22,13 +22,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Examples\" />
       <Folder Include="Parser\Nodes\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Crumpet.Interpreter\Crumpet.Interpreter.csproj" />
       <ProjectReference Include="..\Crumpet.Language\Crumpet.Language.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Examples\**\*.*">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

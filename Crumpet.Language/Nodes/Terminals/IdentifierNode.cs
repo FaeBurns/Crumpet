@@ -1,11 +1,12 @@
-﻿using Crumpet.Interpreter.Parser;
+﻿using Crumpet.Interpreter.Lexer;
+using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
 public class IdentifierNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
-    public IdentifierNode(string terminal) : base(terminal)
+    public IdentifierNode(Token<CrumpetToken> token) : base(token)
     {
     }
     

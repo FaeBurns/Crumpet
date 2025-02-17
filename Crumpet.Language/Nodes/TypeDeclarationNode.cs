@@ -26,7 +26,7 @@ public class TypeDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
                 new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK),
                 new ZeroOrMoreConstraint(new NonTerminalConstraint<TypeDeclarationFieldNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK)),
-            GetNodeConstructor<DeclarationNode>());
+            GetNodeConstructor<TypeDeclarationNode>());
     }
 
     protected override IEnumerable<ASTNode> EnumerateChildrenDerived()

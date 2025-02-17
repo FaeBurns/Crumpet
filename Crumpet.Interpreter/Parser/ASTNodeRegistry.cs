@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Crumpet.Interpreter.Collections;
 using Crumpet.Interpreter.Exceptions;
+using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser.Nodes;
 
 namespace Crumpet.Interpreter.Parser;
@@ -9,6 +10,8 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
 { 
     private readonly MultiDictionary<Type, NonTerminalDefinition> m_nonTerminalDefinitions = new MultiDictionary<Type, NonTerminalDefinition>();
     private readonly Dictionary<TToken, TerminalDefinition<TToken>> m_terminalDefinitions = new Dictionary<TToken, TerminalDefinition<TToken>>();
+
+    private static readonly ConstructorInfo s_defaultTerminalConstructor = typeof(TerminalNode<TToken>).GetConstructor([typeof(Token<TToken>)])!;
 
     public void RegisterTerminal<T>() where T : ITerminalNodeFactory<TToken>
     {
@@ -63,24 +66,46 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
         }
     }
 
-    public TerminalDefinition<TToken> GetTerminalDefinition(TToken token)
+    public TerminalDefinition<TToken>? FindTerminalDefinition(TToken token)
     {
-        if (m_terminalDefinitions.TryGetValue(token, out TerminalDefinition<TToken>? definitions))
-        {
-            return definitions;
-        }
-
-        throw new ParserDefinitionException(ExceptionConstants.PARSER_UNKOWN_TERMINAL.Format(token));
+        return m_terminalDefinitions.GetValueOrDefault(token);
     }
     
-    public IEnumerable<NonTerminalDefinition> GetNonTerminalDefinitions(Type type)
+    public IEnumerable<NonTerminalDefinition>? FindNonTerminalDefinitions(Type type)
     {
         if (m_nonTerminalDefinitions.TryGetValue(type, out List<NonTerminalDefinition>? definitions))
         {
             return definitions;
         }
 
-        throw new ParserDefinitionException(ExceptionConstants.PARSER_UNKOWN_NONTERMINAL.Format(type));
+        return null;
+    }
+
+    public TerminalDefinition<TToken> GetTerminalDefinition(TToken token)
+    {
+        TerminalDefinition<TToken>? definition = FindTerminalDefinition(token);
+        if (definition is null)
+            throw new ArgumentException(ExceptionConstants.PARSER_UNKOWN_TERMINAL.Format(token));
+
+        return definition;
+    }
+
+    public IEnumerable<NonTerminalDefinition> GetNonTerminalDefinitions(Type type)
+    {
+        IEnumerable<NonTerminalDefinition>? definitions = FindNonTerminalDefinitions(type);
+        if (definitions is null)
+            throw new ArgumentException(ExceptionConstants.PARSER_UNKOWN_NONTERMINAL.Format(type));
+
+        return definitions;
+    }
+
+    public ConstructorInfo GetNodeConstructorForToken(TToken token)
+    {
+        TerminalDefinition<TToken>? definition = FindTerminalDefinition(token);
+        if (definition is not null)
+            return definition.Constructor;
+
+        return s_defaultTerminalConstructor;
     }
     
     public IEnumerable<TerminalDefinition<TToken>> GetTerminals() => m_terminalDefinitions.Select(i => i.Value);

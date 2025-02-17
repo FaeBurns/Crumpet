@@ -41,4 +41,11 @@ public class TypeNode : NonTerminalNode, INonTerminalNodeFactory
             yield return node;
         }
     }
+
+    public override string ToString()
+    {
+        return FullName;
+    }
 }
+
+// TODO: void/builtin type variants

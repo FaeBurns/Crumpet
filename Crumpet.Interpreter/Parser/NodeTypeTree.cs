@@ -1,13 +1,17 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser.NodeConstraints;
+using Crumpet.Interpreter.Parser.Nodes;
+using JetBrains.Annotations;
 
 namespace Crumpet.Interpreter.Parser;
 
 public class NodeTypeTree<T> where T : Enum
 {
     private readonly Dictionary<Type, NonTerminalNodeDefinition> m_nonTerminalNodeCache = new Dictionary<Type, NonTerminalNodeDefinition>();
+    private readonly Dictionary<T, TerminalNodeDefinition> m_terminalNodeCache = new Dictionary<T, TerminalNodeDefinition>();
     
     private readonly ASTNodeRegistry<T> m_registry;
     private readonly NonTerminalNodeDefinition m_rootNodeDefinition;
@@ -18,9 +22,51 @@ public class NodeTypeTree<T> where T : Enum
         m_rootNodeDefinition = BuildTree(rootNodeType);
     }
     
+    /// <summary>
+    /// Returns the root node of the built tree.
+    /// </summary>
+    /// <returns></returns>
     public NonTerminalNodeDefinition GetRootNode()
     {
         return m_rootNodeDefinition;
+    }
+
+    /// <summary>
+    /// Gets the <see cref="TerminalNodeDefinition"/> for the specified terminal type.
+    /// </summary>
+    /// <param name="token">The terminal type to search for.</param>
+    /// <returns></returns>
+    [Pure]
+    public TerminalNodeDefinition? GetNodeForTerminal(T token)
+    {
+        return m_terminalNodeCache.GetValueOrDefault(token);
+    }
+
+    /// <summary>
+    /// Gets a collection of node definitions that can contain the provided node as a child.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    [Pure]
+    public IEnumerable<NonTerminalNodeDefinition> FindNodesWithChild(ASTNode node)
+    {
+        try
+        {
+            if (node is TerminalNode<T> terminalNode)
+            {
+                return m_terminalNodeCache[terminalNode.Token.TokenId].Parents;
+            }
+
+            if (node is NonTerminalNode nonTerminalNode)
+            {
+                return m_nonTerminalNodeCache[nonTerminalNode.GetType()].Parents;
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new UnreachableException("node missing from cache");
+        }
+        return Array.Empty<NonTerminalNodeDefinition>();
     }
 
     private NonTerminalNodeDefinition BuildTree(Type rootNodeType)
@@ -44,7 +90,7 @@ public class NodeTypeTree<T> where T : Enum
             return cachedNodeDefinition;
         
         // try and find root node by name
-        IReadOnlyList<NonTerminalDefinition> nonTerminalDefinitions = m_registry.GetNonTerminalDefinitions(type).ToList();
+        IReadOnlyList<NonTerminalDefinition> nonTerminalDefinitions = m_registry.FindNonTerminalDefinitions(type)?.ToList() ?? new List<NonTerminalDefinition>();
         if (!nonTerminalDefinitions.Any())
             throw new ArgumentException(ExceptionConstants.INVALID_NODE_NAME.Format(type));
         
@@ -54,7 +100,7 @@ public class NodeTypeTree<T> where T : Enum
         
         // walk constraint tree and get all non-terminals and terminals used
         HashSet<Type> nonTerminalTypes = new HashSet<Type>();
-        HashSet<T> terminals = new HashSet<T>();
+        HashSet<TerminalNodeDefinition> terminals = new HashSet<TerminalNodeDefinition>();
         foreach (NonTerminalDefinition nonTerminalDefinition in nonTerminalDefinitions)
         {
             nonTerminalTypes.AddRange(GetNonTerminalsInConstraint(nonTerminalDefinition.Constraint));
@@ -75,8 +121,13 @@ public class NodeTypeTree<T> where T : Enum
         }
 
         // populate with terminals
-        foreach (T terminal in terminals) 
+        foreach (TerminalNodeDefinition terminal in terminals)
+        {
             nodeDefinition.TerminalChildren.AddLast(terminal);
+            
+            // add this node to the terminal's parents
+            m_terminalNodeCache[terminal.Token].Parents.AddLast(nodeDefinition);
+        }
         
         return nodeDefinition;
     }
@@ -110,26 +161,35 @@ public class NodeTypeTree<T> where T : Enum
     /// </summary>
     /// <param name="constraint">The root node of the constraint tree.</param>
     /// <returns>An iterator over all found terminals.</returns>
-    private IEnumerable<T> GetTerminalsInConstraint(NodeConstraint constraint)
+    private IEnumerable<TerminalNodeDefinition> GetTerminalsInConstraint(NodeConstraint constraint)
     {
         switch (constraint)
         {
             case MultiNodeConstraint multiNodeConstraint:
                 foreach (NodeConstraint nodeConstraint in multiNodeConstraint.Constraints)
-                foreach (T nonTerminal in GetTerminalsInConstraint(nodeConstraint))
+                foreach (TerminalNodeDefinition nonTerminal in GetTerminalsInConstraint(nodeConstraint))
                     yield return nonTerminal;
                 break;
             case ContainsSingleConstraint singleConstraint:
-                foreach (T nonTerminal in GetTerminalsInConstraint(singleConstraint.Constraint))
+                foreach (TerminalNodeDefinition nonTerminal in GetTerminalsInConstraint(singleConstraint.Constraint))
                     yield return nonTerminal;
                 break;
             case RawTerminalConstraint<T> rawTerminalConstraint:
-                yield return rawTerminalConstraint.Token;
+                yield return GetOrCreateTerminalNodeDefinition(rawTerminalConstraint.Token);
                 break;
             case TerminalConstraint<T> namedTerminalConstraint:
-                yield return namedTerminalConstraint.Token;
+                yield return GetOrCreateTerminalNodeDefinition(namedTerminalConstraint.Token);
                 break;
         }
+    }
+
+    private TerminalNodeDefinition GetOrCreateTerminalNodeDefinition(T token)
+    {
+        if (m_terminalNodeCache.TryGetValue(token, out TerminalNodeDefinition? cachedNodeDefinition))
+            return cachedNodeDefinition;
+        
+        m_terminalNodeCache[token] = new TerminalNodeDefinition(token, m_registry.FindTerminalDefinition(token));
+        return m_terminalNodeCache[token];
     }
     
     public class NonTerminalNodeDefinition(Type type, IEnumerable<NonTerminalDefinition> rules)
@@ -138,7 +198,7 @@ public class NodeTypeTree<T> where T : Enum
         public readonly List<NonTerminalDefinition> Rules = rules.ToList();
 
         public readonly LinkedList<NonTerminalNodeDefinition> NonTerminalChildren = new LinkedList<NonTerminalNodeDefinition>();
-        public readonly LinkedList<T> TerminalChildren = new LinkedList<T>();
+        public readonly LinkedList<TerminalNodeDefinition> TerminalChildren = new LinkedList<TerminalNodeDefinition>();
         public readonly LinkedList<NonTerminalNodeDefinition> Parents = new LinkedList<NonTerminalNodeDefinition>();
 
         // print out the node as ebnf
@@ -159,6 +219,13 @@ public class NodeTypeTree<T> where T : Enum
 
             return builder.ToString();
         }
+    }
+
+    public class TerminalNodeDefinition(T token, TerminalDefinition<T>? translationRule)
+    {
+        public readonly T Token = token;
+        public readonly TerminalDefinition<T>? TranslationRule = translationRule;
+        public readonly LinkedList<NonTerminalNodeDefinition> Parents = new LinkedList<NonTerminalNodeDefinition>();
     }
 
     /// <summary>
@@ -183,9 +250,9 @@ public class NodeTypeTree<T> where T : Enum
                 RecursiveAddNodeToSet(nonTerminal);
             }
 
-            foreach (T token in node.TerminalChildren)
+            foreach (TerminalNodeDefinition token in node.TerminalChildren)
             {
-                terminals.Add(token);
+                terminals.Add(token.Token);
             }
         }
 
