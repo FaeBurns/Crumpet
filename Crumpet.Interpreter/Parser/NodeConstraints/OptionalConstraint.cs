@@ -11,7 +11,7 @@ public class OptionalConstraint : ContainsSingleConstraint
 
     public override string ToString()
     {
-        return Constraint.ToString() + "?";
+        return "(" + Constraint.ToString() + ")?";
     }
 
     public override ParserElement? WalkStream<T>(ObjectStream<TerminalNode<T>> stream, ASTNodeRegistry<T> registry)

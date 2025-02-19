@@ -19,9 +19,9 @@ public class StatementBodyNode : NonTerminalNode, INonTerminalNodeFactory
     {
         yield return new NonTerminalDefinition<StatementBodyNode>(
             new SequenceConstraint(
-                new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK),
                 new ZeroOrMoreConstraint(new NonTerminalConstraint<StatementNode>()),
-                new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK)),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK)),
             GetNodeConstructor<StatementBodyNode>());
     }
 }

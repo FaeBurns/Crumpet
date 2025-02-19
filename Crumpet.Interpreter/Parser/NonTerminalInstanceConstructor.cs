@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Parser.Elements;
 using Crumpet.Interpreter.Parser.Nodes;
@@ -16,9 +17,19 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
 
     public ASTNode? Construct(ObjectStream<TerminalNode<T>> stream, ASTNodeRegistry<T> registry)
     {
+        if (stream.IsAtEnd)
+            return null;
+        
         using PositionSaver<TerminalNode<T>> position = stream.ConstrainPosition();
         TerminalNode<T> initialToken = stream.PeekCurrent();
-            
+     
+        // do check on declaring type as that's gonna be the one the constructor is in
+        // as long as they're not the same
+        // handles checking for variants
+        ParserDebuggerHelper<T>.BreakIfNecessary(m_definition.Type);
+        if (m_definition.Constructor.DeclaringType! != m_definition.Type)
+            ParserDebuggerHelper<T>.BreakIfNecessary(m_definition.Constructor.DeclaringType!);
+        
         // inspect the rule's constraint
         // if the constraint does not pass then check the next one
         ParserElement? element = m_definition.Constraint.WalkStream(stream, registry);
@@ -29,6 +40,13 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
         object[] arguments = element.TransformForConstructor().ToArray();
 
         ParameterInfo[] parameters = m_definition.Constructor.GetParameters();
+
+        if (arguments.Length != parameters.Length && Debugger.IsAttached)
+        {
+            Debugger.Break();
+            // redo but now with debugger
+            arguments = element.TransformForConstructor().ToArray();
+        }
             
         // convert any arrays to the expected type
         object[] parameterizedArguments = new object[arguments.Length];

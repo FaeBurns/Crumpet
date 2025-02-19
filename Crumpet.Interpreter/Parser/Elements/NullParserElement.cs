@@ -7,6 +7,6 @@ public class NullParserElement : ParserElement
 {
     public override IEnumerable<object> TransformForConstructor()
     {
-        return null!;
+        return [null!];
     }
 }

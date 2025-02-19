@@ -1,4 +1,6 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿using System.Text;
+
+namespace Crumpet.Interpreter.Parser;
 
 public class SourceLocation
 {
@@ -22,4 +24,9 @@ public class SourceLocation
     public int EndLine;
     public int StartColumn;
     public int EndColumn;
+
+    public override string ToString()
+    {
+        return $"Location {StartLine + 1}:{StartColumn + 1} - {EndLine + 1}:{EndColumn + 1} ({StartOffset} - {EndOffset})";
+    }
 }

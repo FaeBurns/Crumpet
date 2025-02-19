@@ -10,9 +10,9 @@ func int main(){
     foo(testInstance);
 }
 
-func testType foo(testType){
-    testType.one = 1;
-    testType.two = false;
-    testType.three = "test";
-    testType.four = 4.0;
+func testType foo(testType bar){
+    bar.one = 1;
+    bar.two = false;
+    bar.three = "test";
+    bar.four = 4.0;
 }

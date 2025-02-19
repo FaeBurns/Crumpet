@@ -28,6 +28,10 @@ public class SequenceConstraint : MultiNodeConstraint
                 return null;
             }
             
+            // if element is an empty collection then also reset the position
+            // if (element is MultipleParserElements multiElement && !multiElement.Collection.Any())
+                // stream.Position = position;
+            
             // if the element was valid then record it
             elements.Add(element);
         }

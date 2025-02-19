@@ -1,7 +1,10 @@
-﻿using Crumpet.Interpreter.Lexer;
+﻿using System.Diagnostics;
+using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
+using Crumpet.Language.Nodes.Expressions;
+using Crumpet.Language.Nodes.Statements;
 
 namespace Crumpet.Interpreter.Tests.Parser;
 
@@ -22,8 +25,13 @@ public class FullParserTests
 
         NodeWalkingParser<CrumpetToken,RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
 
-        RootNonTerminalNode? rootNode = parser.ParseToRoot(tokens);
+        // ParserDebuggerHelper<CrumpetToken>.SetBreakingTerminalContent("bar");
+        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminals(typeof(ExpressionWithPostfixNodeIdentifierVariant));
         
-        Assert.That(rootNode, Is.Not.Null);
+        ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
+        
+        TestContext.WriteLine($"Last token: {result.LastTerminalHit} at {result.LastTerminalHit.Location}");
+        
+        Assert.That(result.Root, Is.Not.Null);
     }
 }

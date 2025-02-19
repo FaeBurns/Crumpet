@@ -19,7 +19,7 @@ public class NodeWalkingParser<T, TRoot> where T : Enum where TRoot : ASTNode
         m_nodeTree = nodeTree;
     }
 
-    public TRoot? ParseToRoot(IEnumerable<Token<T>> tokens)
+    public ParseResult<T, TRoot> ParseToRoot(IEnumerable<Token<T>> tokens)
     {
         List<TerminalNode<T>> terminals = new List<TerminalNode<T>>();
         
@@ -45,10 +45,28 @@ public class NodeWalkingParser<T, TRoot> where T : Enum where TRoot : ASTNode
             NonTerminalInstanceConstructor<T> constructor = new NonTerminalInstanceConstructor<T>(definition);
             if (constructor.Construct(terminalStream, m_nodeRegistry) is TRoot node)
             {
-                return node;
+                // if stream is at the end
+                if (terminalStream.Position == terminalStream.Length)
+                    // return the last element
+                    return new ParseResult<T, TRoot>(node, terminalStream[^1]);
+                else
+                    // otherwise return the next item
+                    return new ParseResult<T, TRoot>(node, terminalStream[terminalStream.HighestPosition]);
             }
         }
 
-        return null;
+        return new ParseResult<T, TRoot>(null, terminalStream[terminalStream.HighestPosition]);
     }
+}
+
+public class ParseResult<T, TRoot> where T : Enum where TRoot : ASTNode
+{
+    public ParseResult(TRoot? root, TerminalNode<T> lastTerminalHit)
+    {
+        Root = root;
+        LastTerminalHit = lastTerminalHit;
+    }
+
+    public TRoot? Root { get; }
+    public TerminalNode<T> LastTerminalHit { get; }
 }

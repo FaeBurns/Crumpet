@@ -8,14 +8,14 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class SumExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public MultExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken> Sugar { get; }
-    public MultExpressionNode Secondary { get; }
+    public TerminalNode<CrumpetToken>? Sugar { get; }
+    public MultExpressionNode? Secondary { get; }
 
-    public SumExpressionNode(MultExpressionNode primary, TerminalNode<CrumpetToken> sugar, MultExpressionNode secondary) : base(primary, sugar, secondary)
+    public SumExpressionNode(MultExpressionNode primary, (TerminalNode<CrumpetToken> sugar, MultExpressionNode secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
+        Sugar = optional?.sugar;
+        Secondary = optional?.secondary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -29,6 +29,6 @@ public class SumExpressionNode : NonTerminalNode, INonTerminalNodeFactory
                             new CrumpetTerminalConstraint(CrumpetToken.PLUS),
                             new CrumpetTerminalConstraint(CrumpetToken.MINUS)),
                         new NonTerminalConstraint<MultExpressionNode>()))),
-            GetNodeConstructor<ExclusiveOrExpressionNode>());
+            GetNodeConstructor<SumExpressionNode>());
     }
 }

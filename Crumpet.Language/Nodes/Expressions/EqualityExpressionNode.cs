@@ -8,14 +8,14 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public RelationExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken> Sugar { get; }
+    public TerminalNode<CrumpetToken>? Sugar { get; }
     public RelationExpressionNode? Secondary { get; }
 
-    public EqualityExpressionNode(RelationExpressionNode primary, TerminalNode<CrumpetToken> sugar, RelationExpressionNode? secondary) : base(primary, sugar, secondary)
+    public EqualityExpressionNode(RelationExpressionNode primary, (TerminalNode<CrumpetToken> sugar, RelationExpressionNode? secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
+        Sugar = optional?.sugar;
+        Secondary = optional?.secondary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -29,6 +29,6 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
                             new CrumpetTerminalConstraint(CrumpetToken.EQUALS_EQUALS),
                             new CrumpetTerminalConstraint(CrumpetToken.NOT_EQUALS)),
                         new NonTerminalConstraint<RelationExpressionNode>()))),
-            GetNodeConstructor<ExclusiveOrExpressionNode>());
+            GetNodeConstructor<EqualityExpressionNode>());
     }
 }

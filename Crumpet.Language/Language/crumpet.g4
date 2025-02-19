@@ -92,7 +92,8 @@ unaryExpression
             
 // done
 expressionWithPostfix
-            :  primaryExpression (LINDEX argumentExpressionList RINDEX)?
+            : primaryExpression (LINDEX expression RINDEX)?
+            | primaryExpression LPARAN argumentExpressionList? RPARAN
             ;
             
 // usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value

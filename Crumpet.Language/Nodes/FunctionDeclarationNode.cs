@@ -14,12 +14,14 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
     public ParameterListNode Parameters { get; }
     public StatementBodyNode StatementBody { get; }
 
-    public FunctionDeclarationNode(TypeNode type, IdentifierNode name, ParameterListNode parameters, StatementBodyNode statementBody) : base(type, name, parameters, statementBody)
+    public FunctionDeclarationNode(TypeNode type, IdentifierNode name, ParameterListNode? parameters, StatementBodyNode statementBody) : base(type, name, parameters, statementBody)
     {
         Type = type;
         Name = name;
-        Parameters = parameters;
         StatementBody = statementBody;
+
+        // don't know why this thinks it'll never be null when it's cleary annotated to be
+        Parameters = parameters ?? new ParameterListNode();
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -30,7 +32,7 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
                 new NonTerminalConstraint<TypeNode>(),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
-                new ZeroOrMoreConstraint(new NonTerminalConstraint<ParameterListNode>()),
+                new OptionalConstraint(new NonTerminalConstraint<ParameterListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
                 new NonTerminalConstraint<StatementBodyNode>()),
             GetNodeConstructor<FunctionDeclarationNode>());

@@ -13,6 +13,11 @@ public class ParameterListNode : NonTerminalNode, INonTerminalNodeFactory
     {
         Parameters = others.Prepend(first).ToArray();
     }
+
+    public ParameterListNode()
+    {
+        Parameters = Array.Empty<ParameterNode>();
+    }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {

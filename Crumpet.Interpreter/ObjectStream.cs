@@ -6,14 +6,30 @@ namespace Crumpet.Interpreter;
 public class ObjectStream<T> : IEnumerator<T>, IEnumerable<T>
 {
     private readonly IReadOnlyList<T> m_objectList;
+    private int m_position = 0;
 
     T IEnumerator<T>.Current => m_objectList[Position];
 
     object? IEnumerator.Current => m_objectList[Position];
     
     public int Length => m_objectList.Count;
+    
+    public int HighestPosition { get; private set; }
 
-    public int Position { get; set; }
+    public int Position
+    {
+        get => m_position;
+        set
+        {
+            m_position = value;
+            if (m_position > HighestPosition)
+                HighestPosition = m_position;
+        }
+    }
+
+    public bool IsAtEnd => Position == Length;
+
+    public T this[int index] => m_objectList[index];
 
     public ObjectStream(IEnumerable<T> objects)
     {

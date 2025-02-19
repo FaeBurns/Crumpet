@@ -12,6 +12,7 @@ public class TerminalNode<T> : ASTNode where T : Enum
     {
         Token = token;
         Terminal = token.Value;
+        Location = token.Location;
     }
 
     public TerminalConstraint<T> TriggeredConstraint { get; internal set; } = null!;

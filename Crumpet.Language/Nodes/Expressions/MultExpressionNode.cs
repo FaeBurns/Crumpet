@@ -8,14 +8,14 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public UnaryExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken> Sugar { get; }
-    public UnaryExpressionNode Secondary { get; }
+    public TerminalNode<CrumpetToken>? Sugar { get; }
+    public UnaryExpressionNode? Secondary { get; }
 
-    public MultExpressionNode(UnaryExpressionNode primary, TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary) : base(primary, sugar, secondary)
+    public MultExpressionNode(UnaryExpressionNode primary, (TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
+        Sugar = optional?.sugar;
+        Secondary = optional?.secondary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -29,6 +29,6 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory
                             new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY, true),
                             new CrumpetTerminalConstraint(CrumpetToken.DIVIDE, true)),
                         new NonTerminalConstraint<UnaryExpressionNode>()))),
-            GetNodeConstructor<ExclusiveOrExpressionNode>());
+            GetNodeConstructor<MultExpressionNode>());
     }
 }

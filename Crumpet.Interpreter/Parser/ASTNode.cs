@@ -7,7 +7,8 @@ namespace Crumpet.Interpreter.Parser;
 
 public abstract class ASTNode : ParserElement
 {
-    public SourceLocation Location { get; set; } = new SourceLocation();
+    // TODO: set this
+    public SourceLocation Location { get; internal set; } = new SourceLocation();
 
     protected static ConstructorInfo GetNodeConstructor<T>() where T : ASTNode
     {

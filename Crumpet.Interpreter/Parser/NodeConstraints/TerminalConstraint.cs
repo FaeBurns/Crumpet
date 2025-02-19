@@ -29,6 +29,9 @@ public class TerminalConstraint<T> : NodeConstraint where T : Enum
         // read one from stream
         if (node.Token.TokenId.Equals(Token))
         {
+            ParserDebuggerHelper<T>.BreakIfNecessary(Token);
+            ParserDebuggerHelper<T>.BreakIfNecessary(node.Token.Value);
+            
             // do not reset position
             positionSaver.ConsumePosition();
 
