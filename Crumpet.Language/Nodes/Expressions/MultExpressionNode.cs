@@ -11,11 +11,16 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     public TerminalNode<CrumpetToken>? Sugar { get; }
     public UnaryExpressionNode? Secondary { get; }
 
-    public MultExpressionNode(UnaryExpressionNode primary, (TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
+    public MultExpressionNode(UnaryExpressionNode primary, TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary) : base(primary, sugar, secondary)
     {
         Primary = primary;
-        Sugar = optional?.sugar;
-        Secondary = optional?.secondary;
+        Sugar = sugar;
+        Secondary = secondary;
+    }
+
+    public MultExpressionNode(UnaryExpressionNode primary)
+    {
+        Primary = primary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -23,12 +28,15 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<MultExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<UnaryExpressionNode>(),
-                new OptionalConstraint(
-                    new SequenceConstraint(
-                        new OrConstraint(
-                            new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY, true),
-                            new CrumpetTerminalConstraint(CrumpetToken.DIVIDE, true)),
-                        new NonTerminalConstraint<UnaryExpressionNode>()))),
-            GetNodeConstructor<MultExpressionNode>());
+                new SequenceConstraint(
+                    new OrConstraint(
+                        new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY),
+                        new CrumpetTerminalConstraint(CrumpetToken.DIVIDE)),
+                    new NonTerminalConstraint<UnaryExpressionNode>())),
+            GetNodeConstructor<MultExpressionNode>(3));
+        
+        yield return new NonTerminalDefinition<MultExpressionNode>(
+            new NonTerminalConstraint<UnaryExpressionNode>(),
+            GetNodeConstructor<MultExpressionNode>(1));
     }
 }

@@ -11,26 +11,36 @@ public class RelationExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     public TerminalNode<CrumpetToken>? Sugar { get; }
     public SumExpressionNode? Secondary { get; }
 
-    public RelationExpressionNode(SumExpressionNode primary, (TerminalNode<CrumpetToken> sugar, SumExpressionNode secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
+    public RelationExpressionNode(SumExpressionNode primary, TerminalNode<CrumpetToken> sugar, SumExpressionNode secondary) : base(primary, sugar, secondary)
     {
         Primary = primary;
-        Sugar = optional?.sugar;
-        Secondary = optional?.secondary;
+        Sugar = sugar;
+        Secondary = secondary;
+    }
+
+    public RelationExpressionNode(SumExpressionNode primary) : base(primary)
+    {
+        Primary = primary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
+        // relation
         yield return new NonTerminalDefinition<RelationExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<SumExpressionNode>(),
-                new OptionalConstraint(
-                    new SequenceConstraint(
-                        new OrConstraint(
-                            new CrumpetTerminalConstraint(CrumpetToken.LESS),
-                            new CrumpetTerminalConstraint(CrumpetToken.LESS_OR_EQUAL),
-                            new CrumpetTerminalConstraint(CrumpetToken.GREATER_OR_EQUAL),
-                            new CrumpetTerminalConstraint(CrumpetToken.GREATER)),
-                        new NonTerminalConstraint<SumExpressionNode>()))),
-            GetNodeConstructor<RelationExpressionNode>());
+                new SequenceConstraint(
+                    new OrConstraint(
+                        new CrumpetTerminalConstraint(CrumpetToken.LESS),
+                        new CrumpetTerminalConstraint(CrumpetToken.LESS_OR_EQUAL),
+                        new CrumpetTerminalConstraint(CrumpetToken.GREATER_OR_EQUAL),
+                        new CrumpetTerminalConstraint(CrumpetToken.GREATER)),
+                    new NonTerminalConstraint<SumExpressionNode>())),
+            GetNodeConstructor<RelationExpressionNode>(3));
+        
+        // passthrough
+        yield return new NonTerminalDefinition<RelationExpressionNode>(
+                new NonTerminalConstraint<SumExpressionNode>(),
+            GetNodeConstructor<RelationExpressionNode>(1));
     }
 }

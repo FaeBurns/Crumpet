@@ -41,17 +41,14 @@ public enum CrumpetToken : byte
     [Token("while")]
     KW_WHILE,
     
-    [Token("for")]
-    KW_FOR,
-    
     [Token("if")]
     KW_IF,
     
     [Token("else")]
     KW_ELSE,
     
-    [Token("void")]
-    KW_VOID,
+    [Token("void|string|int|float|bool")]
+    KW_KNOWN_TYPE,
     
     [Token("struct")]
     KW_STRUCT,

@@ -11,7 +11,13 @@ namespace Crumpet.Interpreter.Tests.Parser;
 [TestFixture]
 public class FullParserTests
 {
-    public ParseResult<CrumpetToken, RootNonTerminalNode> TestExampleFile(string examplePath)
+    [TestCase("Full/fullzoo")]
+    public void TestExampleFile(string path)
+    {
+        ParseExampleFile(path);
+    }
+    
+    public ParseResult<CrumpetToken, RootNonTerminalNode> ParseExampleFile(string examplePath)
     {
         string source = File.ReadAllText(Path.Combine("Examples//", examplePath) + ".crm");
         ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(source, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE);
@@ -39,7 +45,7 @@ public class FullParserTests
     [Test]
     public void TestZooFile()
     {
-        ParseResult<CrumpetToken,RootNonTerminalNode> result = TestExampleFile("Full/zoo");
+        ParseResult<CrumpetToken,RootNonTerminalNode> result = ParseExampleFile("Full/zoo");
         Assert.That(result.Root!.Declarations, Has.Length.EqualTo(3));
         Assert.That(result.Root!.Declarations.Select(d => d.Variant.GetType()), Is.EquivalentTo(new [] {typeof(TypeDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode)}));
     }

@@ -18,4 +18,14 @@ public abstract class ASTNode : ParserElement
                ?? throw new ParserSetupException(
                    ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));
     }
+
+    protected static ConstructorInfo GetNodeConstructor<T>(int paramCount) where T : ASTNode
+    {
+        // get first constructor with count
+        ConstructorInfo[] constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+        
+        return constructors.FirstOrDefault(c => c.GetParameters().Count() == paramCount)
+               ?? throw new ParserSetupException(
+                   ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));
+    }
 }

@@ -6,12 +6,36 @@ using Crumpet.Language.Nodes.Terminals;
 
 namespace Crumpet.Language.Nodes;
 
-public class TypeNode : NonTerminalNode, INonTerminalNodeFactory
+public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public string FullName { get; }
+    public required string FullName { get; init; }
+    
+    public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
+    {
+        yield return new NonTerminalDefinition<TypeNode>(
+            new SequenceConstraint(
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new ZeroOrMoreConstraint(new SequenceConstraint(
+                    new CrumpetRawTerminalConstraint(CrumpetToken.PERIOD),
+                    new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)))),
+            GetNodeConstructor<TypeNodeIdentifierVariant>());
+
+        yield return new NonTerminalDefinition<TypeNode>(
+            new CrumpetTerminalConstraint(CrumpetToken.KW_KNOWN_TYPE), 
+            GetNodeConstructor<TypeNodeKeywordVariant>());
+    }
+
+    public override string ToString()
+    {
+        return FullName;
+    }
+}
+
+public class TypeNodeIdentifierVariant : TypeNode
+{
     public IdentifierNode[] Segments { get; }
     
-    public TypeNode(IdentifierNode firstSegment, IEnumerable<IdentifierNode> otherSegments)
+    public TypeNodeIdentifierVariant(IdentifierNode firstSegment, IEnumerable<IdentifierNode> otherSegments)
     {
         // prevent double enumeration
         IEnumerable<IdentifierNode> identifierNodes = otherSegments as IReadOnlyList<IdentifierNode> ?? otherSegments.ToArray();
@@ -23,17 +47,6 @@ public class TypeNode : NonTerminalNode, INonTerminalNodeFactory
         FullName = firstSegment.Terminal + String.Concat(identifierNodes.Select(s => '.' + s.Terminal));
     }
     
-    public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
-    {
-        yield return new NonTerminalDefinition<TypeNode>(
-            new SequenceConstraint(
-                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
-                new ZeroOrMoreConstraint(new SequenceConstraint(
-                    new CrumpetRawTerminalConstraint(CrumpetToken.PERIOD),
-                    new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)))),
-            GetNodeConstructor<TypeNode>());
-    }
-
     protected override IEnumerable<ASTNode> EnumerateChildrenDerived()
     {
         foreach (IdentifierNode node in Segments)
@@ -41,11 +54,20 @@ public class TypeNode : NonTerminalNode, INonTerminalNodeFactory
             yield return node;
         }
     }
-
-    public override string ToString()
-    {
-        return FullName;
-    }
 }
 
-// TODO: void/builtin type variants
+public class TypeNodeKeywordVariant : TypeNode
+{
+    public TerminalNode<CrumpetToken> Keyword { get; }
+    
+    public TypeNodeKeywordVariant(TerminalNode<CrumpetToken> keyword)
+    {
+        Keyword = keyword;
+        FullName = keyword.Terminal;
+    }
+
+    protected override IEnumerable<ASTNode?> EnumerateChildrenDerived()
+    {
+        yield return Keyword;
+    }
+}

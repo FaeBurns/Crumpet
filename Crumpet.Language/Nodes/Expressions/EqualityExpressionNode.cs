@@ -11,11 +11,16 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     public TerminalNode<CrumpetToken>? Sugar { get; }
     public RelationExpressionNode? Secondary { get; }
 
-    public EqualityExpressionNode(RelationExpressionNode primary, (TerminalNode<CrumpetToken> sugar, RelationExpressionNode? secondary)? optional) : base(primary, optional?.sugar, optional?.secondary)
+    public EqualityExpressionNode(RelationExpressionNode primary, TerminalNode<CrumpetToken> sugar, RelationExpressionNode? secondary) : base(primary, sugar, secondary)
     {
         Primary = primary;
-        Sugar = optional?.sugar;
-        Secondary = optional?.secondary;
+        Sugar = sugar;
+        Secondary = secondary;
+    }
+
+    public EqualityExpressionNode(RelationExpressionNode primary)
+    {
+        Primary = primary;
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -23,12 +28,15 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<EqualityExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<RelationExpressionNode>(),
-                new OptionalConstraint(
-                    new SequenceConstraint(
-                        new OrConstraint(
-                            new CrumpetTerminalConstraint(CrumpetToken.EQUALS_EQUALS),
-                            new CrumpetTerminalConstraint(CrumpetToken.NOT_EQUALS)),
-                        new NonTerminalConstraint<RelationExpressionNode>()))),
-            GetNodeConstructor<EqualityExpressionNode>());
+                new SequenceConstraint(
+                    new OrConstraint(
+                        new CrumpetTerminalConstraint(CrumpetToken.EQUALS_EQUALS),
+                        new CrumpetTerminalConstraint(CrumpetToken.NOT_EQUALS)),
+                    new NonTerminalConstraint<RelationExpressionNode>())),
+            GetNodeConstructor<EqualityExpressionNode>(3));
+        
+        yield return new NonTerminalDefinition<EqualityExpressionNode>(
+            new NonTerminalConstraint<RelationExpressionNode>(),
+            GetNodeConstructor<EqualityExpressionNode>(1));
     }
 }
