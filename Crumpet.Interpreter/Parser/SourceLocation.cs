@@ -4,6 +4,11 @@ namespace Crumpet.Interpreter.Parser;
 
 public class SourceLocation
 {
+    public static SourceLocation FromRange(SourceLocation start, SourceLocation end)
+    {
+        return new SourceLocation(start.StartOffset, end.EndOffset, start.StartLine, end.EndLine, start.StartColumn, end.EndColumn);
+    }
+    
     public SourceLocation()
     {
     }

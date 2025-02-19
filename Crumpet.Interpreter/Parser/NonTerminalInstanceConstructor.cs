@@ -58,10 +58,15 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
 
         // construct node
         // if the construction fails then return nothing and reset position (automatic)
-        ASTNode node;
+        NonTerminalNode node;
         try
         {
-            node = (ASTNode)m_definition.Constructor.Invoke(parameterizedArguments);
+            node = (NonTerminalNode)m_definition.Constructor.Invoke(parameterizedArguments);
+            
+            // take start location from initial token
+            // and last from the stream
+            TerminalNode<T> lastTerminal = stream[stream.Position - 1];
+            node.Location = SourceLocation.FromRange(initialToken.Location, lastTerminal.Location);
         }
         catch (Exception e)
         {

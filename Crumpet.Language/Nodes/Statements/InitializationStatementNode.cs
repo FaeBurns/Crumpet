@@ -11,7 +11,7 @@ public class InitializationStatementNode : NonTerminalNode, INonTerminalNodeFact
     public TypeNode Type { get; }
     public IdentifierNode Name { get; }
 
-    public InitializationStatementNode(TypeNode type, IdentifierNode name)
+    public InitializationStatementNode(TypeNode type, IdentifierNode name) : base(type, name)
     {
         Type = type;
         Name = name;

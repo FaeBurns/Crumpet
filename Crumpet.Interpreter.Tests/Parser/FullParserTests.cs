@@ -11,8 +11,7 @@ namespace Crumpet.Interpreter.Tests.Parser;
 [TestFixture]
 public class FullParserTests
 {
-    [TestCase("Full/zoo")]
-    public void TestExampleFile(string examplePath)
+    public ParseResult<CrumpetToken, RootNonTerminalNode> TestExampleFile(string examplePath)
     {
         string source = File.ReadAllText(Path.Combine("Examples//", examplePath) + ".crm");
         ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(source, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE);
@@ -26,12 +25,22 @@ public class FullParserTests
         NodeWalkingParser<CrumpetToken,RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
 
         // ParserDebuggerHelper<CrumpetToken>.SetBreakingTerminalContent("bar");
-        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminals(typeof(ExpressionWithPostfixNodeIdentifierVariant));
+        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminals(typeof(RootNonTerminalNode));
         
         ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
         
         TestContext.WriteLine($"Last token: {result.LastTerminalHit} at {result.LastTerminalHit.Location}");
         
         Assert.That(result.Root, Is.Not.Null);
+
+        return result;
+    }
+
+    [Test]
+    public void TestZooFile()
+    {
+        ParseResult<CrumpetToken,RootNonTerminalNode> result = TestExampleFile("Full/zoo");
+        Assert.That(result.Root!.Declarations, Has.Length.EqualTo(3));
+        Assert.That(result.Root!.Declarations.Select(d => d.Variant.GetType()), Is.EquivalentTo(new [] {typeof(TypeDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode)}));
     }
 }
