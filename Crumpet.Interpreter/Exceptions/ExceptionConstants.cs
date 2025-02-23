@@ -10,4 +10,7 @@ public static class ExceptionConstants
     public const string INVALID_NODE_NAME = "Could not find a node with name \"{0}\"";
     public const string MISSING_TERMINAL_NODE = "Could not find a node for the terminal token \"{0}\". This terminal has not been referenced in the expression tree.";
     public const string NODE_CONSTRUCTOR_FAILED = "Failed invoking constructor for node \"{0}\"";
+    public const string VARIABLE_ALREADY_EXISTS = "Variable \"{0}\" already exists";
+    public const string VARIABLE_NOT_FOUND = "Variable \"{0}\" not found";
+    public const string POP_SCOPE_FAILED = "Could not pop scope. Already at top level";
 }

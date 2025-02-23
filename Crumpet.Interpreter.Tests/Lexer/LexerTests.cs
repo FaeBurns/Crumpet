@@ -12,7 +12,7 @@ public class LexerTests
         Lexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(input);
 
         int i = 0;
-        foreach (Token<CrumpetToken> token in lexer.Tokenize())
+        foreach (Token<CrumpetToken> token in lexer.Tokenize(true))
         {
             Assert.That(i, Is.LessThan(tokens.Length), $"Token {i} leaves expected range. Encountered {token.TokenId}");
             

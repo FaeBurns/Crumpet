@@ -26,7 +26,7 @@ public class Lexer<T> : ILexer<T> where T : Enum
         }
     }
     
-    public IEnumerable<Token<T>> Tokenize()
+    public IEnumerable<Token<T>> Tokenize(bool includeComments = false)
     {
         // m_head gets the length of a section added - will equal m_source.Length when at the end
         while(m_head < m_source.Length)
@@ -72,7 +72,10 @@ public class Lexer<T> : ILexer<T> where T : Enum
             // return this token for the enumeration
             // but only if it's not in the ignore list
             // if it is then just go onto the next loop
-            if (!m_ignoreList.Contains(result.Token.TokenId))
+            bool ignoreCheck = !m_ignoreList.Contains(result.Token.TokenId);
+            bool commentCheck = includeComments || !result.DetectedRule.Attribute.IsComment;
+            
+            if (ignoreCheck && commentCheck)
                 yield return result.Token;
         }
     }

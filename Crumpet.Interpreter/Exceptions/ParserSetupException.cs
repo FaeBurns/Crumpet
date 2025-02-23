@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Interpreter.Exceptions;
 
 public class ParserSetupException : Exception
 {

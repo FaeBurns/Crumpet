@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Interpreter\Nodes\" />
       <Folder Include="Parser\Nodes\" />
     </ItemGroup>
 
