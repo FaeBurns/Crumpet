@@ -32,6 +32,4 @@ public abstract class NonTerminalNode : ASTNode
         // all nodes should just return themselves
         return [this];
     }
-    
-    public NonTerminalDefinition TriggeredConstraint { get; internal set; } = null!;
 }

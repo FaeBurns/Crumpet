@@ -1,8 +1,8 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables;
-using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
-using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.InstanceValues;
+using Crumpet.Interpreter.Variables.Types;
 
-namespace Crumpet.Interpreter.Interpreter;
+namespace Crumpet.Interpreter;
 
 public interface IVariableCollection
 {

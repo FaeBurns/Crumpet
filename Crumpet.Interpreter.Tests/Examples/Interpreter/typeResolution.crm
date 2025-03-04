@@ -1,0 +1,12 @@
+﻿struct TypeA{
+    int a;
+    int b;
+    int c;
+    TypeB child;
+}
+
+struct TypeB{
+    TypeA& parent;
+    string a;
+    float b;
+}

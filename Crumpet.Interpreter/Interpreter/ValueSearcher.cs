@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using Crumpet.Interpreter.Interpreter.Variables;
-using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+﻿using Crumpet.Interpreter.Variables.InstanceValues;
 
-namespace Crumpet.Interpreter.Interpreter;
+namespace Crumpet.Interpreter;
 
 public class ValueSearcher
 {
@@ -71,7 +69,7 @@ public class ValueSearcher
 
     private InstanceReference? FindObjectField(InstanceReference searchTarget, string name)
     {
-        if (searchTarget.Value is ObjectInstance objectInstance && objectInstance.Fields.Has(name))
+        if (searchTarget.Value is UserObjectInstance objectInstance && objectInstance.Fields.Has(name))
         {
             return objectInstance.Fields[name];
         }

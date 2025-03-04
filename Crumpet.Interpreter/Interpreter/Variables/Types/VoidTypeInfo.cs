@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+using Crumpet.Interpreter.Variables.InstanceValues;
 
-namespace Crumpet.Interpreter.Interpreter.Variables.Types;
+namespace Crumpet.Interpreter.Variables.Types;
 
 public class VoidTypeInfo : TypeInfo
 {

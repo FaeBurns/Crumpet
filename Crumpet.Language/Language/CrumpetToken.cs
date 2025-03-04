@@ -100,7 +100,7 @@ public enum CrumpetToken : byte
     NOT_EQUALS,
     
     [Token("!")]
-    NOT,    
+    NOT,
     
     [Token(">=")]
     GREATER_OR_EQUAL,
@@ -129,11 +129,11 @@ public enum CrumpetToken : byte
     [Token("\\&\\&")]
     AND_AND,
     
-    [Token("\\&")]
-    AND,
-    
     [Token("\\|\\|")]
     OR,
+    
+    [Token("\\&")]
+    REFERENCE,
     
     // cannot use \s as newline will not be detected then
     [Token("[\\t ]+")]

@@ -1,6 +1,6 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.Types;
 
-namespace Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+namespace Crumpet.Interpreter.Variables.InstanceValues;
 
 public sealed class InstanceReference
 {

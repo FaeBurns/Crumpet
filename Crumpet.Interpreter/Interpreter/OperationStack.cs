@@ -1,7 +1,6 @@
-﻿using Crumpet.Interpreter.Interpreter.SequenceOperations;
-using Crumpet.Interpreter.Interpreter.Variables;
+﻿using Crumpet.Interpreter.Variables;
 
-namespace Crumpet.Interpreter.Interpreter;
+namespace Crumpet.Interpreter;
 
 public class OperationStack
 {
@@ -15,13 +14,13 @@ public class OperationStack
         throw new NotImplementedException();
     }
 
-    public void PushOperation(IProgramNode operation)
-    {
-        
-    }
-
-    public IProgramNode PopOperation()
-    {
-        throw new NotImplementedException();
-    }
+    // public void PushOperation(IProgramNode operation)
+    // {
+    //     
+    // }
+    //
+    // public IProgramNode PopOperation()
+    // {
+    //     throw new NotImplementedException();
+    // }
 }

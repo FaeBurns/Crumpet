@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Exceptions;
+﻿namespace Crumpet;
 
 public static class ExceptionConstants
 {
@@ -13,4 +13,9 @@ public static class ExceptionConstants
     public const string VARIABLE_ALREADY_EXISTS = "Variable \"{0}\" already exists";
     public const string VARIABLE_NOT_FOUND = "Variable \"{0}\" not found";
     public const string POP_SCOPE_FAILED = "Could not pop scope. Already at top level";
+    public const string KEY_NOT_FOUND = "Key \"{0}\" not found";
+    public const string KEY_ALREADY_EXISTS = "Key \"{0}\" already exists";
+    public const string CREATE_PLACEHOLDER_TYPE = "Cannot create an instance of a type placeholder";
+    public const string REPLACING_NON_PLACEHOLDER_TYPE = "Cannot replace a non-placeholder type";
+    public const string PLACEHOLDER_STILL_PRESENT = "Placeholder of type \"{0}\" still present.";
 }

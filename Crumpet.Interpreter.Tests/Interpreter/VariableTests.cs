@@ -1,5 +1,5 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables;
-using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter.Tests.Interpreter;
 
@@ -17,7 +17,7 @@ public class VariableTests
     {
         VariableCollection collection = new VariableCollection();
         
-        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
+        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>(), false));
         Assert.That(collection.Has("testVar"));
         Assert.That(collection.CheckType("testVar", new BuiltinTypeInfo<string>()));
         Assert.That(collection.GetReference("testVar").Value, Is.EqualTo(String.Empty));
@@ -27,7 +27,7 @@ public class VariableTests
     public void VariableCollection_Saves_Changes()
     {
         VariableCollection collection = new VariableCollection();
-        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
+        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>(), false));
         
         Assert.That(collection.GetReference("testVar").Value, Is.EqualTo(String.Empty));
         collection.GetReference("testVar").Value = "testValue";

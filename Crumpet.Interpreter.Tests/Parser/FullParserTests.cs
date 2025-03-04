@@ -29,9 +29,6 @@ public class FullParserTests
         NodeTypeTree<CrumpetToken> nodeTree = new NodeTypeTree<CrumpetToken>(registry, typeof(RootNonTerminalNode));
 
         NodeWalkingParser<CrumpetToken,RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
-
-        // ParserDebuggerHelper<CrumpetToken>.SetBreakingTerminalContent("bar");
-        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminals(typeof(RootNonTerminalNode));
         
         ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
         

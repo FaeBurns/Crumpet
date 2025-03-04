@@ -1,8 +1,8 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+﻿using Crumpet.Interpreter.Variables.InstanceValues;
 
-namespace Crumpet.Interpreter.Interpreter.Variables.Types;
+namespace Crumpet.Interpreter.Variables.Types;
 
-public abstract class TypeInfo : IComparable<TypeInfo>
+public abstract class TypeInfo
 {
     public override int GetHashCode()
     {
@@ -12,6 +12,11 @@ public abstract class TypeInfo : IComparable<TypeInfo>
     public abstract string TypeName { get; }
 
     public abstract InstanceReference CreateInstance();
+    
+    public override string ToString()
+    {
+        return TypeName;
+    }
     
     protected bool Equals(TypeInfo other)
     {
@@ -24,13 +29,6 @@ public abstract class TypeInfo : IComparable<TypeInfo>
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((TypeInfo)obj);
-    }
-
-    public int CompareTo(TypeInfo? other)
-    {
-        if (ReferenceEquals(this, other)) return 0;
-        if (other is null) return 1;
-        return string.Compare(TypeName, other.TypeName, StringComparison.Ordinal);
     }
     
     public static bool operator == (TypeInfo a, TypeInfo b)

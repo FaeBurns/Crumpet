@@ -1,7 +1,6 @@
-﻿using Crumpet.Interpreter.Interpreter;
-using Crumpet.Interpreter.Interpreter.Variables;
-using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
-using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.InstanceValues;
+using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter.Tests.Interpreter.Variables;
 
@@ -55,36 +54,36 @@ public class TypeTests
     [Test]
     public void TestObject_Constructs_Simple()
     {
-        ObjectTypeInfo testType = new ObjectTypeInfo("testType", [new VariableInfo("testVar", new BuiltinTypeInfo<string>()), new VariableInfo("testVar2", new BuiltinTypeInfo<int>())]);
+        UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>())]);
         InstanceReference instance = testType.CreateInstance();
         
-        Assert.That(instance.Value, Is.TypeOf<ObjectInstance>());
-        Assert.That((instance.Value as ObjectInstance)!.Fields["testVar"].Value, Is.EqualTo(""));
-        Assert.That((instance.Value as ObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(0));
-        (instance.Value as ObjectInstance)!.Fields["testVar2"].Value = 1;
-        Assert.That((instance.Value as ObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(1));
+        Assert.That(instance.Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar"].Value, Is.EqualTo(""));
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(0));
+        (instance.Value as UserObjectInstance)!.Fields["testVar2"].Value = 1;
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(1));
     }
     
     [Test]
     public void TestObject_Constructs_Layered()
     {
-        ObjectTypeInfo typeC = new ObjectTypeInfo("typeC", new VariableInfo("fieldC", new BuiltinTypeInfo<string>()));
-        ObjectTypeInfo typeB = new ObjectTypeInfo("typeB", new VariableInfo("fieldB", typeC));
-        ObjectTypeInfo typeA = new ObjectTypeInfo("typeA", new VariableInfo("fieldA", typeB));
+        UserObjectTypeInfo typeC = new UserObjectTypeInfo("typeC", new FieldInfo("fieldC", new BuiltinTypeInfo<string>()));
+        UserObjectTypeInfo typeB = new UserObjectTypeInfo("typeB", new FieldInfo("fieldB", typeC));
+        UserObjectTypeInfo typeA = new UserObjectTypeInfo("typeA", new FieldInfo("fieldA", typeB));
 
         InstanceReference instance = typeA.CreateInstance();
         
-        Assert.That(instance.Value, Is.TypeOf<ObjectInstance>());
+        Assert.That(instance.Value, Is.TypeOf<UserObjectInstance>());
         
-        ObjectInstance instanceA = (ObjectInstance)instance.Value!;
+        UserObjectInstance instanceA = (UserObjectInstance)instance.Value!;
         Assert.That(instanceA.Fields["fieldA"].Type, Is.EqualTo(typeB));
-        Assert.That(instanceA.Fields["fieldA"].Value, Is.TypeOf<ObjectInstance>());
+        Assert.That(instanceA.Fields["fieldA"].Value, Is.TypeOf<UserObjectInstance>());
         
-        ObjectInstance instanceB = (ObjectInstance)instanceA.Fields["fieldA"].Value!;
+        UserObjectInstance instanceB = (UserObjectInstance)instanceA.Fields["fieldA"].Value!;
         Assert.That(instanceB.Fields["fieldB"].Type, Is.EqualTo(typeC));
-        Assert.That(instanceB.Fields["fieldB"].Value, Is.TypeOf<ObjectInstance>());
+        Assert.That(instanceB.Fields["fieldB"].Value, Is.TypeOf<UserObjectInstance>());
         
-        ObjectInstance instanceC = (ObjectInstance)instanceB.Fields["fieldB"].Value!;
+        UserObjectInstance instanceC = (UserObjectInstance)instanceB.Fields["fieldB"].Value!;
         Assert.That(instanceC.Fields["fieldC"].Type, Is.EqualTo(new BuiltinTypeInfo<string>()));
         Assert.That(instanceC.Fields["fieldC"].Value, Is.EqualTo(""));
     }
@@ -93,7 +92,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindSingle()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new ObjectTypeInfo("testType", new VariableInfo("testVar", new BuiltinTypeInfo<string>()), new VariableInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
         
         ValueSearcher valueSearcher = new ValueSearcher(scope);
         ValueSearchResult testObjectSearchResult = valueSearcher.Find("testObject");
@@ -107,10 +106,9 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindDouble()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new ObjectTypeInfo("testType", new VariableInfo("testVar", new BuiltinTypeInfo<string>()), new VariableInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
         
         ValueSearcher valueSearcher = new ValueSearcher(scope);
-        ValueSearchResult testObjectSearchResult = valueSearcher.Find("testObject");
         
         ValueSearchResult testVarSearchResult = valueSearcher.Find("testObject.testVar");
         Assert.That(testVarSearchResult.DepthReached, Is.EqualTo(2));
@@ -122,10 +120,9 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindTripple()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new ObjectTypeInfo("testType", new VariableInfo("testVar", new ObjectTypeInfo("testType2", new VariableInfo("testVar2", new BuiltinTypeInfo<string>()))), new VariableInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new UserObjectTypeInfo("testType2", new FieldInfo("testVar2", new BuiltinTypeInfo<string>()))), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
         
         ValueSearcher valueSearcher = new ValueSearcher(scope);
-        ValueSearchResult testObjectSearchResult = valueSearcher.Find("testObject");
         
         ValueSearchResult testVarSearchResult = valueSearcher.Find("testObject.testVar.testVar2");
         Assert.That(testVarSearchResult.DepthReached, Is.EqualTo(3));

@@ -1,12 +1,13 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+﻿using Crumpet.Interpreter.Variables.InstanceValues;
+using Crumpet.Interpreter.Variables.Types;
 
-namespace Crumpet.Interpreter.Interpreter.Variables;
+namespace Crumpet.Interpreter.Variables;
 
 public class FieldCollection
 {
     private readonly Dictionary<string, InstanceReference> m_fields;
     
-    public FieldCollection(VariableInfo[] fields)
+    public FieldCollection(FieldInfo[] fields)
     {
         m_fields = new Dictionary<string, InstanceReference>(
             fields.Select(

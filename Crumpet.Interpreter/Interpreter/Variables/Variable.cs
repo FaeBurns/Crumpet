@@ -1,7 +1,6 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
-using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.InstanceValues;
 
-namespace Crumpet.Interpreter.Interpreter.Variables;
+namespace Crumpet.Interpreter.Variables;
 
 public class Variable
 {

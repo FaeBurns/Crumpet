@@ -1,12 +1,12 @@
-﻿using Crumpet.Interpreter.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.Types;
 
-namespace Crumpet.Interpreter.Interpreter.Variables.InstanceValues;
+namespace Crumpet.Interpreter.Variables.InstanceValues;
 
-public class ObjectInstance
+public class UserObjectInstance
 {
-    public ObjectTypeInfo Type { get; }
+    public UserObjectTypeInfo Type { get; }
 
-    public ObjectInstance(ObjectTypeInfo type)
+    public UserObjectInstance(UserObjectTypeInfo type)
     {
         Type = type;
         Fields = new FieldCollection(type.Fields);
