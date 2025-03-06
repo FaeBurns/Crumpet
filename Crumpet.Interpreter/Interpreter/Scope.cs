@@ -1,5 +1,4 @@
 ﻿using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.InstanceValues;
 using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter;
@@ -13,25 +12,24 @@ public class Scope : IVariableCollection
     {
         Parent = parent;
     }
-
     
-    public InstanceReference Create(VariableInfo info) => m_variables.Create(info);
+    public Variable Create(VariableInfo info) => m_variables.Create(info);
 
-    public InstanceReference? FindReference(string name)
+    public Variable? FindVariable(string name)
     {
-        if (m_variables.FindReference(name) is InstanceReference reference)
-            return reference;
+        if (m_variables.FindVariable(name) is Variable variable)
+            return variable;
 
         if (Parent is not null)
-            return Parent?.FindReference(name);
+            return Parent?.FindVariable(name);
 
         return null;
     }
 
-    public InstanceReference GetReference(string name)
+    public Variable GetVariable(string name)
     {
-        if (FindReference(name) is InstanceReference reference)
-            return reference;
+        if (FindVariable(name) is Variable variable)
+            return variable;
 
         throw new ArgumentException(ExceptionConstants.VARIABLE_NOT_FOUND.Format(name));
     }
@@ -48,7 +46,7 @@ public class Scope : IVariableCollection
 
     public bool CheckType(string name, TypeInfo type)
     {
-        if (FindReference(name) is InstanceReference reference) return reference.Type == type;
+        if (FindVariable(name) is Variable variable) return variable.Type == type;
         
         return false;
     }

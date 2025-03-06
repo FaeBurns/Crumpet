@@ -9,8 +9,13 @@ public class UserObjectInstance
     public UserObjectInstance(UserObjectTypeInfo type)
     {
         Type = type;
-        Fields = new FieldCollection(type.Fields);
+        Fields = new VariableCollection();
+        
+        foreach (FieldInfo field in type.Fields)
+        {
+            Fields.Create(new VariableInfo(field.Name, field.Type, field.VariableModifier));
+        }
     }
 
-    public FieldCollection Fields { get; }
+    public VariableCollection Fields { get; }
 }

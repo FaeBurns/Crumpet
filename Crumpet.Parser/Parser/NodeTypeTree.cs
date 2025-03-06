@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser.NodeConstraints;
 using Crumpet.Interpreter.Parser.Nodes;

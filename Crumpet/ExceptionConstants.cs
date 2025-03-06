@@ -18,4 +18,9 @@ public static class ExceptionConstants
     public const string CREATE_PLACEHOLDER_TYPE = "Cannot create an instance of a type placeholder";
     public const string REPLACING_NON_PLACEHOLDER_TYPE = "Cannot replace a non-placeholder type";
     public const string PLACEHOLDER_STILL_PRESENT = "Placeholder of type \"{0}\" still present.";
+    public const string INVALID_ARGUMENT_COUNT = "Invalid argument count. Expected {0} but received {1}";
+    public const string INVALID_ARGUMENT_TYPE = "Invalid argument type at index {0}. Expected {1} but received {2}";
+    public const string CONVERSION_TARGET_INVALID = "Cannot convert type \"{0}\" to \"{1}\"";
+    public const string CONVERT_REFERENCE_ASSIGN = "Cannot convert while assigning a reference or pointer";
+    public const string CREATE_INSTANCE_INVALID_INITIAL_VALUE = "Initial value given to instance reference is not valid for this type.";
 }

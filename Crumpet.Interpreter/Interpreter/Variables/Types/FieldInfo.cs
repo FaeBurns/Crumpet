@@ -1,15 +1,17 @@
-﻿namespace Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Language;
+
+namespace Crumpet.Interpreter.Variables.Types;
 
 public class FieldInfo
 {
-    public FieldInfo(string name, TypeInfo type, bool isReference = false)
+    public FieldInfo(string name, TypeInfo type, VariableModifier variableModifier = VariableModifier.COPY)
     {
         Name = name;
         Type = type;
-        IsReference = isReference;
+        VariableModifier = variableModifier;
     }
 
     public string Name { get; }
     public TypeInfo Type { get; set; }
-    public bool IsReference { get; }
+    public VariableModifier VariableModifier { get; }
 }

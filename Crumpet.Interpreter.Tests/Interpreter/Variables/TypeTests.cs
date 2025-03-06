@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.InstanceValues;
 using Crumpet.Interpreter.Variables.Types;
+using Crumpet.Language;
 
 namespace Crumpet.Interpreter.Tests.Interpreter.Variables;
 
@@ -47,7 +48,7 @@ public class TypeTests
     [Test]
     public void TestPrimitive_Constructor_Sets()
     {
-        InstanceReference instance = InstanceReference.Create(new BuiltinTypeInfo<string>(), "test");
+        InstanceReference instance = new BuiltinTypeInfo<string>().CreateInstance( "test");
         Assert.That(instance.Value, Is.EqualTo("test"));
     }
 
@@ -58,10 +59,10 @@ public class TypeTests
         InstanceReference instance = testType.CreateInstance();
         
         Assert.That(instance.Value, Is.TypeOf<UserObjectInstance>());
-        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar"].Value, Is.EqualTo(""));
-        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(0));
-        (instance.Value as UserObjectInstance)!.Fields["testVar2"].Value = 1;
-        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(1));
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar"].Instance.Value, Is.EqualTo(""));
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Instance.Value, Is.EqualTo(0));
+        (instance.Value as UserObjectInstance)!.Fields["testVar2"].Instance.Value = 1;
+        Assert.That((instance.Value as UserObjectInstance)!.Fields["testVar2"].Instance.Value, Is.EqualTo(1));
     }
     
     [Test]
@@ -75,17 +76,17 @@ public class TypeTests
         
         Assert.That(instance.Value, Is.TypeOf<UserObjectInstance>());
         
-        UserObjectInstance instanceA = (UserObjectInstance)instance.Value!;
+        UserObjectInstance instanceA = (UserObjectInstance)instance.Value;
         Assert.That(instanceA.Fields["fieldA"].Type, Is.EqualTo(typeB));
-        Assert.That(instanceA.Fields["fieldA"].Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That(instanceA.Fields["fieldA"].Instance.Value, Is.TypeOf<UserObjectInstance>());
         
-        UserObjectInstance instanceB = (UserObjectInstance)instanceA.Fields["fieldA"].Value!;
+        UserObjectInstance instanceB = (UserObjectInstance)instanceA.Fields["fieldA"].Instance.Value!;
         Assert.That(instanceB.Fields["fieldB"].Type, Is.EqualTo(typeC));
-        Assert.That(instanceB.Fields["fieldB"].Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That(instanceB.Fields["fieldB"].Instance.Value, Is.TypeOf<UserObjectInstance>());
         
-        UserObjectInstance instanceC = (UserObjectInstance)instanceB.Fields["fieldB"].Value!;
+        UserObjectInstance instanceC = (UserObjectInstance)instanceB.Fields["fieldB"].Instance.Value!;
         Assert.That(instanceC.Fields["fieldC"].Type, Is.EqualTo(new BuiltinTypeInfo<string>()));
-        Assert.That(instanceC.Fields["fieldC"].Value, Is.EqualTo(""));
+        Assert.That(instanceC.Fields["fieldC"].Instance.Value, Is.EqualTo(""));
     }
 
     [Test]
@@ -129,5 +130,46 @@ public class TypeTests
         Assert.That(testVarSearchResult.Result, Is.Not.Null);
         Assert.That(testVarSearchResult.Result.Value, Is.EqualTo(""));
     }
+
+    [Test]
+    public void CloneValueTypes_Int()
+    {
+        // setup initial value
+        InstanceReference initial = new BuiltinTypeInfo<int>().CreateInstance();
+        Assert.That(initial.Value, Is.EqualTo(default(int)));
+        initial.Value = 10;
+        
+        // create copy
+        InstanceReference copy = initial.GetForModifier(VariableModifier.COPY);
+        Assert.That(copy.Value, Is.EqualTo(initial.Value));
+        
+        // change value in one
+        copy.Value = 20;
+        Assert.That(initial.Value, Is.EqualTo(10));
+        Assert.That(copy.Value, Is.EqualTo(20));
+    }
     
+    [Test]
+    public void CloneValueTypes_String()
+    {
+        // setup initial value
+        InstanceReference initial = new BuiltinTypeInfo<string>().CreateInstance();
+        Assert.That(initial.Value, Is.EqualTo(String.Empty));
+        initial.Value = "test_1";
+        
+        // create copy
+        InstanceReference copy = initial.GetForModifier(VariableModifier.COPY);
+        Assert.That(copy.Value, Is.EqualTo(initial.Value));
+        
+        // change value in one
+        copy.Value = "test_2";
+        Assert.That(initial.Value, Is.EqualTo("test_1"));
+        Assert.That(copy.Value, Is.EqualTo("test_2"));
+    }
+
+    [Test]
+    public void ConvertType_IntToFloat()
+    {
+        // TODO implement
+    }
 }

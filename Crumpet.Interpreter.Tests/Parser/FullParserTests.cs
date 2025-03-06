@@ -1,10 +1,7 @@
-﻿using System.Diagnostics;
-using Crumpet.Interpreter.Lexer;
+﻿using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
-using Crumpet.Language.Nodes.Expressions;
-using Crumpet.Language.Nodes.Statements;
 
 namespace Crumpet.Interpreter.Tests.Parser;
 

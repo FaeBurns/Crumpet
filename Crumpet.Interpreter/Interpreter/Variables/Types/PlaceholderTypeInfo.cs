@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Variables.InstanceValues;
+﻿using System.Diagnostics;
+using Crumpet.Interpreter.Variables.InstanceValues;
 
 namespace Crumpet.Interpreter.Variables.Types;
 
@@ -13,5 +14,15 @@ internal class PlaceholderTypeInfo : TypeInfo
     public override InstanceReference CreateInstance()
     {
         throw new InvalidOperationException(ExceptionConstants.CREATE_PLACEHOLDER_TYPE);
+    }
+
+    public override InstanceReference CreateInstance(object initialValue)
+    {
+        return CreateInstance();
+    }
+
+    public override object CreateCopy(object instance)
+    {
+        throw new UnreachableException();
     }
 }

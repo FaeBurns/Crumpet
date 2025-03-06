@@ -12,6 +12,7 @@ public abstract class TypeInfo
     public abstract string TypeName { get; }
 
     public abstract InstanceReference CreateInstance();
+    public abstract InstanceReference CreateInstance(object initialValue);
     
     public override string ToString()
     {
@@ -40,4 +41,10 @@ public abstract class TypeInfo
     {
         return !(a == b);
     }
+
+    public virtual bool ConvertableTo(TypeInfo other) => false;
+
+    public virtual InstanceReference ConvertInstance(InstanceReference instance) => throw new NotImplementedException();
+    
+    public abstract object CreateCopy(object instance);
 }

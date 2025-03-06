@@ -11,4 +11,14 @@ public class VoidTypeInfo : TypeInfo
     {
         throw new UnreachableException();
     }
+
+    public override InstanceReference CreateInstance(object initialValue)
+    {
+        throw new UnreachableException();
+    }
+
+    public override object CreateCopy(object instance)
+    {
+        throw new UnreachableException();
+    }
 }

@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Interpreter.Parser;
 
 public class SourceLocation
 {

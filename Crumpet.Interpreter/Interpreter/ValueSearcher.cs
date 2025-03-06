@@ -34,7 +34,7 @@ public class ValueSearcher
             throw new ArgumentException();
 
         // get the root instance
-        InstanceReference? instance = m_scope.FindReference(segments[0]);
+        InstanceReference? instance = m_scope.FindVariable(segments[0])?.Instance;
 
         // if it wasn't found, return 0 and null output
         if (instance is null)
@@ -71,7 +71,7 @@ public class ValueSearcher
     {
         if (searchTarget.Value is UserObjectInstance objectInstance && objectInstance.Fields.Has(name))
         {
-            return objectInstance.Fields[name];
+            return objectInstance.Fields[name].Instance;
         }
 
         return null;

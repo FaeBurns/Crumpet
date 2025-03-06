@@ -1,7 +1,6 @@
 ﻿using Crumpet.Interpreter.Lexer;
 using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.Parser.Nodes;
-using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
@@ -38,7 +37,13 @@ public class TypeDefinitionTests
             if (resolved is UserObjectTypeInfo resolvedUserObjectType && expected is UserObjectTypeInfo expectedUserObjectType)
             {
                 Assert.That(resolvedUserObjectType.Fields.Length, Is.EqualTo(expectedUserObjectType.Fields.Length));
-                Assert.That(resolvedUserObjectType.Fields, Is.EquivalentTo(expectedUserObjectType.Fields));
+                foreach (FieldInfo field in resolvedUserObjectType.Fields)
+                {
+                    FieldInfo? expectedField = expectedUserObjectType.Fields.FirstOrDefault(x => x.Name == field.Name);
+                    Assert.That(expectedField, Is.Not.Null);
+                    Assert.That(field.Type.TypeName, Is.EqualTo(expectedField.Type.TypeName));
+                    Assert.That(field.VariableModifier, Is.EqualTo(expectedField.VariableModifier));
+                }
             }
         }
     }
@@ -72,7 +77,7 @@ public class TypeDefinitionTests
             new FieldInfo("child", null!));
 
         UserObjectTypeInfo typeB = new UserObjectTypeInfo("TypeB",
-            new FieldInfo("parent", typeA, true),
+            new FieldInfo("parent", typeA, VariableModifier.REFERENCE),
             new FieldInfo("a", new BuiltinTypeInfo<string>()),
             new FieldInfo("b", new BuiltinTypeInfo<float>()));
         

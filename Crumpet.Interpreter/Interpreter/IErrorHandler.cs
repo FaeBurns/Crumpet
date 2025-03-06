@@ -1,6 +1,4 @@
-﻿using Crumpet.Interpreter.Parser;
-
-namespace Crumpet.Interpreter;
+﻿namespace Crumpet.Interpreter;
 
 public interface IErrorHandler<in TBaseException> where TBaseException : Exception
 {

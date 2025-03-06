@@ -1,5 +1,4 @@
 ﻿using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.InstanceValues;
 using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter;
@@ -11,21 +10,21 @@ public interface IVariableCollection
     /// </summary>
     /// <param name="info"></param>
     /// <returns></returns>
-    public InstanceReference Create(VariableInfo info);
+    public Variable Create(VariableInfo info);
 
     /// <summary>
     /// Gets a variable. Returns null if nothing was found
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public InstanceReference? FindReference(string name);
+    public Variable? FindVariable(string name);
 
     /// <summary>
     /// Gets a variable. Throws if missing. 
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public InstanceReference GetReference(string name);
+    public Variable GetVariable(string name);
     
     /// <summary>
     /// Checks if a variable exists 
@@ -35,7 +34,7 @@ public interface IVariableCollection
     public bool Has(string name);
 
     /// <summary>
-    /// Checks the type of a variable. returns false if not found
+    /// Checks the type of a variable. returns false if not found or if the type mismatched.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="type"></param>

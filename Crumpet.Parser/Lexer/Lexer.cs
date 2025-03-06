@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Parser;
 

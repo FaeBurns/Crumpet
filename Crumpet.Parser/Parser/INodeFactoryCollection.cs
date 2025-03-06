@@ -1,6 +1,4 @@
-﻿using Crumpet.Interpreter.Parser.Nodes;
-
-namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Interpreter.Parser;
 
 public interface INodeFactoryCollection
 {

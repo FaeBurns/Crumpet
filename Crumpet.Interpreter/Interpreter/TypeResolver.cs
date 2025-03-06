@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language.Nodes;
 
 namespace Crumpet.Interpreter;
@@ -36,7 +34,7 @@ public class PlaceholderTypeResolver
     
     public void RegisterType(TypeDeclarationNode node)
     {
-        IEnumerable<FieldInfo> fieldTypes = node.Fields.Select(f => new FieldInfo(f.Name.Terminal, ResolveType(f.Type.FullName), f.IsReference));
+        IEnumerable<FieldInfo> fieldTypes = node.Fields.Select(f => new FieldInfo(f.Name.Terminal, ResolveType(f.Type.FullName), f.VariableModifier));
 
         // use direct assign when setting in dictionary to replace placeholders when encountered
         UserObjectTypeInfo typeInfo = new UserObjectTypeInfo(node.Name.Terminal, fieldTypes.ToArray());

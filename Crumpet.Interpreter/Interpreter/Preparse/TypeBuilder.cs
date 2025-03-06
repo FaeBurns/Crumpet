@@ -1,8 +1,5 @@
 ﻿using System.Diagnostics;
 using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Parser.Nodes;
-using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language.Nodes;
 
 namespace Crumpet.Interpreter.Preparse;
@@ -11,10 +8,9 @@ public class TypeBuilder
 {
     private readonly IEnumerable<TypeDeclarationNode> m_typeDeclarations;
     
-    public TypeBuilder(NonTerminalNode rootNode)
+    public TypeBuilder(IEnumerable<ASTNode> nodes)
     {
-        IEnumerable<ASTNode> nodeSequence = new NodeSequenceEnumerator(rootNode);
-        m_typeDeclarations = nodeSequence.OfType<TypeDeclarationNode>();
+        m_typeDeclarations = nodes.OfType<TypeDeclarationNode>();
     }
 
     public TypeResolver GetTypeDefinitions()
