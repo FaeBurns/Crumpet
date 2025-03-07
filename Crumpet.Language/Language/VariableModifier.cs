@@ -3,6 +3,5 @@
 public enum VariableModifier
 {
     COPY,
-    REFERENCE,
-    POINTER
+    POINTER,
 }

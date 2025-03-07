@@ -14,12 +14,12 @@ public class TypeDefinitionTests
     {
         TestProgramFile(Path.Combine("Examples//", filename) + ".crm", expectedTypes);
     }
-    
+
     public void TestProgramFile(string path, IEnumerable<TypeInfo> expectedTypes)
     {
         TestProgram(File.ReadAllText(path), expectedTypes);
     }
-    
+
     private void TestProgram(string programText, IEnumerable<TypeInfo> expectedTypes)
     {
         NonTerminalNode programRoot = BuildProgram(programText);
@@ -29,7 +29,7 @@ public class TypeDefinitionTests
         foreach (TypeInfo expected in expectedTypes)
         {
             TypeInfo? resolved = interpreter.TypeResolver.ResolveType(expected.TypeName);
-            
+
             Assert.That(resolved, Is.Not.Null);
             Assert.That(resolved.TypeName, Is.EqualTo(expected.TypeName));
             Assert.That(resolved, Is.TypeOf(expected.GetType()));
@@ -59,11 +59,11 @@ public class TypeDefinitionTests
         NodeTypeTree<CrumpetToken> nodeTree = new NodeTypeTree<CrumpetToken>(registry, typeof(RootNonTerminalNode));
 
         NodeWalkingParser<CrumpetToken,RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
-        
+
         ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
 
         Assert.That(result.Root, Is.Not.Null);
-        
+
         return result.Root;
     }
 
@@ -71,16 +71,16 @@ public class TypeDefinitionTests
     public void TestTypeResolution()
     {
         UserObjectTypeInfo typeA = new UserObjectTypeInfo("TypeA",
-            new FieldInfo("a", new BuiltinTypeInfo<int>()), 
-            new FieldInfo("b", new BuiltinTypeInfo<int>()), 
+            new FieldInfo("a", new BuiltinTypeInfo<int>()),
+            new FieldInfo("b", new BuiltinTypeInfo<int>()),
             new FieldInfo("c", new BuiltinTypeInfo<int>()),
             new FieldInfo("child", null!));
 
         UserObjectTypeInfo typeB = new UserObjectTypeInfo("TypeB",
-            new FieldInfo("parent", typeA, VariableModifier.REFERENCE),
+            new FieldInfo("parent", typeA, VariableModifier.POINTER),
             new FieldInfo("a", new BuiltinTypeInfo<string>()),
             new FieldInfo("b", new BuiltinTypeInfo<float>()));
-        
+
         typeA.Fields[3].Type = typeB;
 
         RunExampleFile("Interpreter/typeResolution", [typeA, typeB]);

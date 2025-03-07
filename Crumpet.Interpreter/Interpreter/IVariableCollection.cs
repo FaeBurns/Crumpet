@@ -13,6 +13,14 @@ public interface IVariableCollection
     public Variable Create(VariableInfo info);
 
     /// <summary>
+    /// Adds an existing variable.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="variable"></param>
+    /// <returns>True if the variable was added, False if one already existed.</returns>
+    public bool Add(string name, Variable variable);
+
+    /// <summary>
     /// Gets a variable. Returns null if nothing was found
     /// </summary>
     /// <param name="name"></param>
@@ -20,14 +28,14 @@ public interface IVariableCollection
     public Variable? FindVariable(string name);
 
     /// <summary>
-    /// Gets a variable. Throws if missing. 
+    /// Gets a variable. Throws if missing.
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
     public Variable GetVariable(string name);
-    
+
     /// <summary>
-    /// Checks if a variable exists 
+    /// Checks if a variable exists
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>

@@ -1,10 +1,12 @@
-﻿using Crumpet.Interpreter.Exceptions;
+﻿using System.Diagnostics;
+using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Parser;
+using Crumpet.Interpreter.SequenceOperations;
 using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.InstanceValues;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
+using Crumpet.Language.Nodes;
 
 namespace Crumpet.Interpreter.Functions;
 
@@ -13,12 +15,13 @@ public class Function
     private readonly IInstruction[] m_instructions;
     public FunctionDefinition Definition { get; }
 
-    public Function(FunctionDefinition definition, IEnumerable<IInstruction> instructions)
+    public Function(FunctionDefinition definition, FunctionDeclarationNode root)
     {
-        m_instructions = instructions.ToArray();
+        // get instructions from child nodes
+        m_instructions = new NodeSequenceEnumerator(root.StatementBody).OfType<IInstructionProvider>().SelectMany(n => n.GetInstructions()).ToArray();
         Definition = definition;
     }
-    
+
     /// <summary>
     /// Creates an <see cref="ExecutableUnit"/> for this function.
     /// </summary>
@@ -26,14 +29,14 @@ public class Function
     /// <param name="arguments"></param>
     /// <returns></returns>
     /// <exception cref="InterpreterException">Argument count mismatch.</exception>
-    public ExecutableUnit CreateInvokableUnit(ExecutionContext context, InstanceReference[] arguments)
+    public ExecutableUnit CreateInvokableUnit(ExecutionContext context, Variable[] arguments)
     {
         if (arguments.Length != Definition.Parameters.Count)
             // default on source location will occur if it's the first invocable called
             throw new InterpreterException(context.CurrentUnit?.SourceLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
 
         ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation);
-        
+
         for (int i = 0; i < Definition.Parameters.Count; i++)
         {
             TypeInfo argType = arguments[i].Type;
@@ -41,12 +44,12 @@ public class Function
             VariableModifier modifier = Definition.Parameters[i].VariableModifier;
 
             // target reference
-            InstanceReference convertedArg;
-            
+            Variable convertedArg = Variable.CreateModifier(defType, modifier, arguments[i]);
+
             if (argType == defType)
             {
-                // set as Variable will do copy or reference assign later
-                convertedArg = arguments[i];
+                // set value
+                convertedArg.Value = arguments[i];
             }
             else if (argType.ConvertableTo(Definition.Parameters[i].Type))
             {
@@ -54,20 +57,19 @@ public class Function
                 if (modifier != VariableModifier.COPY)
                     throw new InterpreterException(context.CurrentUnit?.SourceLocation ?? new SourceLocation(), ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
 
-                // convert instance with a copy of 
-                convertedArg = defType.ConvertInstance(arguments[i]);
+                // convert instance with a copy of
+                convertedArg.Value = defType.ConvertValidObject(argType, arguments[i].Value);
             }
             else
             {
                 throw new InterpreterException(
-                    context.CurrentUnit?.SourceLocation ?? new SourceLocation(), 
+                    context.CurrentUnit?.SourceLocation ?? new SourceLocation(),
                     ExceptionConstants.INVALID_ARGUMENT_TYPE.Format(i, defType, argType));
             }
-            
+
             // create the new instance in the function's scope
-            // then assign the value 
-            unit.Scope.Create(new VariableInfo(Definition.Parameters[i]));
-            unit.Scope.GetVariable(Definition.Parameters[i].Name).Instance = convertedArg;
+            // then assign the value
+            unit.Scope.Add(Definition.Parameters[i].Name, convertedArg);
         }
 
         return unit;

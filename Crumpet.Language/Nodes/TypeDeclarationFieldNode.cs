@@ -20,11 +20,8 @@ public class TypeDeclarationFieldNode : NonTerminalNode, INonTerminalNodeFactory
             if (ModifierSugar is null)
                 return VariableModifier.COPY;
 
-            if (ModifierSugar.Token.TokenId == CrumpetToken.REFERENCE)
-                return VariableModifier.REFERENCE;
-
             // re-use multiply as multiple identical tokens cannot exist
-            if (ModifierSugar.Token.TokenId == CrumpetToken.MULTIPLY)
+            if (ModifierSugar.Token.TokenId == CrumpetToken.REFERENCE)
                 return VariableModifier.POINTER;
 
             throw new UnreachableException();
@@ -37,14 +34,14 @@ public class TypeDeclarationFieldNode : NonTerminalNode, INonTerminalNodeFactory
         ModifierSugar = modifierSugar;
         Name = name;
     }
-    
+
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
         yield return new NonTerminalDefinition<TypeDeclarationFieldNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new OrConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE), new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY))),
-                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER), 
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<TypeDeclarationFieldNode>());
     }

@@ -23,4 +23,5 @@ public static class ExceptionConstants
     public const string CONVERSION_TARGET_INVALID = "Cannot convert type \"{0}\" to \"{1}\"";
     public const string CONVERT_REFERENCE_ASSIGN = "Cannot convert while assigning a reference or pointer";
     public const string CREATE_INSTANCE_INVALID_INITIAL_VALUE = "Initial value given to instance reference is not valid for this type.";
+    public const string EXPECTED_VARIABLE_NOT_VALUE = "Failed to set variable as value given was not a Variable and was instead a value.";
 }

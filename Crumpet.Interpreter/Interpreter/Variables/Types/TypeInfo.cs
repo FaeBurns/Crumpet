@@ -1,6 +1,4 @@
-﻿using Crumpet.Interpreter.Variables.InstanceValues;
-
-namespace Crumpet.Interpreter.Variables.Types;
+﻿namespace Crumpet.Interpreter.Variables.Types;
 
 public abstract class TypeInfo
 {
@@ -11,14 +9,13 @@ public abstract class TypeInfo
 
     public abstract string TypeName { get; }
 
-    public abstract InstanceReference CreateInstance();
-    public abstract InstanceReference CreateInstance(object initialValue);
-    
+    public abstract Variable CreateVariable();
+
     public override string ToString()
     {
         return TypeName;
     }
-    
+
     protected bool Equals(TypeInfo other)
     {
         return TypeName == other.TypeName;
@@ -31,7 +28,7 @@ public abstract class TypeInfo
         if (obj.GetType() != GetType()) return false;
         return Equals((TypeInfo)obj);
     }
-    
+
     public static bool operator == (TypeInfo a, TypeInfo b)
     {
         return a.Equals(b);
@@ -44,7 +41,17 @@ public abstract class TypeInfo
 
     public virtual bool ConvertableTo(TypeInfo other) => false;
 
-    public virtual InstanceReference ConvertInstance(InstanceReference instance) => throw new NotImplementedException();
-    
+    public virtual object ConvertValidObject(TypeInfo type, object value) => throw new NotImplementedException();
+
     public abstract object CreateCopy(object instance);
+
+    public bool IsAssignableTo(TypeInfo other)
+    {
+        return this == other || ConvertableTo(other);
+    }
+
+    public bool IsAssignableFrom(TypeInfo other)
+    {
+        return other.IsAssignableTo(this);
+    }
 }

@@ -1,5 +1,4 @@
 ﻿using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.InstanceValues;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 
@@ -11,14 +10,14 @@ public class VariableTests
     [Test]
     public void PrimitiveTypes()
     {
-        
+
     }
-    
+
     [Test]
     public void VariableCollection_Create_Valid()
     {
         VariableCollection collection = new VariableCollection();
-        
+
         collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
         Assert.That(collection.Has("testVar"));
         Assert.That(collection.CheckType("testVar", new BuiltinTypeInfo<string>()));
@@ -30,26 +29,26 @@ public class VariableTests
     {
         VariableCollection collection = new VariableCollection();
         collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
-        
+
         Assert.That(collection.GetVariable("testVar").Value, Is.EqualTo(String.Empty));
         collection.GetVariable("testVar").Value = "testValue";
         Assert.That(collection.GetVariable("testVar").Value, Is.EqualTo("testValue"));
     }
-    
+
     [Test]
     public void AssignVariable_Copy()
     {
         // setup variables
-        Variable initial = new Variable("var", new BuiltinTypeInfo<int>().CreateInstance(), VariableModifier.COPY);
-        Variable copy = new Variable("copy", new BuiltinTypeInfo<int>().CreateInstance(), VariableModifier.COPY);
-        
+        Variable initial = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable copy = new BuiltinTypeInfo<int>().CreateVariable();
+
         Assert.That(initial.Value, Is.EqualTo(default(int)));
         initial.Value = 10;
-        copy.Instance = initial.Instance;
-        
+        copy.Value = initial;
+
         // create copy
         Assert.That(copy.Value, Is.EqualTo(initial.Value));
-        
+
         // change value in one and test it does not propagate to the other
         copy.Value = 20;
         Assert.That(initial.Value, Is.EqualTo(10));
@@ -57,22 +56,26 @@ public class VariableTests
     }
 
     [Test]
-    public void AssignVariable_Reference()
+    public void AssignVariable_Pointer()
     {
         // setup variables
-        Variable initial = new Variable("var", new BuiltinTypeInfo<int>().CreateInstance(), VariableModifier.COPY);
-        Variable copy = new Variable("copy", new BuiltinTypeInfo<int>().CreateInstance(), VariableModifier.REFERENCE);
-        
+        Variable initial = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable pointer = Variable.CreatePointer(initial);
+
         Assert.That(initial.Value, Is.EqualTo(default(int)));
         initial.Value = 10;
-        copy.Instance = initial.Instance;
-        
+        pointer.Value = initial;
+
         // create copy
-        Assert.That(copy.Value, Is.EqualTo(initial.Value));
-        
+        Assert.That(pointer.Value, Is.EqualTo(initial.Value));
+
         // change value in one and test it does not propagate to the other
-        copy.Value = 20;
+        pointer.Value = 20;
         Assert.That(initial.Value, Is.EqualTo(20));
-        Assert.That(copy.Value, Is.EqualTo(20));
+        Assert.That(pointer.Value, Is.EqualTo(20));
+
+        initial.Value = 30;
+        Assert.That(initial.Value, Is.EqualTo(30));
+        Assert.That(pointer.Value, Is.EqualTo(30));
     }
 }

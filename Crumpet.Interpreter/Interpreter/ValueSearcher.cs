@@ -1,4 +1,4 @@
-﻿using Crumpet.Interpreter.Variables.InstanceValues;
+﻿using Crumpet.Interpreter.Variables;
 
 namespace Crumpet.Interpreter;
 
@@ -34,44 +34,44 @@ public class ValueSearcher
             throw new ArgumentException();
 
         // get the root instance
-        InstanceReference? instance = m_scope.FindVariable(segments[0])?.Instance;
+        Variable? instance = m_scope.FindVariable(segments[0]);
 
         // if it wasn't found, return 0 and null output
         if (instance is null)
         {
             return new ValueSearchResult(null, 0);
         }
-        
+
         // return if this was the only segment
         if (segments.Length == 1)
         {
             return new ValueSearchResult(instance, 1);
         }
-        
+
         // otherwise do recursive check
         return FindObjectFieldRecursive(instance, segments.Skip(1).ToArray(), 1);
     }
 
-    private ValueSearchResult FindObjectFieldRecursive(InstanceReference searchTarget, string[] segments, int depth)
+    private ValueSearchResult FindObjectFieldRecursive(Variable searchTarget, string[] segments, int depth)
     {
-        InstanceReference? nextTarget = FindObjectField(searchTarget, segments[0]);
-        
+        Variable? nextTarget = FindObjectField(searchTarget, segments[0]);
+
         if (segments.Length == 1)
         {
             return new ValueSearchResult(nextTarget, depth + 1);
         }
-        
+
         if (nextTarget is null)
             return new ValueSearchResult(null, depth);
-        
+
         return FindObjectFieldRecursive(nextTarget, segments.Skip(1).ToArray(), depth + 1);
     }
 
-    private InstanceReference? FindObjectField(InstanceReference searchTarget, string name)
+    private Variable? FindObjectField(Variable searchTarget, string name)
     {
         if (searchTarget.Value is UserObjectInstance objectInstance && objectInstance.Fields.Has(name))
         {
-            return objectInstance.Fields[name].Instance;
+            return objectInstance.Fields[name];
         }
 
         return null;
@@ -79,8 +79,8 @@ public class ValueSearcher
 
 }
 
-public class ValueSearchResult(InstanceReference? result, int depthReached)
+public class ValueSearchResult(Variable? result, int depthReached)
 {
-    public InstanceReference? Result { get; } = result;
+    public Variable? Result { get; } = result;
     public int DepthReached { get; } = depthReached;
 }

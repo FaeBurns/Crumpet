@@ -12,8 +12,10 @@ public class Scope : IVariableCollection
     {
         Parent = parent;
     }
-    
+
     public Variable Create(VariableInfo info) => m_variables.Create(info);
+
+    public bool Add(string name, Variable variable) => m_variables.Add(name, variable);
 
     public Variable? FindVariable(string name)
     {
@@ -37,7 +39,7 @@ public class Scope : IVariableCollection
     public bool Has(string name)
     {
         if (m_variables.Has(name)) return true;
-        
+
         if (Parent is not null)
             return Parent.Has(name);
 
@@ -47,7 +49,7 @@ public class Scope : IVariableCollection
     public bool CheckType(string name, TypeInfo type)
     {
         if (FindVariable(name) is Variable variable) return variable.Type == type;
-        
+
         return false;
     }
 }
