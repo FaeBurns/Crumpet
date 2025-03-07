@@ -1,6 +1,5 @@
 ﻿using Crumpet.Exceptions;
 using Crumpet.Interpreter.Instructions;
-using Crumpet.Interpreter.SequenceOperations;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
@@ -18,7 +17,7 @@ public class Function
     public Function(FunctionDefinition definition, FunctionDeclarationNode root)
     {
         // get instructions from child nodes
-        m_instructions = new NodeSequenceEnumerator(root.StatementBody).OfType<IInstructionProvider>().SelectMany(n => n.GetInstructions()).ToArray();
+        m_instructions = NodeSequenceEnumerator.CreateLeafWalking(root.StatementBody).OfType<IInstructionProvider>().SelectMany(n => n.GetInstructions()).ToArray();
         Definition = definition;
     }
 

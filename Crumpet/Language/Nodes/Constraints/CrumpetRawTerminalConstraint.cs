@@ -8,10 +8,3 @@ public class CrumpetRawTerminalConstraint : RawTerminalConstraint<CrumpetToken>
     {
     }
 }
-
-public class CrumpetTerminalConstraint : TerminalConstraint<CrumpetToken>
-{
-    public CrumpetTerminalConstraint(CrumpetToken token, bool includeInConstructor = true) : base(token, includeInConstructor)
-    {
-    }
-}

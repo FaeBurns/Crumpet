@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Crumpet.Exceptions;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 
@@ -20,6 +21,14 @@ public class Variable
     {
         get => GetValue();
         set => SetValue(value);
+    }
+
+    public T GetValue<T>()
+    {
+        if (!Value.GetType().IsAssignableTo(typeof(T)))
+            throw new TypeMismatchException(typeof(T), Value.GetType());
+
+        return (T)Value;
     }
 
     private Variable(TypeInfo type, object initialValue, VariableModifier modifier)

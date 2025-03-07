@@ -1,6 +1,6 @@
 ﻿using Crumpet.Interpreter.Instructions;
 
-namespace Crumpet.Interpreter.SequenceOperations;
+namespace Crumpet.Interpreter;
 
 public interface IInstructionProvider
 {

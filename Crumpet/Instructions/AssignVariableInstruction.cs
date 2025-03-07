@@ -1,21 +1,18 @@
-﻿using Crumpet.Interpreter.Functions;
+﻿using Crumpet.Exceptions;
+using Crumpet.Interpreter;
+using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Shared;
 
 namespace Crumpet.Instructions;
 
 public class AssignVariableInstruction : Instruction
 {
-    private readonly Variable m_variable;
-
-    public AssignVariableInstruction(Variable variable)
-    {
-        m_variable = variable;
-    }
-
     public override void Execute(InterpreterExecutionContext context)
     {
-        Variable var = context.VariableStack.Pop();
-        m_variable.Value = var;
+        Variable target = context.VariableStack.Pop();
+        Variable source = context.VariableStack.Pop();
+        target.Value = source;
     }
 }

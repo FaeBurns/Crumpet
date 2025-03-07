@@ -12,6 +12,7 @@ public class InterpreterExecutionContext
 
     public UnitExecutionContext? CurrentUnit => m_executionStack.Any() ? m_executionStack.Peek() : null;
     public Scope CurrentScope => CurrentUnit?.Unit.Scope ?? m_rootScope;
+    public ValueSearcher ValueSearcher => new ValueSearcher(CurrentScope);
     public Variable? LatestReturnValue { get; private set; }
     public VariableStack VariableStack { get; } = new VariableStack();
 

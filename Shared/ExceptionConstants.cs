@@ -25,4 +25,5 @@ public static class ExceptionConstants
     public const string CREATE_INSTANCE_INVALID_INITIAL_VALUE = "Initial value given to instance reference is not valid for this type";
     public const string EXPECTED_VARIABLE_NOT_VALUE = "Failed to set variable as value given was not a Variable and was instead a value";
     public const string VARIABLE_STACK_POP_WHILE_EMPTY = "Tried to pop a variable from the stack while it was empty";
+    public const string INVALID_TYPE = "Invalid type detected during operation. Expected \"{0}\" received \"{1}\"";
 }

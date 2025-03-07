@@ -1,10 +1,14 @@
-﻿using Lexer;
+﻿using Crumpet.Instructions;
+using Crumpet.Interpreter;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Interpreter.Variables.Types;
+using Lexer;
 using Parser;
 using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
+public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>, IInstructionProvider
 {
     public int IntLiteral { get; }
 
@@ -16,5 +20,10 @@ public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<C
     public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()
     {
         yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.INT, GetNodeConstructor<IntLiteralNode>());
+    }
+
+    public IEnumerable<Instruction> GetInstructions()
+    {
+        yield return new PushConstantInstruction(new BuiltinTypeInfo<int>(), IntLiteral);
     }
 }

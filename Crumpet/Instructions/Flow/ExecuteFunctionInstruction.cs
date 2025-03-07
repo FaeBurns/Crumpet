@@ -1,7 +1,7 @@
 ﻿using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 
-namespace Crumpet.Instructions;
+namespace Crumpet.Instructions.Flow;
 
 public class ExecuteFunctionInstruction : Instruction
 {

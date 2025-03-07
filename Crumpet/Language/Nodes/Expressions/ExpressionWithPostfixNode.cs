@@ -76,6 +76,6 @@ public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixN
     public ExpressionWithPostfixNodeIdentifierVariant(PrimaryExpressionNode expression, IEnumerable<IdentifierNode> identifierList) : base(expression, identifierList)
     {
         IdentifierSections = identifierList.ToArray();
-        FullExpressionIdentifier = string.Join('.', IdentifierSections.Select(s => s.ToString()));
+        FullExpressionIdentifier = String.Join('.', IdentifierSections.Select(s => s.ToString()));
     }
 }

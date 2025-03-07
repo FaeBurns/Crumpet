@@ -15,7 +15,7 @@ public class TreeWalkingInterpreter
 
     public TreeWalkingInterpreter(NonTerminalNode root)
     {
-        IEnumerable<ASTNode> nodeSequence = new NodeSequenceEnumerator(root);
+        ASTNode[] nodeSequence = NodeSequenceEnumerator.CreateSequential(root).ToArray();
         TypeResolver = new TypeBuilder(nodeSequence).GetTypeDefinitions();
         Functions = new FunctionCollection(nodeSequence);
     }

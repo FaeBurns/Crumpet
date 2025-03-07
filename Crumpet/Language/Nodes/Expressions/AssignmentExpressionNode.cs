@@ -1,4 +1,7 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Instructions;
+using Crumpet.Interpreter;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 
 using Parser;
 using Parser.NodeConstraints;
@@ -35,7 +38,7 @@ public class AssignmentExpressionNodePassthroughVariant : AssignmentExpressionNo
     }
 }
 
-public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNode
+public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNode, IInstructionProvider
 {
     public UnaryExpressionNode UnaryExpression { get; }
     public AssignmentExpressionNode AssignmentExpression { get; }
@@ -44,5 +47,10 @@ public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNod
     {
         UnaryExpression = unaryExpression;
         AssignmentExpression = assignmentExpression;
+    }
+
+    public IEnumerable<Instruction> GetInstructions()
+    {
+        yield return new AssignVariableInstruction();
     }
 }

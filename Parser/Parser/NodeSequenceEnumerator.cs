@@ -3,37 +3,78 @@ using Parser.Nodes;
 
 namespace Parser;
 
-public class NodeSequenceEnumerator : IEnumerable<ASTNode>
+public class NodeSequenceEnumerator
 {
-    private readonly NonTerminalNode m_root;
+    public static IEnumerable<ASTNode> CreateSequential(NonTerminalNode root) => new SequentialNodeEnumerator(root);
+    public static IEnumerable<ASTNode> CreateLeafWalking(NonTerminalNode root) => new LeafWalkingNodeEnumerator(root);
 
-    public NodeSequenceEnumerator(NonTerminalNode root)
+    private class SequentialNodeEnumerator : IEnumerable<ASTNode>
     {
-        m_root = root;
-    }
+        private readonly NonTerminalNode m_root;
 
-    public IEnumerator<ASTNode> GetEnumerator()
-    {
-        Stack<ASTNode> stack = new Stack<ASTNode>();
-        stack.Push(m_root);
-        while (stack.Any())
+        public SequentialNodeEnumerator(NonTerminalNode root)
         {
-            ASTNode node = stack.Pop();
-            
-            // yield node immediately
-            yield return node;
+            m_root = root;
+        }
 
-            // push children to stack
-            if (node is NonTerminalNode nonTerminalNode)
+        public IEnumerator<ASTNode> GetEnumerator()
+        {
+            Stack<ASTNode> stack = new Stack<ASTNode>();
+            stack.Push(m_root);
+            while (stack.Any())
             {
-                foreach (ASTNode child in nonTerminalNode.EnumerateChildren()) 
-                    stack.Push(child);
+                ASTNode node = stack.Pop();
+
+                // yield node immediately
+                yield return node;
+
+                // push children to stack
+                if (node is NonTerminalNode nonTerminalNode)
+                {
+                    foreach (ASTNode child in nonTerminalNode.EnumerateChildren())
+                        stack.Push(child);
+                }
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 
-    IEnumerator IEnumerable.GetEnumerator()
+    public class LeafWalkingNodeEnumerator : IEnumerable<ASTNode>
     {
-        return GetEnumerator();
+        private readonly NonTerminalNode m_root;
+
+        public LeafWalkingNodeEnumerator(NonTerminalNode root)
+        {
+            m_root = root;
+        }
+
+        public IEnumerator<ASTNode> GetEnumerator()
+        {
+            Stack<ASTNode> stack = new Stack<ASTNode>();
+            stack.Push(m_root);
+            while (stack.Any())
+            {
+                ASTNode node = stack.Pop();
+
+                // push children to stack
+                if (node is NonTerminalNode nonTerminalNode)
+                {
+                    foreach (ASTNode child in nonTerminalNode.EnumerateChildren())
+                        stack.Push(child);
+                }
+
+                // yield node AFTER children
+                yield return node;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
