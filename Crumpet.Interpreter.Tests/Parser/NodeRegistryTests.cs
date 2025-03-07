@@ -1,8 +1,8 @@
-﻿using Crumpet.Interpreter.Parser;
-using Crumpet.Language;
+﻿using Crumpet.Language;
 using Crumpet.Language.Nodes;
 using Crumpet.Language.Nodes.Expressions;
 using Crumpet.Language.Nodes.Statements;
+using Crumpet.Parser;
 
 namespace Crumpet.Interpreter.Tests.Parser;
 

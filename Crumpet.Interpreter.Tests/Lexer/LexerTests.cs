@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Exceptions;
 using Crumpet.Language;
-using Crumpet.Interpreter.Lexer;
+using Crumpet.Parser.Exceptions;
+using Crumpet.Parser.Lexer;
 
 namespace Crumpet.Interpreter.Tests.Lexer;
 

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public sealed class TerminalDefinition<T> where T : Enum
 {

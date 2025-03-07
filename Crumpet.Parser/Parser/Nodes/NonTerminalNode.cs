@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.Nodes;
+﻿namespace Crumpet.Parser.Nodes;
 
 public abstract class NonTerminalNode : ASTNode
 {
@@ -24,9 +24,9 @@ public abstract class NonTerminalNode : ASTNode
             if (node is not null)
                 yield return node;
     }
-    
+
     protected virtual IEnumerable<ASTNode?> EnumerateChildrenDerived() { yield break; }
-    
+
     public override IEnumerable<object> TransformForConstructor()
     {
         // all nodes should just return themselves

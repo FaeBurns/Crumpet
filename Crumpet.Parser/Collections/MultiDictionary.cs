@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Crumpet.Interpreter.Collections;
+namespace Crumpet.Parser.Collections;
 
 public class MultiDictionary<TKey, TValue> : IDictionary<TKey, List<TValue>> where TKey : notnull
 {

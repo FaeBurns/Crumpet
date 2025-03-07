@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
-using Crumpet.Interpreter.Collections;
-using Crumpet.Interpreter.Exceptions;
-using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Parser.Collections;
+using Crumpet.Parser.Exceptions;
+using Crumpet.Parser.Lexer;
+using Crumpet.Parser.Nodes;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public class ASTNodeRegistry<TToken> where TToken : Enum
 { 

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Crumpet.Interpreter.Lexer;
+namespace Crumpet.Parser.Lexer;
 
 internal class TokenRule<T> where T : Enum
 {

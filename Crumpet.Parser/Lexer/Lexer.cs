@@ -1,8 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using Crumpet.Interpreter.Exceptions;
-using Crumpet.Interpreter.Parser;
+using Crumpet.Parser.Exceptions;
 
-namespace Crumpet.Interpreter.Lexer;
+namespace Crumpet.Parser.Lexer;
 
 public class Lexer<T> : ILexer<T> where T : Enum
 {

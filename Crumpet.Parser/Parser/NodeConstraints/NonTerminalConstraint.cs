@@ -1,7 +1,7 @@
-﻿using Crumpet.Interpreter.Parser.Elements;
-using Crumpet.Interpreter.Parser.Nodes;
+﻿using Crumpet.Parser.Elements;
+using Crumpet.Parser.Nodes;
 
-namespace Crumpet.Interpreter.Parser.NodeConstraints;
+namespace Crumpet.Parser.NodeConstraints;
 
 public abstract class NonTerminalConstraint : NodeConstraint
 {

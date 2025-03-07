@@ -1,7 +1,7 @@
 ﻿using Crumpet.Interpreter.Functions;
-using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Parser.Nodes;
 using Crumpet.Interpreter.Preparse;
+using Crumpet.Parser;
+using Crumpet.Parser.Nodes;
 
 namespace Crumpet.Interpreter;
 

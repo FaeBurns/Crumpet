@@ -1,6 +1,6 @@
-﻿using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Parser.Nodes;
+﻿using Crumpet.Parser;
+using Crumpet.Parser.Lexer;
+using Crumpet.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 

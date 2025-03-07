@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.Elements;
+﻿namespace Crumpet.Parser.Elements;
 
 public abstract class ParserElement
 {

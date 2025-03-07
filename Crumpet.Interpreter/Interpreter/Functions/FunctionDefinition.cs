@@ -1,8 +1,8 @@
-﻿using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
+using Crumpet.Parser;
 
-namespace Crumpet.Interpreter;
+namespace Crumpet.Interpreter.Functions;
 
 public class FunctionDefinition(string name, TypeInfo returnType, IEnumerable<ParameterDefinition> parameters, SourceLocation sourceLocation)
 {

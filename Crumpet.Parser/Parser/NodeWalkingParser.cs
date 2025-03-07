@@ -1,8 +1,8 @@
-﻿using Crumpet.Interpreter.Exceptions;
-using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser.Nodes;
+﻿using Crumpet.Parser.Exceptions;
+using Crumpet.Parser.Lexer;
+using Crumpet.Parser.Nodes;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public class NodeWalkingParser<T, TRoot> where T : Enum where TRoot : ASTNode
 {

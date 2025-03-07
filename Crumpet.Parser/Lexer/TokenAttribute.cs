@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Lexer;
+﻿namespace Crumpet.Parser.Lexer;
 
 [AttributeUsage(AttributeTargets.Field)]
 public sealed class TokenAttribute : Attribute

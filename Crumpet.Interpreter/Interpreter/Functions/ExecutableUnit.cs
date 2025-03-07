@@ -1,18 +1,17 @@
 ﻿using Crumpet.Interpreter.Instructions;
-using Crumpet.Interpreter.Parser;
 
 namespace Crumpet.Interpreter.Functions;
 
 public class ExecutableUnit
 {
-    public ExecutableUnit(ExecutionContext context, IEnumerable<IInstruction> instructions, SourceLocation location)
+    public ExecutableUnit(InterpreterExecutionContext context, IEnumerable<Instruction> instructions, FunctionDefinition functionDefinition)
     {
         Scope = new Scope(context.CurrentScope);
         Instructions = instructions.ToArray();
-        SourceLocation = location;
+        FunctionDefinition = functionDefinition;
     }
-    
-    public IReadOnlyList<IInstruction> Instructions { get; }
+
+    public IReadOnlyList<Instruction> Instructions { get; }
     public Scope Scope { get; }
-    public SourceLocation SourceLocation { get; }
+    public FunctionDefinition FunctionDefinition { get; set; }
 }

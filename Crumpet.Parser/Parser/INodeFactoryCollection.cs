@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Parser;
 
 public interface INodeFactoryCollection
 {

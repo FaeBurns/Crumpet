@@ -1,7 +1,7 @@
-﻿using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser.NodeConstraints;
+﻿using Crumpet.Parser.Lexer;
+using Crumpet.Parser.NodeConstraints;
 
-namespace Crumpet.Interpreter.Parser.Nodes;
+namespace Crumpet.Parser.Nodes;
 
 public class TerminalNode<T> : ASTNode where T : Enum
 {

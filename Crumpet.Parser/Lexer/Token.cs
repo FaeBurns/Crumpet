@@ -1,6 +1,4 @@
-﻿using Crumpet.Interpreter.Parser;
-
-namespace Crumpet.Interpreter.Lexer;
+﻿namespace Crumpet.Parser.Lexer;
 
 public class Token<T> where T : Enum
 {

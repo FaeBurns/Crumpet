@@ -1,18 +1,20 @@
-﻿using Crumpet.Interpreter.Variables;
+﻿using Crumpet.Interpreter.Functions;
+using Crumpet.Interpreter.Variables;
 
 namespace Crumpet.Interpreter.Instructions;
 
-public class PushVariableInstruction : IInstruction
+public class PushVariableInstruction : Instruction
 {
-    private readonly Variable m_variable;
+    private readonly string m_name;
 
-    public PushVariableInstruction(Variable variable)
+    public PushVariableInstruction(string name)
     {
-        m_variable = variable;
+        m_name = name;
     }
 
-    public void Execute()
+    public override void Execute(InterpreterExecutionContext context)
     {
-        throw new NotImplementedException();
+        Variable var = context.CurrentScope.GetVariable(m_name);
+        context.VariableStack.Push(var);
     }
 }

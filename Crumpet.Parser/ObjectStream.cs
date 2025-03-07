@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 
-namespace Crumpet.Interpreter;
+namespace Crumpet.Parser;
 
 public class ObjectStream<T> : IEnumerator<T>, IEnumerable<T>
 {

@@ -10,8 +10,4 @@
       <ProjectReference Include="..\Crumpet.Parser\Crumpet.Parser.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Interpreter\" />
-    </ItemGroup>
-
 </Project>

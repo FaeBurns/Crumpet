@@ -11,4 +11,8 @@
       <ProjectReference Include="..\Crumpet.Parser\Crumpet.Parser.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Instructions\Comparison\" />
+    </ItemGroup>
+
 </Project>

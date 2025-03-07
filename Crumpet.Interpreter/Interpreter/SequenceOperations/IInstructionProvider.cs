@@ -4,5 +4,5 @@ namespace Crumpet.Interpreter.SequenceOperations;
 
 public interface IInstructionProvider
 {
-    public IEnumerable<IInstruction> GetInstructions();
+    public IEnumerable<Instruction> GetInstructions();
 }

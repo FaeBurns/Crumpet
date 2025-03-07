@@ -1,4 +1,4 @@
-﻿using Crumpet.Interpreter.Parser;
+﻿using Crumpet.Parser;
 
 namespace Crumpet.Interpreter.Functions;
 

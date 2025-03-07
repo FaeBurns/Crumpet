@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.Nodes;
+﻿namespace Crumpet.Parser.Nodes;
 
 public interface INonTerminalNodeFactory
 {

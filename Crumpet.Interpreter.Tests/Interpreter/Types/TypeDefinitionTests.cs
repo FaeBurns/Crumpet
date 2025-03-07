@@ -1,9 +1,9 @@
-﻿using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Parser.Nodes;
-using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
+using Crumpet.Parser;
+using Crumpet.Parser.Lexer;
+using Crumpet.Parser.Nodes;
 
 namespace Crumpet.Interpreter.Tests.Interpreter.Types;
 

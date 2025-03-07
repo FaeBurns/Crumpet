@@ -1,25 +1,20 @@
-﻿using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Functions;
+using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter.Instructions;
 
-public class ExecuteFunctionInstruction : IInstruction
+public class ExecuteFunctionInstruction : Instruction
 {
-    private readonly FunctionDefinition m_targetFunction;
-    private readonly bool m_pushReturnValue;
-    
-    /// <param name="targetFunction">The function to call.</param>
-    /// <param name="pushReturnValue">Should the return value be pushed onto the stack?. Ignored if <paramref name="targetFunction"/>returns <see cref="VoidTypeInfo"/>.</param>
-    public ExecuteFunctionInstruction(FunctionDefinition targetFunction, bool pushReturnValue)
-    {
-        m_targetFunction = targetFunction;
-        m_pushReturnValue = pushReturnValue;
+    private readonly ExecutableUnit m_function;
 
-        if (targetFunction.ReturnType is VoidTypeInfo)
-            m_pushReturnValue = false;
-    }
-    
-    public void Execute()
+    /// <param name="function">The function to call.</param>
+    public ExecuteFunctionInstruction(ExecutableUnit function)
     {
-        throw new NotImplementedException();
+        m_function = function;
+    }
+
+    public override void Execute(InterpreterExecutionContext context)
+    {
+        context.Call(m_function);
     }
 }

@@ -1,9 +1,9 @@
-﻿using Crumpet.Interpreter.Parser;
-using Crumpet.Interpreter.Parser.NodeConstraints;
-using Crumpet.Interpreter.Parser.Nodes;
-using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Statements;
 using Crumpet.Language.Nodes.Terminals;
+using Crumpet.Parser;
+using Crumpet.Parser.NodeConstraints;
+using Crumpet.Parser.Nodes;
 
 namespace Crumpet.Language.Nodes;
 

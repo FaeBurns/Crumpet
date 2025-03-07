@@ -1,4 +1,4 @@
-﻿using Crumpet.Interpreter.Parser.NodeConstraints;
+﻿using Crumpet.Parser.NodeConstraints;
 
 namespace Crumpet.Language.Nodes.Constraints;
 

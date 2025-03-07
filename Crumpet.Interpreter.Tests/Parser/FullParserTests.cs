@@ -1,7 +1,7 @@
-﻿using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser;
-using Crumpet.Language;
+﻿using Crumpet.Language;
 using Crumpet.Language.Nodes;
+using Crumpet.Parser;
+using Crumpet.Parser.Lexer;
 
 namespace Crumpet.Interpreter.Tests.Parser;
 
@@ -13,7 +13,7 @@ public class FullParserTests
     {
         ParseExampleFile(path);
     }
-    
+
     public ParseResult<CrumpetToken, RootNonTerminalNode> ParseExampleFile(string examplePath)
     {
         string source = File.ReadAllText(Path.Combine("Examples//", examplePath) + ".crm");
@@ -26,11 +26,11 @@ public class FullParserTests
         NodeTypeTree<CrumpetToken> nodeTree = new NodeTypeTree<CrumpetToken>(registry, typeof(RootNonTerminalNode));
 
         NodeWalkingParser<CrumpetToken,RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
-        
+
         ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
-        
+
         TestContext.WriteLine($"Last token: {result.LastTerminalHit} at {result.LastTerminalHit.Location}");
-        
+
         Assert.That(result.Root, Is.Not.Null);
 
         return result;

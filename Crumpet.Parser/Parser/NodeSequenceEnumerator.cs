@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Parser.Nodes;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public class NodeSequenceEnumerator : IEnumerable<ASTNode>
 {

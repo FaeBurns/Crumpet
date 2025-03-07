@@ -1,6 +1,4 @@
-﻿using Crumpet.Interpreter.Parser;
-
-namespace Crumpet.Interpreter.Exceptions;
+﻿namespace Crumpet.Parser.Exceptions;
 
 public class ParserException : Exception
 {

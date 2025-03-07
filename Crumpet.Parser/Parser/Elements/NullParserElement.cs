@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.Elements;
+﻿namespace Crumpet.Parser.Elements;
 
 /// <summary>
 /// A value that can be returned that means null - used in optional returns.

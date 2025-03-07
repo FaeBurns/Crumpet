@@ -1,18 +1,18 @@
 ﻿using System.Diagnostics;
 using Crumpet.Interpreter.Exceptions;
 using Crumpet.Interpreter.Instructions;
-using Crumpet.Interpreter.Parser;
 using Crumpet.Interpreter.SequenceOperations;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
+using Crumpet.Parser;
 
 namespace Crumpet.Interpreter.Functions;
 
 public class Function
 {
-    private readonly IInstruction[] m_instructions;
+    private readonly Instruction[] m_instructions;
     public FunctionDefinition Definition { get; }
 
     public Function(FunctionDefinition definition, FunctionDeclarationNode root)
@@ -29,13 +29,13 @@ public class Function
     /// <param name="arguments"></param>
     /// <returns></returns>
     /// <exception cref="InterpreterException">Argument count mismatch.</exception>
-    public ExecutableUnit CreateInvokableUnit(ExecutionContext context, Variable[] arguments)
+    public ExecutableUnit CreateInvokableUnit(InterpreterExecutionContext context, Variable[] arguments)
     {
         if (arguments.Length != Definition.Parameters.Count)
             // default on source location will occur if it's the first invocable called
-            throw new InterpreterException(context.CurrentUnit?.SourceLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
+            throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
 
-        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation);
+        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition);
 
         for (int i = 0; i < Definition.Parameters.Count; i++)
         {
@@ -55,15 +55,14 @@ public class Function
             {
                 // cannot use a convert with a reference or pointer
                 if (modifier != VariableModifier.COPY)
-                    throw new InterpreterException(context.CurrentUnit?.SourceLocation ?? new SourceLocation(), ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
+                    throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
 
                 // convert instance with a copy of
                 convertedArg.Value = defType.ConvertValidObject(argType, arguments[i].Value);
             }
             else
             {
-                throw new InterpreterException(
-                    context.CurrentUnit?.SourceLocation ?? new SourceLocation(),
+                throw new InterpreterException(context.CurrentUnit?.UnitLocation,
                     ExceptionConstants.INVALID_ARGUMENT_TYPE.Format(i, defType, argType));
             }
 

@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.NodeConstraints;
+﻿namespace Crumpet.Parser.NodeConstraints;
 
 public abstract class MultiNodeConstraint : NodeConstraint
 {

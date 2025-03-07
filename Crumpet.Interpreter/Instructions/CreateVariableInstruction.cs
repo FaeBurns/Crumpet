@@ -1,20 +1,20 @@
-﻿using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Functions;
+using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Interpreter.Instructions;
 
-public class CreateVariableInstruction : IInstruction
+public class CreateVariableInstruction : Instruction
 {
-    private readonly TypeInfo m_type;
-    private readonly string m_name;
+    private readonly VariableInfo m_variableInfo;
 
-    public CreateVariableInstruction(TypeInfo type, string name)
+    public CreateVariableInstruction(VariableInfo variableInfo)
     {
-        m_type = type;
-        m_name = name;
+        m_variableInfo = variableInfo;
     }
 
-    public void Execute()
+    public override void Execute(InterpreterExecutionContext context)
     {
-        throw new NotImplementedException();
+        context.CurrentScope.Create(m_variableInfo);
     }
 }

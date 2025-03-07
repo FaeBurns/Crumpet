@@ -1,19 +1,19 @@
 ﻿// https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form
 
 grammar crumpet;
-    
+
 // done
-root_program        
+root_program
             : declaration*
             ;
-            
+
 // done
-declaration 
+declaration
             : functionDeclaration
             | typeDeclaration
             ;
 
-// done               
+// done
 functionDeclaration
             : 'func' type IDENTIFIER LPARAN parameterList* RPARAN statementBody
             ;
@@ -22,29 +22,29 @@ functionDeclaration
 parameterList
             : parameter (COMMA parameter)*
             ;
-            
+
 // done
 parameter
-            : type IDENTIFIER
+            : type REFERENCE? IDENTIFIER
             ;
-            
+
 // done
 typeDeclaration
             : 'struct' IDENTIFIER LBRACK typeDeclarationField* RBRACK
             ;
-            
+
 // done
 typeDeclarationField
-            : type IDENTIFIER SEMICOLON
+            : type REFERENCE? IDENTIFIER SEMICOLON
             ;
-          
-// done  
+
+// done
 statementBody
             : LBRACK statement* RBRACK
             ;
 
 // done
-statement    
+statement
             : expression? SEMICOLON
             | ifStatement
             | iterationStatement
@@ -55,47 +55,47 @@ statement
 // done
 flowStatement
             : ( 'continue' | 'break' | ( 'return' expression? ) ) SEMICOLON
-            ;        
+            ;
 
 // done
-ifStatement  
+ifStatement
             : 'if' LPARAN expression RPARAN statementBody ('else' statementBody)?
             ;
 
 // done
-iterationStatement  
+iterationStatement
             : 'while' LPARAN expression RPARAN statementBody
             ;
-         
-// done   
+
+// done
 initializationStatement
-            : IDENTIFIER IDENTIFIER SEMICOLON
+            : IDENTIFIER REFERENCE? IDENTIFIER SEMICOLON
             ;
-       
+
 // done
 type
             : IDENTIFIER (PERIOD IDENTIFIER)*
             ;
-      
-      
+
+
 // actually the top most expression type
 // done
 expression
             : assignmentExpression
             ;
-            
+
 // topmost expression type?
 // done
 unaryExpression
             : expressionWithPostfix
             ;
-            
+
 // done
 expressionWithPostfix
             : primaryExpression (LINDEX expression RINDEX)?
             | primaryExpression LPARAN argumentExpressionList? RPARAN
             ;
-            
+
 // usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value
 // done
 primaryExpression
@@ -103,8 +103,8 @@ primaryExpression
             | literalConstant
             | LPARAN expression RPARAN
             ;
-            
-// or expression or (unary = self) 
+
+// or expression or (unary = self)
 // use or here as this takes order of operations precidence
 // done
 assignmentExpression
@@ -117,14 +117,14 @@ argumentExpressionList
             : expression (COMMA expression)*
             ;
 
-// done            
+// done
 literalConstant
             : STRING
             | INT
             | FLOAT
             | BOOL
             ;
-            
+
 // conditional/mathematical expressions
 // order of operations: OR < AND < XOR < EQUALITY < RELATION < SUM < MULT
 // done
@@ -140,13 +140,13 @@ andExpression
 // done
 exclusiveOrExpression
             : equalityExpression ('^' equalityExpression)?
-            ; 
+            ;
 
 // done
 equalityExpression
             : relationExpression (('==' | '!=') relationExpression)?
             ;
-            
+
 // done
 relationExpression
             : sumExpression (( '<' | '<=' | '>=' | '>' ) sumExpression)?
@@ -154,7 +154,7 @@ relationExpression
 
 // done
 sumExpression
-            : multExpression (('+' | '-') multExpression)? 
+            : multExpression (('+' | '-') multExpression)?
             ;
 
 // done
@@ -168,19 +168,19 @@ multExpression
 IDENTIFIER
             : IdentifierAlpha (IdentifierAlpha | Digit)*
             ;
-            
+
 fragment IdentifierAlpha
             : [a-zA-Z_]
             ;
-            
+
 fragment Digit
-            : [0-9] 
+            : [0-9]
             ;
-            
+
 fragment DigitNonZero
             : [1-9]
             ;
-            
+
 LPARAN: '(' ;
 RPARAN: ')' ;
 LBRACK: '{' ;
@@ -191,9 +191,10 @@ COMMA: ',' ;
 SEMICOLON: ';' ;
 PERIOD: '.' ;
 EQUALS: '=' ;
+REFERENCE: '&' ;
 
 BOOL
-            : 'true' | 'false' 
+            : 'true' | 'false'
             ;
 
 INT
@@ -201,12 +202,12 @@ INT
             ;
 
 FLOAT // requires at least one digit
-            : Digit+ '.' Digit+ 
+            : Digit+ '.' Digit+
             ;
-            
+
 STRING
-            : '"' CHARACTER* '"' 
+            : '"' CHARACTER* '"'
             ;
-            
+
 fragment CHARACTER
             : . ;

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Crumpet.Interpreter.Parser.NodeConstraints;
+using Crumpet.Parser.NodeConstraints;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public class NonTerminalDefinition
 {

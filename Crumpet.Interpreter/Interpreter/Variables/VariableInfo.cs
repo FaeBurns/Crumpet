@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Interpreter.Functions;
+using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 
 namespace Crumpet.Interpreter.Variables;

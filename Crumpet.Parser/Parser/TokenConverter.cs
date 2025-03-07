@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Parser;
 
 [System.AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
 public sealed class TokenConverterAttribute<TToken, TResultNode> : Attribute

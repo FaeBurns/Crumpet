@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser;
+﻿namespace Crumpet.Parser;
 
 public class SourceLocation
 {
@@ -6,11 +6,11 @@ public class SourceLocation
     {
         return new SourceLocation(start.StartOffset, end.EndOffset, start.StartLine, end.EndLine, start.StartColumn, end.EndColumn);
     }
-    
+
     public SourceLocation()
     {
     }
-    
+
     public SourceLocation(int startOffset, int endOffset, int startLine, int endLine, int startColumn, int endColumn)
     {
         StartOffset = startOffset;

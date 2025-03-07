@@ -1,4 +1,4 @@
-﻿using Crumpet.Interpreter.Parser.Nodes;
+﻿using Crumpet.Parser.Nodes;
 
 namespace Crumpet.Interpreter.Exceptions;
 

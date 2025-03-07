@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public static class ParserDebuggerHelper<T> where T : Enum
 {

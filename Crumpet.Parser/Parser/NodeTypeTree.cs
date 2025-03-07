@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Crumpet.Interpreter.Lexer;
-using Crumpet.Interpreter.Parser.NodeConstraints;
-using Crumpet.Interpreter.Parser.Nodes;
+using Crumpet.Parser.Lexer;
+using Crumpet.Parser.NodeConstraints;
+using Crumpet.Parser.Nodes;
 using JetBrains.Annotations;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public class NodeTypeTree<T> where T : Enum
 {

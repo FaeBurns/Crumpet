@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using Crumpet.Interpreter.Exceptions;
-using Crumpet.Interpreter.Parser.Elements;
+using Crumpet.Parser.Elements;
+using Crumpet.Parser.Exceptions;
 
-namespace Crumpet.Interpreter.Parser;
+namespace Crumpet.Parser;
 
 public abstract class ASTNode : ParserElement
 {

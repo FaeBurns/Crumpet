@@ -1,4 +1,4 @@
-﻿namespace Crumpet.Interpreter.Parser.Elements;
+﻿namespace Crumpet.Parser.Elements;
 
 public class MultipleParserElements : ParserElement
 {
@@ -15,7 +15,7 @@ public class MultipleParserElements : ParserElement
     {
         // select many so they accumulate into the one enumerable
         object[] transformedElements = Collection.SelectMany(e => e.TransformForConstructor()).ToArray();
-        
+
         // if each element should be a separate argument
         // then return them as such
         if (TransformToSeparateArguments)
