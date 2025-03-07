@@ -1,4 +1,4 @@
-﻿namespace Parser.Exceptions;
+﻿namespace Shared.Exceptions;
 
 public class ParserException : Exception
 {

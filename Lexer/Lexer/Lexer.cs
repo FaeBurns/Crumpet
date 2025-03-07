@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using Shared;
-using Parser.Exceptions;
+using Shared.Exceptions;
 
-namespace Parser.Lexer;
+namespace Lexer;
 
 public class Lexer<T> : ILexer<T> where T : Enum
 {

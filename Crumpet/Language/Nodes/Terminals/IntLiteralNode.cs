@@ -1,5 +1,5 @@
-﻿using Parser;
-using Parser.Lexer;
+﻿using Lexer;
+using Parser;
 using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
@@ -7,7 +7,7 @@ namespace Crumpet.Language.Nodes.Terminals;
 public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
     public int IntLiteral { get; }
-    
+
     public IntLiteralNode(Token<CrumpetToken> token) : base(token)
     {
         IntLiteral = Convert.ToInt32(token.Value);

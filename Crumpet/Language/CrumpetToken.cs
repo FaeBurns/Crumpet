@@ -1,7 +1,7 @@
 ﻿// ReSharper disable UseVerbatimString
 // ReSharper disable IdentifierTypo
 
-using Parser.Lexer;
+using Lexer;
 
 namespace Crumpet.Language;
 

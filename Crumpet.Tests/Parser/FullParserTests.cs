@@ -1,9 +1,7 @@
 ﻿using Crumpet.Language;
 using Crumpet.Language.Nodes;
-
-
+using Lexer;
 using Parser;
-using Parser.Lexer;
 
 namespace Crumpet.Tests.Parser;
 

@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Parser.Collections;
+namespace Shared.Collections;
 
 public class MultiDictionary<TKey, TValue> : IDictionary<TKey, List<TValue>> where TKey : notnull
 {
     private readonly Dictionary<TKey, List<TValue>> m_dictionary = new Dictionary<TKey, List<TValue>>();
-    
+
     public IEnumerator<KeyValuePair<TKey, List<TValue>>> GetEnumerator()
     {
         return m_dictionary.GetEnumerator();
@@ -21,7 +21,7 @@ public class MultiDictionary<TKey, TValue> : IDictionary<TKey, List<TValue>> whe
     {
         if (!m_dictionary.ContainsKey(item.Key))
             m_dictionary[item.Key] = new List<TValue>();
-        
+
         m_dictionary[item.Key].AddRange(item.Value);
     }
 
@@ -46,22 +46,22 @@ public class MultiDictionary<TKey, TValue> : IDictionary<TKey, List<TValue>> whe
     }
 
     public int Count => m_dictionary.Count;
-    
+
     public bool IsReadOnly => false;
 
     public void Add(TKey key, TValue value)
     {
         if (!m_dictionary.ContainsKey(key))
             m_dictionary[key] = new List<TValue>(1);
-        
+
         m_dictionary[key].Add(value);
     }
-    
+
     public void Add(TKey key, List<TValue> value)
     {
         if (!m_dictionary.ContainsKey(key))
             m_dictionary[key] = new List<TValue>(value.Count);
-        
+
         m_dictionary[key].AddRange(value);
     }
 

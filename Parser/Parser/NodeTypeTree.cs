@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Shared;
 using JetBrains.Annotations;
-using Parser.Lexer;
+using Lexer;
 using Parser.NodeConstraints;
 using Parser.Nodes;
+using Shared;
 
 namespace Parser;
 
@@ -12,16 +12,16 @@ public class NodeTypeTree<T> where T : Enum
 {
     private readonly Dictionary<Type, NonTerminalNodeDefinition> m_nonTerminalNodeCache = new Dictionary<Type, NonTerminalNodeDefinition>();
     private readonly Dictionary<T, TerminalNodeDefinition> m_terminalNodeCache = new Dictionary<T, TerminalNodeDefinition>();
-    
+
     private readonly ASTNodeRegistry<T> m_registry;
     private readonly NonTerminalNodeDefinition m_rootNodeDefinition;
-    
+
     public NodeTypeTree(ASTNodeRegistry<T> registry, Type rootNodeType)
     {
         m_registry = registry;
         m_rootNodeDefinition = BuildTree(rootNodeType);
     }
-    
+
     /// <summary>
     /// Returns the root node of the built tree.
     /// </summary>
@@ -73,13 +73,13 @@ public class NodeTypeTree<T> where T : Enum
     {
         IReadOnlyList<NonTerminalDefinition> nonTerminalDefinitions = m_registry.GetNonTerminals().ToList();
         IReadOnlyList<TerminalDefinition<T>> terminalDefinitions = m_registry.GetTerminals().ToList();
-        
+
         // throw if no nodes are registered
         if (!(nonTerminalDefinitions.Any() || terminalDefinitions.Any()))
             throw new ArgumentException(ExceptionConstants.NO_NODES_REGISTERED);
 
         NonTerminalNodeDefinition rootNodeDefinition = DefineNonTerminalByType(rootNodeType);
-        
+
         return rootNodeDefinition;
     }
 
@@ -88,16 +88,16 @@ public class NodeTypeTree<T> where T : Enum
         // exit early if cached instance already exists
         if (m_nonTerminalNodeCache.TryGetValue(type, out NonTerminalNodeDefinition? cachedNodeDefinition))
             return cachedNodeDefinition;
-        
+
         // try and find root node by name
         IReadOnlyList<NonTerminalDefinition> nonTerminalDefinitions = m_registry.FindNonTerminalDefinitions(type)?.ToList() ?? new List<NonTerminalDefinition>();
         if (!nonTerminalDefinitions.Any())
             throw new ArgumentException(ExceptionConstants.INVALID_NODE_NAME.Format(type));
-        
+
         // delcaring type is never null
         NonTerminalNodeDefinition nodeDefinition = new NonTerminalNodeDefinition(type, nonTerminalDefinitions);
         m_nonTerminalNodeCache[type] = nodeDefinition; // add to cache immediately to prevent issues with recursion
-        
+
         // walk constraint tree and get all non-terminals and terminals used
         HashSet<Type> nonTerminalTypes = new HashSet<Type>();
         HashSet<TerminalNodeDefinition> terminals = new HashSet<TerminalNodeDefinition>();
@@ -114,7 +114,7 @@ public class NodeTypeTree<T> where T : Enum
         {
             NonTerminalNodeDefinition child = DefineNonTerminalByType(nonTerminalType);
             nodeDefinition.NonTerminalChildren.AddLast(child);
-            
+
             // no idea if adding to parent can happen multiple times but check anyway
             if (!child.Parents.Contains(nodeDefinition))
                 child.Parents.AddLast(nodeDefinition);
@@ -124,11 +124,11 @@ public class NodeTypeTree<T> where T : Enum
         foreach (TerminalNodeDefinition terminal in terminals)
         {
             nodeDefinition.TerminalChildren.AddLast(terminal);
-            
+
             // add this node to the terminal's parents
             m_terminalNodeCache[terminal.Token].Parents.AddLast(nodeDefinition);
         }
-        
+
         return nodeDefinition;
     }
 
@@ -187,11 +187,11 @@ public class NodeTypeTree<T> where T : Enum
     {
         if (m_terminalNodeCache.TryGetValue(token, out TerminalNodeDefinition? cachedNodeDefinition))
             return cachedNodeDefinition;
-        
+
         m_terminalNodeCache[token] = new TerminalNodeDefinition(token, m_registry.FindTerminalDefinition(token));
         return m_terminalNodeCache[token];
     }
-    
+
     public class NonTerminalNodeDefinition(Type type, IEnumerable<NonTerminalDefinition> rules)
     {
         public readonly Type Type = type;
@@ -213,7 +213,7 @@ public class NodeTypeTree<T> where T : Enum
                 builder.Append("\t\t\t| ");
             }
 
-            // remove last 2 characters '|' and ' ' 
+            // remove last 2 characters '|' and ' '
             builder.Length -= 2;
             builder.Append(';');
 
@@ -238,13 +238,13 @@ public class NodeTypeTree<T> where T : Enum
 
         HashSet<NonTerminalNodeDefinition> nonTerminals = new HashSet<NonTerminalNodeDefinition>();
         HashSet<T> terminals = new HashSet<T>();
-        
+
         void RecursiveAddNodeToSet(NonTerminalNodeDefinition node)
         {
             if (nonTerminals.Contains(node))
                 return;
             nonTerminals.Add(node);
-            
+
             foreach (NonTerminalNodeDefinition nonTerminal in node.NonTerminalChildren)
             {
                 RecursiveAddNodeToSet(nonTerminal);
@@ -265,12 +265,12 @@ public class NodeTypeTree<T> where T : Enum
             builder.AppendLine("'");
             builder.AppendLine("\t\t\t;\n");
         }
-        
+
         RecursiveAddNodeToSet(m_rootNodeDefinition);
 
         nonTerminals.Foreach(n => builder.AppendLine(n.ToString() + "\n"));
         terminals.Foreach(AppendTerminal);
-        
+
         return builder.ToString();
     }
 }

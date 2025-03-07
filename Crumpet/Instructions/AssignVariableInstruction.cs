@@ -2,8 +2,6 @@
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 
-
-
 namespace Crumpet.Instructions;
 
 public class AssignVariableInstruction : Instruction

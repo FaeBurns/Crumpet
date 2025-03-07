@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using Shared;
 using Parser.Elements;
-using Parser.Exceptions;
 using Parser.Nodes;
+using Shared;
+using Shared.Exceptions;
 
 namespace Parser;
 

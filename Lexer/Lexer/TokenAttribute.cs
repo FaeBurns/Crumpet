@@ -1,4 +1,4 @@
-﻿namespace Parser.Lexer;
+﻿namespace Lexer;
 
 [AttributeUsage(AttributeTargets.Field)]
 public sealed class TokenAttribute : Attribute

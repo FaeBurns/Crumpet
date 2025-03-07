@@ -1,4 +1,4 @@
-﻿using Parser.Lexer;
+﻿using Lexer;
 using Parser.NodeConstraints;
 
 namespace Parser.Nodes;

@@ -1,7 +1,7 @@
-﻿using Shared;
-using Parser.Exceptions;
-using Parser.Lexer;
+﻿using Lexer;
 using Parser.Nodes;
+using Shared;
+using Shared.Exceptions;
 
 namespace Parser;
 
@@ -19,17 +19,17 @@ public class NodeWalkingParser<T, TRoot> where T : Enum where TRoot : ASTNode
     public ParseResult<T, TRoot> ParseToRoot(IEnumerable<Token<T>> tokens)
     {
         List<TerminalNode<T>> terminals = new List<TerminalNode<T>>();
-        
+
         foreach (Token<T> token in tokens)
         {
             // null case occurs if a token has been used but is not defined in the nodes and in the tree somewhere
             NodeTypeTree<T>.TerminalNodeDefinition? terminal = m_nodeTree.GetNodeForTerminal(token.TokenId);
             if (terminal is null)
                 throw new ParserException(ExceptionConstants.MISSING_TERMINAL_NODE.Format(token.TokenId), token.Location);
-            
+
             // invoke constructor for relevant terminal node
             TerminalNode<T> node = (TerminalNode<T>)m_nodeRegistry.GetNodeConstructorForToken(token.TokenId).Invoke([token]);
-            
+
             // add to ordered node list
             terminals.Add(node);
         }

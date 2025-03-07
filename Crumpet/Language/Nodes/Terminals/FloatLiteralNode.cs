@@ -1,5 +1,5 @@
-﻿using Parser;
-using Parser.Lexer;
+﻿using Lexer;
+using Parser;
 using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
@@ -7,7 +7,7 @@ namespace Crumpet.Language.Nodes.Terminals;
 public class FloatLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>
 {
     public float FloatLiteral { get; }
-    
+
     public FloatLiteralNode(Token<CrumpetToken> token) : base(token)
     {
         FloatLiteral = Convert.ToSingle(token.Value);

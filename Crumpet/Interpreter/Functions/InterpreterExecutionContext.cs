@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Parser;
+using Shared;
 
 namespace Crumpet.Interpreter.Functions;
 

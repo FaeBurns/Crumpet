@@ -3,7 +3,6 @@ using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 
-
 namespace Crumpet.Instructions;
 
 public class PushConstantInstruction : Instruction

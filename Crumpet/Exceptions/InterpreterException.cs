@@ -1,4 +1,5 @@
 ﻿using Parser;
+using Shared;
 
 namespace Crumpet.Exceptions;
 

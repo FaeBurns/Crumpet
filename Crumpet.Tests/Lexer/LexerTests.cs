@@ -1,8 +1,6 @@
 ﻿using Crumpet.Language;
-
-
-using Parser.Exceptions;
-using Parser.Lexer;
+using Lexer;
+using Shared.Exceptions;
 
 namespace Crumpet.Tests.Lexer;
 
@@ -17,7 +15,7 @@ public class LexerTests
         foreach (Token<CrumpetToken> token in lexer.Tokenize(true))
         {
             Assert.That(i, Is.LessThan(tokens.Length), $"Token {i} leaves expected range. Encountered {token.TokenId}");
-            
+
             Assert.That(token.TokenId, Is.EqualTo(tokens[i]), $"Token {i}({token.TokenId}) did not match expected token {tokens[i]}");
 
             TestContext.Out.WriteLine($"Encountered token {i} {token.TokenId} as expected");
@@ -69,7 +67,7 @@ public class LexerTests
         foreach (Token<CrumpetToken> token in lexer.Tokenize())
         {
             Assert.That(i, Is.LessThan(tokens.Length), $"Token {i} leaves expected range. Encountered {token.TokenId}");
-            
+
             Assert.That(token.TokenId, Is.EqualTo(tokens[i]), $"Token {i}({token.TokenId}) did not match expected token {tokens[i]}");
 
             TestContext.Out.WriteLine($"Encountered token {i} {token.TokenId} as expected");

@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Lexer\Lexer.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 

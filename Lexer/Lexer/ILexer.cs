@@ -1,4 +1,4 @@
-﻿namespace Parser.Lexer;
+﻿namespace Lexer;
 
 public interface ILexer<T> where T : Enum
 {

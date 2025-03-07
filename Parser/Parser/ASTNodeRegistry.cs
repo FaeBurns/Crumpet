@@ -1,14 +1,14 @@
 ﻿using System.Reflection;
-using Shared;
-using Parser.Collections;
-using Parser.Exceptions;
-using Parser.Lexer;
+using Lexer;
 using Parser.Nodes;
+using Shared;
+using Shared.Collections;
+using Shared.Exceptions;
 
 namespace Parser;
 
 public class ASTNodeRegistry<TToken> where TToken : Enum
-{ 
+{
     private readonly MultiDictionary<Type, NonTerminalDefinition> m_nonTerminalDefinitions = new MultiDictionary<Type, NonTerminalDefinition>();
     private readonly Dictionary<TToken, TerminalDefinition<TToken>> m_terminalDefinitions = new Dictionary<TToken, TerminalDefinition<TToken>>();
 
@@ -33,7 +33,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
     public void RegisterFactoryCollection<T>() where T : INodeFactoryCollection, new()
     {
         INodeFactoryCollection collection = new T();
-        
+
         foreach (Type terminalType in collection.GetTerminalFactories())
         {
             if (!typeof(ITerminalNodeFactory<TToken>).IsAssignableFrom(terminalType))
@@ -41,7 +41,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
 
             // get collection method on factory using reflection
             MethodInfo registryMethod = terminalType.GetMethod(nameof(ITerminalNodeFactory<TToken>.GetTerminals))!;
-            
+
             // invoke and iterate to register
             IEnumerable<TerminalDefinition<TToken>> definitions = (IEnumerable<TerminalDefinition<TToken>>)registryMethod.Invoke(null, Array.Empty<object>())!;
             foreach (TerminalDefinition<TToken> definition in definitions)
@@ -49,7 +49,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
                 m_terminalDefinitions.Add(definition.Token, definition);
             }
         }
-        
+
         foreach (Type nonTerminalType in collection.GetNonTerminalFactories())
         {
             if (!typeof(INonTerminalNodeFactory).IsAssignableFrom(nonTerminalType))
@@ -57,7 +57,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
 
             // get collection method on factory using reflection
             MethodInfo registryMethod = nonTerminalType.GetMethod(nameof(INonTerminalNodeFactory.GetNonTerminals))!;
-            
+
             // invoke and iterate to register
             IEnumerable<NonTerminalDefinition> definitions = (IEnumerable<NonTerminalDefinition>)registryMethod.Invoke(null, Array.Empty<object>())!;
             foreach (NonTerminalDefinition definition in definitions)
@@ -71,7 +71,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
     {
         return m_terminalDefinitions.GetValueOrDefault(token);
     }
-    
+
     public IEnumerable<NonTerminalDefinition>? FindNonTerminalDefinitions(Type type)
     {
         if (m_nonTerminalDefinitions.TryGetValue(type, out List<NonTerminalDefinition>? definitions))
@@ -108,7 +108,7 @@ public class ASTNodeRegistry<TToken> where TToken : Enum
 
         return s_defaultTerminalConstructor;
     }
-    
+
     public IEnumerable<TerminalDefinition<TToken>> GetTerminals() => m_terminalDefinitions.Select(i => i.Value);
     public IEnumerable<NonTerminalDefinition> GetNonTerminals() => m_nonTerminalDefinitions.SelectMany(i => i.Value);
 }

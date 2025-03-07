@@ -1,5 +1,5 @@
-﻿using Parser;
-using Parser.Lexer;
+﻿using Lexer;
+using Parser;
 using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;

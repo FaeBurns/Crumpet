@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using Shared;
 using Parser.Elements;
-using Parser.Exceptions;
+using Shared;
+using Shared.Exceptions;
 
 namespace Parser;
 
@@ -13,7 +13,7 @@ public abstract class ASTNode : ParserElement
     {
         // get first constructor
         ConstructorInfo[] constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-        
+
         return constructors.FirstOrDefault()
                ?? throw new ParserSetupException(
                    ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));
@@ -23,7 +23,7 @@ public abstract class ASTNode : ParserElement
     {
         // get first constructor with count
         ConstructorInfo[] constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-        
+
         return constructors.FirstOrDefault(c => c.GetParameters().Count() == paramCount)
                ?? throw new ParserSetupException(
                    ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));

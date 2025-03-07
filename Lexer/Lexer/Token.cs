@@ -1,4 +1,6 @@
-﻿namespace Parser.Lexer;
+﻿using Shared;
+
+namespace Lexer;
 
 public class Token<T> where T : Enum
 {
@@ -6,13 +8,13 @@ public class Token<T> where T : Enum
     {
         TokenId = tokenId;
         Value = value;
-        
+
         Location = location;
     }
-    
+
     public T TokenId { get; }
 
     public string Value { get; }
-    
+
     public SourceLocation Location { get; }
 }

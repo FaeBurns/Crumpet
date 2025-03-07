@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Parser.Lexer;
+namespace Lexer;
 
 internal class TokenRule<T> where T : Enum
 {
