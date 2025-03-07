@@ -4,7 +4,7 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        // IInterpreter interpreter = new Crumpet.Parser.CrumpetInterpreter();
+        // IInterpreter interpreter = new Parser.CrumpetInterpreter();
         // interpreter.Execute(File.ReadAllText(args[1]));
     }
 }
