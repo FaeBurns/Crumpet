@@ -20,7 +20,6 @@ public class VariableCollection : IVariableCollection
             throw new InvalidOperationException(ExceptionConstants.VARIABLE_ALREADY_EXISTS.Format(info.Name));
 
         m_variables.Add(info.Name, Variable.CreateModifier(info.Type, info.VariableModifier, null!));
-        m_variables.Add(info.Name, info.Type.CreateVariable());
         return m_variables[info.Name];
     }
 
