@@ -1,20 +1,24 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using System.Linq.Expressions;
+using Crumpet.Exceptions;
+using Crumpet.Instructions;
+using Crumpet.Instructions.Flow;
+using Crumpet.Interpreter.Functions;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 
 using Parser;
 using Parser.NodeConstraints;
 using Parser.Nodes;
+using Shared;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
 public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public PrimaryExpressionNode Expression { get; }
-
-    protected ExpressionWithPostfixNode(PrimaryExpressionNode expression, params IEnumerable<ASTNode?> childRefs) : base(childRefs.Prepend(expression))
+    protected ExpressionWithPostfixNode(params IEnumerable<ASTNode?> children) : base(children)
     {
-        Expression = expression;
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -22,19 +26,18 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<PrimaryExpressionNode>(),
-                new OptionalConstraint(new SequenceConstraint(
+                new SequenceConstraint(
                     new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
-                    new NonTerminalConstraint<ArgumentExpressionListNode>(),
-                    new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX)))),
+                    new NonTerminalConstraint<ExpressionNode>(),
+                    new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX))),
             GetNodeConstructor<ExpressionWithPostfixNodeIndexVariant>());
 
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint<PrimaryExpressionNode>(),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
                 new OptionalConstraint(new NonTerminalConstraint<ArgumentExpressionListNode>()),
-                new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN)),
-            GetNodeConstructor<ExpressionWithPostfixNodeParansVariant>());
+                new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN)), GetNodeConstructor<ExpressionWithPostfixNodeExecutionVariant>());
 
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
@@ -44,38 +47,84 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
                         new CrumpetRawTerminalConstraint(CrumpetToken.PERIOD),
                         new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)))),
             GetNodeConstructor<ExpressionWithPostfixNodeIdentifierVariant>());
+
+        yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
+            new NonTerminalConstraint<PrimaryExpressionNode>(),
+            GetNodeConstructor<ExpressionWithPostfixNodePassthroughVariant>());
     }
 }
 
-public class ExpressionWithPostfixNodeIndexVariant : ExpressionWithPostfixNode
+public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
+    public IdentifierNode Identifier { get; }
     public ArgumentExpressionListNode Arguments { get; }
 
-    public ExpressionWithPostfixNodeIndexVariant(PrimaryExpressionNode expression, ArgumentExpressionListNode arguments) : base(expression, arguments)
+    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, ArgumentExpressionListNode arguments) : base(identifier, arguments)
     {
+        Identifier = identifier;
         Arguments = arguments;
+    }
+    
+    public IEnumerable GetInstructionsRecursive()
+    {
+        // evaluate all args
+        yield return Arguments;
+        // execute
+        yield return new ExecutionFunctionInstruction(Identifier.Terminal);
     }
 }
 
-public class ExpressionWithPostfixNodeParansVariant : ExpressionWithPostfixNode
+public class ExpressionWithPostfixNodeIndexVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
-    public ArgumentExpressionListNode? Arguments { get; }
+    public PrimaryExpressionNode Expression { get; }
+    public ExpressionNode Argument { get; }
 
-    public ExpressionWithPostfixNodeParansVariant(PrimaryExpressionNode expression, ArgumentExpressionListNode? arguments) : base(expression, arguments)
+    public ExpressionWithPostfixNodeIndexVariant(PrimaryExpressionNode expression, ExpressionNode argument) : base(expression, argument)
     {
-        Arguments = arguments;
+        Expression = expression;
+        Argument = argument;
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expression;
+        yield return Argument;
+        yield return new AccessIndexInstruction();
     }
 }
 
-public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixNode
+public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
+    public PrimaryExpressionNode Expression { get; }
     public string FullExpressionIdentifier { get; }
     public IdentifierNode[] IdentifierSections { get; }
 
     // ReSharper disable PossibleMultipleEnumeration
-    public ExpressionWithPostfixNodeIdentifierVariant(PrimaryExpressionNode expression, IEnumerable<IdentifierNode> identifierList) : base(expression, identifierList)
+    public ExpressionWithPostfixNodeIdentifierVariant(PrimaryExpressionNode expression, IEnumerable<IdentifierNode> identifierList) : base(identifierList.Prepend<ASTNode?>(expression))
     {
+        Expression = expression;
         IdentifierSections = identifierList.ToArray();
         FullExpressionIdentifier = String.Join('.', IdentifierSections.Select(s => s.ToString()));
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expression;
+        yield return new PopAndSearchField(IdentifierSections.Select(s => s.Terminal));
+    }
+}
+
+public class ExpressionWithPostfixNodePassthroughVariant : ExpressionWithPostfixNode, IInstructionProvider
+{
+    public PrimaryExpressionNode PrimaryExpression { get; }
+
+    public ExpressionWithPostfixNodePassthroughVariant(PrimaryExpressionNode primaryExpression) : base(primaryExpression)
+    {
+        PrimaryExpression = primaryExpression;
+    }
+    
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return PrimaryExpression;
     }
 }

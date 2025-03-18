@@ -16,7 +16,7 @@ public abstract class TypeInfo
         return TypeName;
     }
 
-    protected bool Equals(TypeInfo other)
+    protected virtual bool Equals(TypeInfo other)
     {
         return TypeName == other.TypeName;
     }

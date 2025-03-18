@@ -27,15 +27,20 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
         // do check on declaring type as that's gonna be the one the constructor is in
         // as long as they're not the same
         // handles checking for variants
-        ParserDebuggerHelper<T>.BreakIfNecessary(m_definition.Type);
+        ParserDebuggerHelper<T>.BreakIfNecessaryTrying(m_definition.Type);
         if (m_definition.Constructor.DeclaringType! != m_definition.Type)
-            ParserDebuggerHelper<T>.BreakIfNecessary(m_definition.Constructor.DeclaringType!);
+            ParserDebuggerHelper<T>.BreakIfNecessaryTrying(m_definition.Constructor.DeclaringType!);
         
         // inspect the rule's constraint
         // if the constraint does not pass then check the next one
         ParserElement? element = m_definition.Constraint.WalkStream(stream, registry);
         if (element == null)
             return null;
+        
+        // another debug step
+        ParserDebuggerHelper<T>.BreakIfNecessarySuccess(m_definition.Type);
+        if (m_definition.Constructor.DeclaringType! != m_definition.Type)
+            ParserDebuggerHelper<T>.BreakIfNecessarySuccess(m_definition.Constructor.DeclaringType!);
 
         // transformForConstrutor handles inner info
         object[] arguments = element.TransformForConstructor().ToArray();
@@ -66,7 +71,8 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
             
             // take start location from initial token
             // and last from the stream
-            TerminalNode<T> lastTerminal = stream[stream.Position - 1];
+            // ensure that the first element is taken if it would go negative
+            TerminalNode<T> lastTerminal = stream[Math.Max(stream.Position - 1, 0)];
             node.Location = SourceLocation.FromRange(initialToken.Location, lastTerminal.Location);
         }
         catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using Crumpet.Language;
 using Crumpet.Language.Nodes;
+using Crumpet.Language.Nodes.Expressions;
 using Lexer;
 using Parser;
 
@@ -39,8 +40,10 @@ public class FullParserTests
     [Test]
     public void TestZooFile()
     {
+        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminalsTrying(typeof(ExpressionWithPostfixNodeExecutionVariant));
+        // ParserDebuggerHelper<CrumpetToken>.SetBreakingNonTerminalsSuccess(typeof(ExpressionWithPostfixNodeExecutionVariant));
         ParseResult<CrumpetToken,RootNonTerminalNode> result = ParseExampleFile("Parser/zoo");
-        Assert.That(result.Root!.Declarations, Has.Length.EqualTo(3));
-        Assert.That(result.Root!.Declarations.Select(d => d.Variant.GetType()), Is.EquivalentTo(new [] {typeof(TypeDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode)}));
+        Assert.That(result.Root!.Declarations, Has.Length.EqualTo(5));
+        Assert.That(result.Root!.Declarations.Select(d => d.Variant.GetType()), Is.EquivalentTo(new [] {typeof(TypeDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode), typeof(FunctionDeclarationNode)}));
     }
 }

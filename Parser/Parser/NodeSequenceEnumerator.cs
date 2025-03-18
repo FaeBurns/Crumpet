@@ -6,7 +6,7 @@ namespace Parser;
 public class NodeSequenceEnumerator
 {
     public static IEnumerable<ASTNode> CreateSequential(NonTerminalNode root) => new SequentialNodeEnumerator(root);
-    public static IEnumerable<ASTNode> CreateLeafWalking(NonTerminalNode root) => new LeafWalkingNodeEnumerator(root);
+    public static IEnumerable<ASTNode> CreateDepthFirst(NonTerminalNode root) => new DepthFirstNodeEnumerator(root);
 
     private class SequentialNodeEnumerator : IEnumerable<ASTNode>
     {
@@ -43,11 +43,11 @@ public class NodeSequenceEnumerator
         }
     }
 
-    public class LeafWalkingNodeEnumerator : IEnumerable<ASTNode>
+    public class DepthFirstNodeEnumerator : IEnumerable<ASTNode>
     {
         private readonly NonTerminalNode m_root;
 
-        public LeafWalkingNodeEnumerator(NonTerminalNode root)
+        public DepthFirstNodeEnumerator(NonTerminalNode root)
         {
             m_root = root;
         }

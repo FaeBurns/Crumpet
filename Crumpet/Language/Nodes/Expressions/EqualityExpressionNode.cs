@@ -1,4 +1,7 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using System.Diagnostics;
+using Crumpet.Instructions.Binary;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 
 using Parser;
 using Parser.NodeConstraints;
@@ -6,7 +9,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
-public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
+public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public RelationExpressionNode Primary { get; }
     public TerminalNode<CrumpetToken>? Sugar { get; }
@@ -39,5 +42,17 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<EqualityExpressionNode>(
             new NonTerminalConstraint<RelationExpressionNode>(),
             GetNodeConstructor<EqualityExpressionNode>(1));
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Primary;
+
+        yield return Secondary;
+        if (Secondary is not null)
+        {
+            Debug.Assert(Sugar is not null);
+            yield return new EqualityInstruction(Sugar.Token.TokenId == CrumpetToken.NOT_EQUALS);
+        }
     }
 }

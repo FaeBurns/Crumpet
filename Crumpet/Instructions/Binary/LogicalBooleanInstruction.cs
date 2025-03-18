@@ -4,7 +4,7 @@ using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 
-namespace Crumpet.Instructions.Boolean;
+namespace Crumpet.Instructions.Binary;
 
 public class LogicalBooleanInstruction : Instruction
 {
@@ -35,5 +35,6 @@ public class LogicalBooleanInstruction : Instruction
     {
         AND,
         OR,
+        XOR,
     }
 }

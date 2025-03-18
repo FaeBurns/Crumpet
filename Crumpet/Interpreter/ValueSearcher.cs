@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Variables;
+﻿using System.Data;
+using Crumpet.Interpreter.Variables;
 
 namespace Crumpet.Interpreter;
 
@@ -41,30 +42,37 @@ public class ValueSearcher
         {
             return new ValueSearchResult(null, 0);
         }
-
+        
         // return if this was the only segment
         if (segments.Length == 1)
         {
             return new ValueSearchResult(instance, 1);
         }
 
-        // otherwise do recursive check
         return FindObjectFieldRecursive(instance, segments.Skip(1).ToArray(), 1);
     }
 
-    private ValueSearchResult FindObjectFieldRecursive(Variable searchTarget, string[] segments, int depth)
+    public ValueSearchResult Find(Variable target, string[] segments)
+    {
+        if (segments.Length == 0)
+            return new ValueSearchResult(target, 0);
+        
+        return FindObjectFieldRecursive(target, segments.Skip(1).ToArray(), 1);
+    }
+
+    private ValueSearchResult FindObjectFieldRecursive(Variable searchTarget, string[] segments, int currentDepth)
     {
         Variable? nextTarget = FindObjectField(searchTarget, segments[0]);
 
         if (segments.Length == 1)
         {
-            return new ValueSearchResult(nextTarget, depth + 1);
+            return new ValueSearchResult(nextTarget, currentDepth + 1);
         }
 
         if (nextTarget is null)
-            return new ValueSearchResult(null, depth);
+            return new ValueSearchResult(null, currentDepth);
 
-        return FindObjectFieldRecursive(nextTarget, segments.Skip(1).ToArray(), depth + 1);
+        return FindObjectFieldRecursive(nextTarget, segments.Skip(1).ToArray(), currentDepth + 1);
     }
 
     private Variable? FindObjectField(Variable searchTarget, string name)

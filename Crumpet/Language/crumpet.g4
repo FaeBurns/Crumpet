@@ -92,8 +92,10 @@ unaryExpression
 
 // done
 expressionWithPostfix
-            : primaryExpression (LINDEX expression RINDEX)?
-            | primaryExpression LPARAN argumentExpressionList? RPARAN
+            : IDENTIFIER LPARAN argumentExpressionList? RPARAN // skip primaryExpression to only call functions on identifiers
+            | primaryExpression (LINDEX expression RINDEX) // do not do optional - passthrough variant still required
+            | primaryExpression (PERIOD IDENTIFIER)+
+            | primaryExpression
             ;
 
 // usually last element in branch of tree - the first component of an expression that does not contain its type but contains the identifier or value

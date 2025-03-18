@@ -1,4 +1,5 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 
@@ -7,7 +8,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes;
 
-public abstract class LiteralConstantNode : NonTerminalNode, INonTerminalNodeFactory
+public abstract class LiteralConstantNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     private readonly ASTNode m_childRef;
 
@@ -22,6 +23,11 @@ public abstract class LiteralConstantNode : NonTerminalNode, INonTerminalNodeFac
         yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.INT), GetNodeConstructor<LiteralConstantNodeIntVariant>());
         yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.FLOAT), GetNodeConstructor<LiteralConstantNodeFloatVariant>());
         yield return new NonTerminalDefinition<LiteralConstantNode>(new CrumpetTerminalConstraint(CrumpetToken.BOOL), GetNodeConstructor<LiteralConstantNodeBoolVariant>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return m_childRef;
     }
 }
 

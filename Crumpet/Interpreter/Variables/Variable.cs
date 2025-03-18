@@ -2,6 +2,7 @@
 using Crumpet.Exceptions;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
+using Shared;
 
 namespace Crumpet.Interpreter.Variables;
 
@@ -69,6 +70,16 @@ public class Variable
             VariableModifier.POINTER => CreatePointer(potentiallyReferencedVariable),
             _ => throw new UnreachableException(),
         };
+    }
+
+    public bool AssertType(TypeInfo type)
+    {
+        return Type == type;
+    }
+
+    public bool AssertType<T>() where T : struct
+    {
+        return AssertType(new BuiltinTypeInfo<T>());
     }
 
     private object GetValue()

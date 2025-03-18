@@ -1,4 +1,5 @@
-﻿using Crumpet.Instructions;
+﻿using System.Collections;
+using Crumpet.Instructions;
 using Crumpet.Interpreter;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -28,13 +29,18 @@ public abstract class AssignmentExpressionNode : NonTerminalNode, INonTerminalNo
     }
 }
 
-public class AssignmentExpressionNodePassthroughVariant : AssignmentExpressionNode
+public class AssignmentExpressionNodePassthroughVariant : AssignmentExpressionNode, IInstructionProvider
 {
     public OrExpressionNode OrExpression { get; }
 
     public AssignmentExpressionNodePassthroughVariant(OrExpressionNode orExpression) : base(orExpression)
     {
         OrExpression = orExpression;
+    }
+    
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return OrExpression;
     }
 }
 
@@ -49,8 +55,10 @@ public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNod
         AssignmentExpression = assignmentExpression;
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
+        yield return UnaryExpression;
+        yield return AssignmentExpression;
         yield return new AssignVariableInstruction();
     }
 }

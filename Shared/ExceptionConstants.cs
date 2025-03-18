@@ -26,4 +26,11 @@ public static class ExceptionConstants
     public const string EXPECTED_VARIABLE_NOT_VALUE = "Failed to set variable as value given was not a Variable and was instead a value";
     public const string VARIABLE_STACK_POP_WHILE_EMPTY = "Tried to pop a variable from the stack while it was empty";
     public const string INVALID_TYPE = "Invalid type detected during operation. Expected \"{0}\" received \"{1}\"";
+    public const string FUNCTION_NOT_FOUND = "Function \"{0}\" not found";
+    public const string UNKOWN_TYPE = "Could not find type named \"{0}\"";
+    public const string UNKOWN_RETURN_TYPE = "Could not find type for return named \"{0}\"";
+    public const string INVALID_FUNCTION_CALL_EXPRESSION_TYPE = "Invalid expression given to function call";
+    public const string VALUE_SEARCH_FAILED = "Failed to find target field in value. Reached \"{0}\" from to \"{1}\"";
+    public const string NO_EXECUTING_UNIT = "No unit to execute";
+    public const string PASSING_RETURNABLE_UNIT = "Cannot pass ";
 }

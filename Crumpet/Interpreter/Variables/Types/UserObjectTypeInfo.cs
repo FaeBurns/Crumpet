@@ -37,9 +37,6 @@ public class UserObjectTypeInfo : TypeInfo
         // InstanceReference.Value's setter will check CopyOnAssign and do a recurisve copy that calls this if it needs to
         foreach (string name in objectInstance.Fields.VariableNames)
         {
-            // assign field instance based on target field modifier
-            VariableModifier modifier = Fields.First(f => f.Name == name).VariableModifier;
-
             // copy, pointer, or ref assign handled in setter
             // as long as the passed value is a Variable instance itself
             newInstance.Fields[name].Value = objectInstance.Fields[name];

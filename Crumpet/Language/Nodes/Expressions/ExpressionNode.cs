@@ -1,10 +1,12 @@
-﻿using Parser;
+﻿using Crumpet.Interpreter;
+using Crumpet.Interpreter.Instructions;
+using Parser;
 using Parser.NodeConstraints;
 using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
-public class ExpressionNode : NonTerminalNode, INonTerminalNodeFactory
+public class ExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public AssignmentExpressionNode Expression { get; }
 
@@ -23,5 +25,10 @@ public class ExpressionNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<ExpressionNode>(
             new NonTerminalConstraint<AssignmentExpressionNode>(),
             GetNodeConstructor<ExpressionNode>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expression;
     }
 }

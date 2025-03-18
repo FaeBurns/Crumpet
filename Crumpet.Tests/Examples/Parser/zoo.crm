@@ -16,3 +16,10 @@ func testType foo(testType bar){
     bar.three = "test";
     bar.four = 4.0;
 }
+
+func void empty(){
+}
+
+func void twoArgs(int a, int b){
+    return a + b;
+}

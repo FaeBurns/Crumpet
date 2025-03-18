@@ -1,4 +1,7 @@
 ﻿using System.Diagnostics;
+using Crumpet.Instructions;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Interpreter.Variables;
 using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
@@ -9,7 +12,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Statements;
 
-public class InitializationStatementNode : NonTerminalNode, INonTerminalNodeFactory
+public class InitializationStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public TypeNode Type { get; }
     public TerminalNode<CrumpetToken>? ModifierSugar { get; }
@@ -46,5 +49,10 @@ public class InitializationStatementNode : NonTerminalNode, INonTerminalNodeFact
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<InitializationStatementNode>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, VariableModifier);
     }
 }

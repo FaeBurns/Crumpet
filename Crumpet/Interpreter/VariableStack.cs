@@ -1,4 +1,5 @@
 using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 using Shared;
 
 namespace Crumpet.Interpreter;
@@ -7,6 +8,10 @@ public class VariableStack
 {
     private readonly Stack<Variable> m_variables = new Stack<Variable>();
 
+    public int Count => m_variables.Count();
+
+    public void Push(TypeInfo type, object value) => Push(Variable.Create(type, value));
+    
     public void Push(Variable value)
     {
         m_variables.Push(value);

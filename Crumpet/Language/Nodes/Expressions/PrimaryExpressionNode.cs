@@ -1,4 +1,6 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Instructions;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 
@@ -25,9 +27,9 @@ public class PrimaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
         yield return new NonTerminalDefinition<PrimaryExpressionNode>(new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER), GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant>());
-
+        
         yield return new NonTerminalDefinition<PrimaryExpressionNode>(new NonTerminalConstraint<LiteralConstantNode>(), GetNodeConstructor<PrimaryExpressionNodeLiteralConstantVariant>());
-
+        
         yield return new NonTerminalDefinition<PrimaryExpressionNode>(new SequenceConstraint(
             new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
             new NonTerminalConstraint<ExpressionNode>(),
@@ -37,7 +39,7 @@ public class PrimaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
     }
 }
 
-public class PrimaryExpressionNodeIdentifierVariant : PrimaryExpressionNode
+public class PrimaryExpressionNodeIdentifierVariant : PrimaryExpressionNode, IInstructionProvider
 {
     public IdentifierNode Identifier { get; }
 
@@ -45,9 +47,14 @@ public class PrimaryExpressionNodeIdentifierVariant : PrimaryExpressionNode
     {
         Identifier = identifier;
     }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return new PushVariableInstruction(Identifier.Terminal);
+    }
 }
 
-public class PrimaryExpressionNodeLiteralConstantVariant : PrimaryExpressionNode
+public class PrimaryExpressionNodeLiteralConstantVariant : PrimaryExpressionNode, IInstructionProvider
 {
     public LiteralConstantNode LiteralConstant { get; }
 
@@ -55,14 +62,24 @@ public class PrimaryExpressionNodeLiteralConstantVariant : PrimaryExpressionNode
     {
         LiteralConstant = literalConstant;
     }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return LiteralConstant;
+    }
 }
 
-public class PrimaryExpressionNodeNestedExpressionVariant : PrimaryExpressionNode
+public class PrimaryExpressionNodeNestedExpressionVariant : PrimaryExpressionNode, IInstructionProvider
 {
     public ExpressionNode Expression { get; }
 
     public PrimaryExpressionNodeNestedExpressionVariant(ExpressionNode expression) : base(expression)
     {
         Expression = expression;
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expression;
     }
 }

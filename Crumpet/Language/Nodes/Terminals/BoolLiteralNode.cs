@@ -22,7 +22,7 @@ public class BoolLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<
         yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.BOOL, GetNodeConstructor<BoolLiteralNode>());
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
         yield return new PushConstantInstruction(new BuiltinTypeInfo<bool>(), BoolLiteral);
     }

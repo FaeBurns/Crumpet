@@ -65,5 +65,8 @@ public class ParseResult<T, TRoot> where T : Enum where TRoot : ASTNode
     }
 
     public TRoot? Root { get; }
+    
     public TerminalNode<T> LastTerminalHit { get; }
+
+    public bool Success => Root is not null;
 }

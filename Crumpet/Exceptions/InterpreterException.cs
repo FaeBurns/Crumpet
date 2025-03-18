@@ -1,4 +1,5 @@
-﻿using Parser;
+﻿using Crumpet.Interpreter.Functions;
+using Parser;
 using Shared;
 
 namespace Crumpet.Exceptions;
@@ -6,6 +7,11 @@ namespace Crumpet.Exceptions;
 public class InterpreterException : Exception
 {
     public SourceLocation SourceLocation { get; }
+
+    public InterpreterException(InterpreterExecutionContext context, string message) : base(message)
+    {
+        SourceLocation = context.CurrentUnit?.UnitLocation ?? new SourceLocation();
+    }
 
     public InterpreterException(SourceLocation? sourceLocation, string message) : base(message)
     {

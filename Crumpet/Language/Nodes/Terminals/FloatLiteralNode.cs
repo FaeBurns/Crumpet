@@ -1,5 +1,4 @@
 ﻿using Crumpet.Instructions;
-using Crumpet.Interpreter;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables.Types;
 using Lexer;
@@ -8,7 +7,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Terminals;
 
-public class FloatLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>,IInstructionProvider
+public class FloatLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<CrumpetToken>, IInstructionProvider
 {
     public float FloatLiteral { get; }
 
@@ -22,7 +21,7 @@ public class FloatLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory
         yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.FLOAT, GetNodeConstructor<FloatLiteralNode>());
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
         yield return new PushConstantInstruction(new BuiltinTypeInfo<float>(), FloatLiteral);
     }

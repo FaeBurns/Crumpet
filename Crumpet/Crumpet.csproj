@@ -9,7 +9,11 @@
     <ItemGroup>
       <ProjectReference Include="..\Parser\Parser.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <Using Include="System.Collections"/>
+    </ItemGroup>
+    
     <ItemGroup>
       <Folder Include="Instructions\Comparison\" />
     </ItemGroup>

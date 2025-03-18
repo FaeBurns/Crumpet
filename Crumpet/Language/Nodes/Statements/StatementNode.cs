@@ -1,4 +1,5 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Expressions;
 
 
@@ -8,7 +9,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Statements;
 
-public class StatementNode : NonTerminalNode, INonTerminalNodeFactory
+public class StatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public ASTNode? VariantNode { get; }
 
@@ -40,6 +41,11 @@ public class StatementNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<StatementNode>(
             new NonTerminalConstraint<InitializationStatementNode>(),
             GetNodeConstructor<StatementNodeInitializationVariant>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return VariantNode;
     }
 }
 

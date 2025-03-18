@@ -12,14 +12,14 @@ namespace Crumpet.Language.Nodes;
 
 public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public TypeNode Type { get; }
+    public TypeNode ReturnType { get; }
     public IdentifierNode Name { get; }
     public ParameterListNode Parameters { get; }
     public StatementBodyNode StatementBody { get; }
 
-    public FunctionDeclarationNode(TypeNode type, IdentifierNode name, ParameterListNode? parameters, StatementBodyNode statementBody) : base(type, name, parameters, statementBody)
+    public FunctionDeclarationNode(TypeNode returnType, IdentifierNode name, ParameterListNode? parameters, StatementBodyNode statementBody) : base(returnType, name, parameters, statementBody)
     {
-        Type = type;
+        ReturnType = returnType;
         Name = name;
         StatementBody = statementBody;
 

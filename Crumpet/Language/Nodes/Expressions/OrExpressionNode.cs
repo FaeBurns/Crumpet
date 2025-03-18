@@ -1,4 +1,4 @@
-﻿using Crumpet.Instructions.Boolean;
+﻿using Crumpet.Instructions.Binary;
 using Crumpet.Interpreter;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -32,12 +32,13 @@ public class OrExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
             GetNodeConstructor<OrExpressionNode>());
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
-        // don't push anything if there is no secondary
-        if (Secondary is null)
-            yield break;
-
-        yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.OR);
+        yield return Primary;
+        yield return Secondary;
+        
+        // only push primary if there is no secondary section
+        if (Secondary is not null)
+            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.OR);
     }
 }

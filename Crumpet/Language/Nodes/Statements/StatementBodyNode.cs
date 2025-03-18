@@ -1,4 +1,5 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 
 using Parser;
 using Parser.NodeConstraints;
@@ -6,7 +7,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Statements;
 
-public class StatementBodyNode : NonTerminalNode, INonTerminalNodeFactory
+public class StatementBodyNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public StatementNode[] Statements { get; }
 
@@ -24,5 +25,10 @@ public class StatementBodyNode : NonTerminalNode, INonTerminalNodeFactory
                 new ZeroOrMoreConstraint(new NonTerminalConstraint<StatementNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK)),
             GetNodeConstructor<StatementBodyNode>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Statements;
     }
 }

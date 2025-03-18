@@ -1,4 +1,5 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 
 using Parser;
 using Parser.NodeConstraints;
@@ -6,7 +7,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
-public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFactory
+public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public ExpressionNode[] Expressions { get; }
 
@@ -33,5 +34,10 @@ public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFacto
                         new CrumpetRawTerminalConstraint(CrumpetToken.COMMA),
                         new NonTerminalConstraint<ExpressionNode>()))),
             GetNodeConstructor<ArgumentExpressionListNode>());
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expressions;
     }
 }

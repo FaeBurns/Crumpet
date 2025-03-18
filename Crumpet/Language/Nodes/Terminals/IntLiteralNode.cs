@@ -22,7 +22,7 @@ public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<C
         yield return new TerminalDefinition<CrumpetToken>(CrumpetToken.INT, GetNodeConstructor<IntLiteralNode>());
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
         yield return new PushConstantInstruction(new BuiltinTypeInfo<int>(), IntLiteral);
     }

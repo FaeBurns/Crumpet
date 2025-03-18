@@ -38,8 +38,10 @@ public class FlowStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInst
             GetNodeConstructor<FlowStatementNode>());
     }
 
-    public IEnumerable<Instruction> GetInstructions()
+    public IEnumerable GetInstructionsRecursive()
     {
+        yield return Expression;
+        
         yield return Keyword.Token.TokenId switch
         {
             CrumpetToken.KW_CONTINUE => new ContinueInstruction(),

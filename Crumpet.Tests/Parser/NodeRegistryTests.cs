@@ -54,7 +54,7 @@ public class NodeRegistryTests
     [TestCase(typeof(TypeNode), 2)]
     [TestCase(typeof(ExpressionNode))]
     [TestCase(typeof(UnaryExpressionNode))]
-    [TestCase(typeof(ExpressionWithPostfixNode), 3)]
+    [TestCase(typeof(ExpressionWithPostfixNode), 4)]
     [TestCase(typeof(PrimaryExpressionNode), 3)]
     [TestCase(typeof(AssignmentExpressionNode), 2)]
     [TestCase(typeof(ArgumentExpressionListNode))]

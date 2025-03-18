@@ -3,8 +3,6 @@ using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
-using Crumpet.Language.Nodes;
-using Parser;
 using Shared;
 
 namespace Crumpet.Interpreter.Functions;
@@ -14,10 +12,10 @@ public class Function
     private readonly Instruction[] m_instructions;
     public FunctionDefinition Definition { get; }
 
-    public Function(FunctionDefinition definition, FunctionDeclarationNode root)
+    public Function(FunctionDefinition definition, IEnumerable<Instruction> instructions)
     {
         // get instructions from child nodes
-        m_instructions = NodeSequenceEnumerator.CreateLeafWalking(root.StatementBody).OfType<IInstructionProvider>().SelectMany(n => n.GetInstructions()).ToArray();
+        m_instructions = instructions.ToArray();
         Definition = definition;
     }
 
@@ -34,7 +32,8 @@ public class Function
             // default on source location will occur if it's the first invocable called
             throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
 
-        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition);
+        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation);
+        unit.AcceptsReturn = true;
 
         for (int i = 0; i < Definition.Parameters.Count; i++)
         {
