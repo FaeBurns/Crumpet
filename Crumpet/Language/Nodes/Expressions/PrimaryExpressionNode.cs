@@ -50,7 +50,7 @@ public class PrimaryExpressionNodeIdentifierVariant : PrimaryExpressionNode, IIn
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushVariableInstruction(Identifier.Terminal);
+        yield return new PushNamedVariableInstruction(Identifier.Terminal);
     }
 }
 

@@ -9,6 +9,8 @@ namespace Crumpet.Interpreter.Functions;
 
 public class InterpreterExecutionContext
 {
+    private readonly Stream m_inputStream;
+    private readonly Stream m_outputStream;
     private readonly Scope m_rootScope = new Scope(null);
     private readonly Stack<UnitExecutionContext> m_executionStack = new Stack<UnitExecutionContext>();
 
@@ -20,8 +22,10 @@ public class InterpreterExecutionContext
     public TypeResolver TypeResolver { get; }
     public FunctionResolver FunctionResolver { get; }
 
-    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver)
+    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream)
     {
+        m_inputStream = inputStream;
+        m_outputStream = outputStream;
         TypeResolver = typeResolver;
         FunctionResolver = functionResolver;
     }
@@ -88,7 +92,7 @@ public class InterpreterExecutionContext
         JumpToInstructionOfType<LoopBreakLabel>();
     }
 
-    public Instruction StepNextInstruction()
+    public Instruction? StepNextInstruction()
     {
         // invalid if no unit is currently active
         if (CurrentUnit == null)
@@ -98,13 +102,37 @@ public class InterpreterExecutionContext
             m_executionStack.Pop();
         
         // then check again?
-        // invalid if no unit is currently active
+        // that may have been the last unit
         if (CurrentUnit == null)
-            throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
+            return null;
         
         Instruction instruction = CurrentUnit.StepNextInstruction();
 
         return instruction;
+    }
+
+    public void WriteToOutputStream(string output)
+    {
+        // do not wrap in using as otherwise the streamwriter will dispose the inner stream
+        StreamWriter sw = new StreamWriter(m_outputStream);
+        sw.Write(output);
+        sw.Flush();
+    }
+
+    public string ReadInputStreamLine(bool blockUntilInput)
+    {
+        // do not wrap in using as otherwise the streamreader will dispose the inner stream
+        UnbufferedStreamReader sr = new UnbufferedStreamReader(m_inputStream);
+
+        if (!blockUntilInput)
+            return sr.ReadLine() ?? string.Empty;
+
+        while (true)
+        {
+            string? line = sr.ReadLine();
+            if (line != null)
+                return line;
+        }
     }
 
     private void JumpToInstructionOfType<T>() where T : Instruction

@@ -9,32 +9,10 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes;
 
-public class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
+public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public TypeNode Type { get; }
-    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
-    public IdentifierNode Name { get; }
-
-    public VariableModifier VariableModifier
+    protected ParameterNode(params IEnumerable<ASTNode?> implicitChildren) : base(implicitChildren)
     {
-        get
-        {
-            if (ModifierSugar is null)
-                return VariableModifier.COPY;
-
-            // re-use multiply as multiple identical tokens cannot exist
-            if (ModifierSugar.Token.TokenId == CrumpetToken.REFERENCE)
-                return VariableModifier.POINTER;
-
-            throw new UnreachableException();
-        }
-    }
-
-    public ParameterNode(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
-    {
-        Type = type;
-        ModifierSugar = modifierSugar;
-        Name = name;
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -44,6 +22,56 @@ public class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
                 new NonTerminalConstraint<TypeNode>(),
                 new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)),
-            GetNodeConstructor<ParameterNode>());
+            GetNodeConstructor<ParameterNodeBasicVariant>());
+
+        yield return new NonTerminalDefinition<ParameterNode>(
+            new SequenceConstraint(
+                new NonTerminalConstraint<TypeNode>(),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
+                new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)),
+            GetNodeConstructor<ParameterNodeArrayVariant>());
+    }
+    
+    public VariableModifier GetModifier(TerminalNode<CrumpetToken>? sugar)
+    {
+        if (sugar is null)
+            return VariableModifier.COPY;
+
+        // re-use multiply as multiple identical tokens cannot exist
+        if (sugar.Token.TokenId == CrumpetToken.REFERENCE)
+            return VariableModifier.POINTER;
+
+        throw new UnreachableException();
+    }
+}
+
+public class ParameterNodeBasicVariant : ParameterNode
+{
+    public TypeNode Type { get; }
+    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
+    public IdentifierNode Name { get; }
+    public ParameterNodeBasicVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
+    {
+        Type = type;
+        ModifierSugar = modifierSugar;
+        Name = name;
+    }
+}
+
+public class ParameterNodeArrayVariant : ParameterNode
+{
+    public TypeNode Type { get; }
+    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
+    public TerminalNode<CrumpetToken>? ArrayModifierSugar { get; }
+    public IdentifierNode Name { get; }
+    public ParameterNodeArrayVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, TerminalNode<CrumpetToken>? arrayModifierSugar, IdentifierNode name) : base(type, modifierSugar, arrayModifierSugar, name)
+    {
+        Type = type;
+        ModifierSugar = modifierSugar;
+        ArrayModifierSugar = arrayModifierSugar;
+        Name = name;
     }
 }

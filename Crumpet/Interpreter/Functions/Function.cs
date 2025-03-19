@@ -1,4 +1,5 @@
 ﻿using Crumpet.Exceptions;
+using Crumpet.Instructions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
@@ -7,18 +8,25 @@ using Shared;
 
 namespace Crumpet.Interpreter.Functions;
 
-public class Function
+public abstract class Function
+{
+    public abstract string Name { get; }
+}
+
+public class UserFunction : Function
 {
     private readonly Instruction[] m_instructions;
     public FunctionDefinition Definition { get; }
 
-    public Function(FunctionDefinition definition, IEnumerable<Instruction> instructions)
+    public override string Name => Definition.Name;
+
+    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions)
     {
         // get instructions from child nodes
         m_instructions = instructions.ToArray();
         Definition = definition;
     }
-
+    
     /// <summary>
     /// Creates an <see cref="ExecutableUnit"/> for this function.
     /// </summary>
@@ -70,5 +78,23 @@ public class Function
         }
 
         return unit;
+    }
+}
+
+public class BuiltInFunction : Function
+{
+    private readonly Action<InterpreterExecutionContext> m_function;
+
+    public override string Name { get; }
+
+    public BuiltInFunction(string name, Action<InterpreterExecutionContext> function)
+    {
+        Name = name;
+        m_function = function;
+    }
+    
+    public void Invoke(InterpreterExecutionContext context)
+    {
+        m_function.Invoke(context);
     }
 }

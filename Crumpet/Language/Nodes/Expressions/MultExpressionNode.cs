@@ -12,46 +12,48 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public UnaryExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken>? Sugar { get; }
-    public UnaryExpressionNode? Secondary { get; }
+    public IEnumerable<MultExpressionNodeArgumentCollator> Arguments { get; }
 
-    public MultExpressionNode(UnaryExpressionNode primary, TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary) : base(primary, sugar, secondary)
+    public MultExpressionNode(UnaryExpressionNode primary, IEnumerable<MultExpressionNodeArgumentCollator> arguments) : base(primary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
-    }
+        Arguments = arguments.ToArray();
 
-    public MultExpressionNode(UnaryExpressionNode primary)
-    {
-        Primary = primary;
+        foreach (MultExpressionNodeArgumentCollator collator in Arguments)
+        {
+            ImplicitChildren.Add(collator.Sugar);
+            ImplicitChildren.Add(collator.Secondary);
+        }
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
+        // mult
         yield return new NonTerminalDefinition<MultExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<UnaryExpressionNode>(),
-                new SequenceConstraint(
-                    new OrConstraint(
-                        new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY),
-                        new CrumpetTerminalConstraint(CrumpetToken.DIVIDE)),
-                    new NonTerminalConstraint<UnaryExpressionNode>())),
-            GetNodeConstructor<MultExpressionNode>(3));
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<MultExpressionNodeArgumentCollator>())),
+            GetNodeConstructor<MultExpressionNode>());
 
-        yield return new NonTerminalDefinition<MultExpressionNode>(
-            new NonTerminalConstraint<UnaryExpressionNode>(),
-            GetNodeConstructor<MultExpressionNode>(1));
+        // arguments
+        yield return new NonTerminalDefinition<MultExpressionNodeArgumentCollator>(
+            new SequenceConstraint(
+                new OrConstraint(
+                    new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY),
+                    new CrumpetTerminalConstraint(CrumpetToken.DIVIDE)),
+                new NonTerminalConstraint<UnaryExpressionNode>()),
+            GetNodeConstructor<MultExpressionNodeArgumentCollator>());
     }
 
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Primary;
-        yield return Secondary;
-
-        if (Sugar is not null)
+        
+        foreach (MultExpressionNodeArgumentCollator argument in Arguments)
         {
-            switch (Sugar.Token.TokenId)
+            yield return argument.Secondary;
+
+            switch (argument.Sugar.Token.TokenId)
             {
                 case CrumpetToken.MULTIPLY:
                     yield return new MathematicalInstruction(MathematicalInstruction.Operation.MULTIPLY);
@@ -60,6 +62,18 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIns
                     yield return new MathematicalInstruction(MathematicalInstruction.Operation.DIVIDE);
                     break;
             }
+        }
+    }
+
+    public class MultExpressionNodeArgumentCollator : NonTerminalNode
+    {
+        public TerminalNode<CrumpetToken> Sugar { get; }
+        public UnaryExpressionNode Secondary { get; }
+
+        public MultExpressionNodeArgumentCollator(TerminalNode<CrumpetToken> sugar, UnaryExpressionNode secondary)
+        {
+            Sugar = sugar;
+            Secondary = secondary;
         }
     }
 }

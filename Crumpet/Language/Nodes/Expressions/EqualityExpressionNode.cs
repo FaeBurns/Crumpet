@@ -12,19 +12,18 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public RelationExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken>? Sugar { get; }
-    public RelationExpressionNode? Secondary { get; }
+    public IEnumerable<EqualityExpressionNodeArgumentCollator> Arguments { get; }
 
-    public EqualityExpressionNode(RelationExpressionNode primary, TerminalNode<CrumpetToken> sugar, RelationExpressionNode? secondary) : base(primary, sugar, secondary)
+    public EqualityExpressionNode(RelationExpressionNode primary, IEnumerable<EqualityExpressionNodeArgumentCollator> arguments) : base(primary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
-    }
+        Arguments = arguments.ToArray();
 
-    public EqualityExpressionNode(RelationExpressionNode primary)
-    {
-        Primary = primary;
+        foreach (EqualityExpressionNodeArgumentCollator collator in Arguments)
+        {
+            ImplicitChildren.Add(collator.Sugar);
+            ImplicitChildren.Add(collator.Secondary);
+        }
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -32,27 +31,38 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory, 
         yield return new NonTerminalDefinition<EqualityExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<RelationExpressionNode>(),
-                new SequenceConstraint(
-                    new OrConstraint(
-                        new CrumpetTerminalConstraint(CrumpetToken.EQUALS_EQUALS),
-                        new CrumpetTerminalConstraint(CrumpetToken.NOT_EQUALS)),
-                    new NonTerminalConstraint<RelationExpressionNode>())),
-            GetNodeConstructor<EqualityExpressionNode>(3));
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<EqualityExpressionNodeArgumentCollator>())),
+            GetNodeConstructor<EqualityExpressionNode>());
 
-        yield return new NonTerminalDefinition<EqualityExpressionNode>(
-            new NonTerminalConstraint<RelationExpressionNode>(),
-            GetNodeConstructor<EqualityExpressionNode>(1));
+        yield return new NonTerminalDefinition<EqualityExpressionNodeArgumentCollator>(
+            new SequenceConstraint(
+                new OrConstraint(
+                    new CrumpetTerminalConstraint(CrumpetToken.EQUALS_EQUALS),
+                    new CrumpetTerminalConstraint(CrumpetToken.NOT_EQUALS)),
+                new NonTerminalConstraint<RelationExpressionNode>()),
+            GetNodeConstructor<EqualityExpressionNodeArgumentCollator>());
     }
 
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Primary;
 
-        yield return Secondary;
-        if (Secondary is not null)
+        foreach (EqualityExpressionNodeArgumentCollator argument in Arguments)
         {
-            Debug.Assert(Sugar is not null);
-            yield return new EqualityInstruction(Sugar.Token.TokenId == CrumpetToken.NOT_EQUALS);
+            yield return argument.Secondary;
+            yield return new EqualityInstruction(argument.Sugar.Token.TokenId == CrumpetToken.NOT_EQUALS);
+        }
+    }
+
+    public class EqualityExpressionNodeArgumentCollator : NonTerminalNode
+    {
+        public TerminalNode<CrumpetToken> Sugar { get; }
+        public RelationExpressionNode Secondary { get; }
+
+        public EqualityExpressionNodeArgumentCollator(TerminalNode<CrumpetToken> sugar, RelationExpressionNode secondary)
+        {
+            Sugar = sugar;
+            Secondary = secondary;
         }
     }
 }

@@ -12,49 +12,47 @@ namespace Crumpet.Language.Nodes.Expressions;
 public class SumExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public MultExpressionNode Primary { get; }
-    public TerminalNode<CrumpetToken>? Sugar { get; }
-    public MultExpressionNode? Secondary { get; }
+    public IEnumerable<SumExpressionNodeArgumentCollator> Arguments { get; }
 
-    public SumExpressionNode(MultExpressionNode primary, TerminalNode<CrumpetToken> sugar, MultExpressionNode secondary) : base(primary, sugar, secondary)
+    public SumExpressionNode(MultExpressionNode primary, IEnumerable<SumExpressionNodeArgumentCollator> arguments) : base(primary)
     {
         Primary = primary;
-        Sugar = sugar;
-        Secondary = secondary;
-    }
+        Arguments = arguments.ToArray();
 
-    public SumExpressionNode(MultExpressionNode primary) : base(primary)
-    {
-        Primary = primary;
+        foreach (SumExpressionNodeArgumentCollator collator in Arguments)
+        {
+            ImplicitChildren.Add(collator.Sugar);
+            ImplicitChildren.Add(collator.Secondary);
+        }
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        // sum
         yield return new NonTerminalDefinition<SumExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<MultExpressionNode>(),
-                new SequenceConstraint(
-                    new OrConstraint(
-                        new CrumpetTerminalConstraint(CrumpetToken.PLUS),
-                        new CrumpetTerminalConstraint(CrumpetToken.MINUS)),
-                    new NonTerminalConstraint<MultExpressionNode>())),
-            GetNodeConstructor<SumExpressionNode>(3));
+                new ZeroOrMoreConstraint(new NonTerminalConstraint<SumExpressionNodeArgumentCollator>())),
+            GetNodeConstructor<SumExpressionNode>());
 
-        // passthrough
-        yield return new NonTerminalDefinition<SumExpressionNode>(
-                new NonTerminalConstraint<MultExpressionNode>(),
-            GetNodeConstructor<SumExpressionNode>(1));
+        yield return new NonTerminalDefinition<SumExpressionNodeArgumentCollator>(
+            new SequenceConstraint(
+                new OrConstraint(
+                    new CrumpetTerminalConstraint(CrumpetToken.PLUS),
+                    new CrumpetTerminalConstraint(CrumpetToken.MINUS)),
+                new NonTerminalConstraint<MultExpressionNode>()),
+            GetNodeConstructor<SumExpressionNodeArgumentCollator>());
     }
 
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Primary;
-        yield return Secondary;
 
-        if (Sugar is not null)
+        foreach (SumExpressionNodeArgumentCollator argument in Arguments)
         {
+            yield return argument.Secondary;
+
             // need values in reverse order so they play nicely with the later instructions (stack order)
-            switch (Sugar.Token.TokenId)
+            switch (argument.Sugar.Token.TokenId)
             {
                 case CrumpetToken.PLUS:
                     yield return new MathematicalInstruction(MathematicalInstruction.Operation.ADD);
@@ -63,6 +61,18 @@ public class SumExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInst
                     yield return new MathematicalInstruction(MathematicalInstruction.Operation.SUBTRACT);
                     break;
             }
+        }
+    }
+    
+    public class SumExpressionNodeArgumentCollator : NonTerminalNode
+    {
+        public TerminalNode<CrumpetToken> Sugar { get; }
+        public MultExpressionNode Secondary { get; }
+
+        public SumExpressionNodeArgumentCollator(TerminalNode<CrumpetToken> sugar, MultExpressionNode secondary)
+        {
+            Sugar = sugar;
+            Secondary = secondary;
         }
     }
 }

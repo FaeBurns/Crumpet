@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using Parser.Elements;
 using Parser.Nodes;
@@ -93,18 +94,60 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
         {
             // get the first generic argument
             Type genericType = parameterType.GetGenericArguments()[0];
-
             object[] objArray = array as object[] ?? array.ToArray();
-            
-            // populate a new array with the arguments
-            Array typedArray = Array.CreateInstance(genericType, objArray.Length);
-            Array.Copy(objArray, typedArray, objArray.Length);
 
-            return typedArray;
+            if (genericType.IsGenericType)
+            {
+                Type[] innerGenericTypes = genericType.GetGenericArguments();
+                if (innerGenericTypes.Length >= 2)
+                {
+                    object[] tupleArray = ConvertToTupleArray(objArray, innerGenericTypes.Length);
+                    return ConvertToSingleTypeArray(tupleArray, genericType);
+                }
+            }
+            else
+            {
+                return ConvertToSingleTypeArray(objArray, genericType);
+            }
+
+            throw new UnreachableException();
         }
         else
         {
             return argument;
         }
+    }
+
+    private object ConvertToSingleTypeArray(object[] elements, Type arrayType)
+    {
+        // populate a new array with the arguments
+        Array typedArray = Array.CreateInstance(arrayType, elements.Length);
+        Array.Copy(elements, typedArray, elements.Length);
+
+        return typedArray;
+    }
+
+    private object[] ConvertToTupleArray(object[] elements, int elementsPerTuple)
+    {
+        // this shit don't work
+        // need to case to Tuple<known type, known type...> but this only returns Tuple<object, object...>
+        // cannot implicitly cast between
+        List<object> tuples = new List<object>(elements.Length / elementsPerTuple);
+        for (int i = 0; i < elements.Length; i += elementsPerTuple)
+        {
+            object tuple = elementsPerTuple switch
+            {
+                2 => (elements[i], elements[i + 1]),
+                3 => (elements[i], elements[i + 1], elements[i + 2]),
+                4 => (elements[i], elements[i + 1], elements[i + 2], elements[i + 3]),
+                5 => (elements[i], elements[i + 1], elements[i + 2], elements[i + 3], elements[i + 4]),
+                6 => (elements[i], elements[i + 1], elements[i + 2], elements[i + 3], elements[i + 4], elements[i + 5]),
+                7 => (elements[i], elements[i + 1], elements[i + 2], elements[i + 3], elements[i + 4], elements[i + 5], elements[i + 6]),
+                _ => throw new ArgumentException()
+            };
+            tuples.Add(tuple);
+        }
+
+        return tuples.ToArray();
     }
 }

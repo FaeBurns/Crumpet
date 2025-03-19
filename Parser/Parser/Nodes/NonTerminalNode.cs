@@ -2,21 +2,21 @@
 
 public abstract class NonTerminalNode : ASTNode
 {
-    private readonly IEnumerable<ASTNode?> m_implicitChildren;
+    protected readonly List<ASTNode?> ImplicitChildren;
 
     protected NonTerminalNode()
     {
-        m_implicitChildren = Array.Empty<ASTNode>();
+        ImplicitChildren = new List<ASTNode?>();
     }
 
     protected NonTerminalNode(params IEnumerable<ASTNode?> implicitChildren)
     {
-        m_implicitChildren = implicitChildren;
+        ImplicitChildren = implicitChildren.ToList();
     }
 
     public IEnumerable<ASTNode> EnumerateChildren()
     {
-        foreach (ASTNode? node in m_implicitChildren)
+        foreach (ASTNode? node in ImplicitChildren)
             if (node is not null)
                 yield return node;
 

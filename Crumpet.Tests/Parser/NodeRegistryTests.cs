@@ -41,8 +41,7 @@ public class NodeRegistryTests
     [TestCase(typeof(DeclarationNode), 2)]
     [TestCase(typeof(FunctionDeclarationNode))]
     [TestCase(typeof(ParameterListNode))]
-    [TestCase(typeof(ParameterNode))]
-    [TestCase(typeof(ParameterNode))]
+    [TestCase(typeof(ParameterNode), 2)]
     [TestCase(typeof(TypeDeclarationNode))]
     [TestCase(typeof(TypeDeclarationFieldNode))]
     [TestCase(typeof(StatementBodyNode))]
@@ -50,7 +49,7 @@ public class NodeRegistryTests
     [TestCase(typeof(FlowStatementNode))]
     [TestCase(typeof(IfStatementNode))]
     [TestCase(typeof(IterationStatementNode))]
-    [TestCase(typeof(InitializationStatementNode))]
+    [TestCase(typeof(InitializationStatementNode), 2)]
     [TestCase(typeof(TypeNode), 2)]
     [TestCase(typeof(ExpressionNode))]
     [TestCase(typeof(UnaryExpressionNode))]
@@ -62,10 +61,10 @@ public class NodeRegistryTests
     [TestCase(typeof(OrExpressionNode))]
     [TestCase(typeof(AndExpressionNode))]
     [TestCase(typeof(ExclusiveOrExpressionNode))]
-    [TestCase(typeof(EqualityExpressionNode), 2)]
+    [TestCase(typeof(EqualityExpressionNode), 1)]
     [TestCase(typeof(RelationExpressionNode), 2)]
-    [TestCase(typeof(SumExpressionNode), 2)]
-    [TestCase(typeof(MultExpressionNode), 2)]
+    [TestCase(typeof(SumExpressionNode), 1)]
+    [TestCase(typeof(MultExpressionNode), 1)]
     public void TestRegisterNonTerminal(Type type, int variantCount = 1)
     {
         ASTNodeRegistry<CrumpetToken> registry = RegisterNodes();

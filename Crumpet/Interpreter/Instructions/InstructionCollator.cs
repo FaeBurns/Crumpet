@@ -42,7 +42,7 @@ public class InstructionCollator : IEnumerable<Instruction>
                     break;
                 case IInstructionProvider instructionProvider: // yielding a node
 #if DEBUG
-                    target.Add(new DebugReferenceProviderInstruction(instructionProvider));
+                    // target.Add(new DebugReferenceProviderInstruction(instructionProvider));
 #endif
                     EnumerateStep(instructionProvider.GetInstructionsRecursive(), target);
                     break;

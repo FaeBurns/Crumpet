@@ -14,10 +14,10 @@ public class AccessIndexInstruction : Instruction
         Variable index = context.VariableStack.Pop();
         Variable target = context.VariableStack.Pop();
 
-        if (index.Type is not ArrayTypeInfo)
+        if (target.Type is not ArrayTypeInfo)
             throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), index.Type));
         
-        if (!target.AssertType<int>())
+        if (!index.AssertType<int>())
             throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format(typeof(int), target.Type));
 
         // get array object and get variable at desired index

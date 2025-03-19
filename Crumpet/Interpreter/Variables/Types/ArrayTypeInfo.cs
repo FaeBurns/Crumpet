@@ -37,7 +37,11 @@ public class ArrayTypeInfo : TypeInfo
             List<Variable> result = new List<Variable>(source.Count);
             foreach (Variable elem in source)
             {
-                result.Add(Variable.CreateModifier(elem.Type, InnerTypeModifier, elem));
+                Variable copiedElementVariable = Variable.CreateModifier(elem.Type, InnerTypeModifier, elem);
+                // do a manual assignment if it's a copy as CreateModifier won't set the value itself
+                if (InnerTypeModifier == VariableModifier.COPY)
+                    copiedElementVariable.Value = elem;
+                result.Add(copiedElementVariable);
             }
 
             return result;

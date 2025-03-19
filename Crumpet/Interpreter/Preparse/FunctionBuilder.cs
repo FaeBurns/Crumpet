@@ -1,6 +1,8 @@
-﻿using Crumpet.Exceptions;
+﻿using System.Diagnostics;
+using Crumpet.Exceptions;
 using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
+using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language.Nodes;
 using Shared;
 
@@ -27,17 +29,38 @@ public class FunctionBuilder
             FunctionDefinition definition = new FunctionDefinition(
                 node.Name.Terminal, 
                 m_typeResolver.ResolveType(node.ReturnType.FullName) ?? throw new CompilationException(node, ExceptionConstants.UNKOWN_RETURN_TYPE.Format(node.ReturnType)), 
-                node.Parameters.Parameters.Select(
-                    p => new ParameterDefinition(
-                        p.Name.Terminal, 
-                        m_typeResolver.ResolveType(p.Type.FullName) ?? throw new CompilationException(p, ExceptionConstants.UNKOWN_TYPE.Format(p.Type)),
-                        p.VariableModifier)), 
+                node.Parameters.Parameters.Select(NodeToDefinition), 
                 node.Location);
             
             functions.Add(BuildFunction(definition, node));
         }
         
+        // add built in functions
+        functions.AddRange(BuiltInFunctions.GetFunctions());
+        
         return new FunctionResolver(functions);
+    }
+
+    private ParameterDefinition NodeToDefinition(ParameterNode parameterNode)
+    {
+        switch (parameterNode)
+        {
+            case ParameterNodeBasicVariant basic:
+                return new ParameterDefinition(
+                    basic.Name.Terminal,
+                    m_typeResolver.ResolveType(basic.Type.FullName) ?? throw new CompilationException(basic, ExceptionConstants.UNKOWN_TYPE.Format(basic.Type)),
+                    basic.GetModifier(basic.ModifierSugar));
+            case ParameterNodeArrayVariant array:
+                return new ParameterDefinition(
+                    array.Name.Terminal,
+                    new ArrayTypeInfo(
+                        m_typeResolver.ResolveType(array.Type.FullName)
+                            ?? throw new CompilationException(array, ExceptionConstants.UNKOWN_TYPE.Format(array.Type)),
+                        array.GetModifier(array.ModifierSugar)),
+                    array.GetModifier(array.ArrayModifierSugar));
+            default:
+                throw new UnreachableException();
+        }
     }
 
     private Function BuildFunction(FunctionDefinition definition, FunctionDeclarationNode node)
@@ -45,6 +68,6 @@ public class FunctionBuilder
         IEnumerable instructions = node.StatementBody.GetInstructionsRecursive();
         InstructionCollator bodyInstructions = new InstructionCollator(instructions);
 
-        return new Function(definition, bodyInstructions);
+        return new UserFunction(definition, bodyInstructions);
     }
 }

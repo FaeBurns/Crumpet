@@ -74,8 +74,9 @@ public enum CrumpetToken : byte
     [Token("true|false")]
     BOOL,
 
-    // \".*\"
-    [Token("\\\".*\\\"")]
+    // "((\\")|[^"])*" - with " escape
+    // "[^"]*" - no " escape
+    [Token(@"""[^""]*""")]
     STRING,
 
     [Token("\\^")]

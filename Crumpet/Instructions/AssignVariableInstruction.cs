@@ -11,8 +11,8 @@ public class AssignVariableInstruction : Instruction
 {
     public override void Execute(InterpreterExecutionContext context)
     {
-        Variable target = context.VariableStack.Pop();
         Variable source = context.VariableStack.Pop();
+        Variable target = context.VariableStack.Pop();
         target.Value = source;
     }
 }

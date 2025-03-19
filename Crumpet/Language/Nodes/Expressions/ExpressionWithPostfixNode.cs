@@ -70,7 +70,7 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
         // evaluate all args
         yield return Arguments;
         // execute
-        yield return new ExecutionFunctionInstruction(Identifier.Terminal);
+        yield return new ExecuteFunctionInstruction(Identifier.Terminal);
     }
 }
 

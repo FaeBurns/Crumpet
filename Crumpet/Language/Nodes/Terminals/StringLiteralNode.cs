@@ -13,7 +13,8 @@ public class StringLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactor
     public string StringLiteral { get; }
     public StringLiteralNode(Token<CrumpetToken> token) : base(token)
     {
-        StringLiteral = token.Value;
+        // get everything except the quotes on the outside and replace all \" with "
+        StringLiteral = token.Value[new Range(Index.FromStart(1), Index.FromEnd(1))].Replace("\\\"", "\"");
     }
 
     public static IEnumerable<TerminalDefinition<CrumpetToken>> GetTerminals()
