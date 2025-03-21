@@ -58,4 +58,22 @@ public class VariableCollection : IVariableCollection
 
         return false;
     }
+
+    protected bool Equals(VariableCollection other)
+    {
+        return m_variables.Equals(other.m_variables);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((VariableCollection)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return m_variables.GetHashCode();
+    }
 }

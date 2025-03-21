@@ -26,10 +26,10 @@ public class MathematicalInstruction : Instruction
         
         // string concat
         // kinda stinky putting it here but it works?
-        if (a.Type == b.Type && a.Type == new BuiltinTypeInfo<string>() && m_operation == Operation.ADD)
+        if (a.Type == b.Type && a.Type == BuiltinTypeInfo.String && m_operation == Operation.ADD)
         {
             string stringResult = a.GetValue<string>() + b.GetValue<string>();
-            context.VariableStack.Push(new BuiltinTypeInfo<string>(), stringResult);
+            context.VariableStack.Push(BuiltinTypeInfo.String, stringResult);
             return;
         }
         
@@ -38,11 +38,11 @@ public class MathematicalInstruction : Instruction
         // both values are the same type
         if (a.Type == b.Type)
         {
-            if (a.Type == new BuiltinTypeInfo<int>())
+            if (a.Type == BuiltinTypeInfo.Int)
             {
                 result = Operate<int>(a, b);
             }
-            else if (a.Type == new BuiltinTypeInfo<float>())
+            else if (a.Type == BuiltinTypeInfo.Float)
             {
                 result = Operate<float>(a, b);
             }
@@ -54,11 +54,11 @@ public class MathematicalInstruction : Instruction
         else
         {
             // both orders
-            if (a.Type == new BuiltinTypeInfo<int>() && b.Type == new BuiltinTypeInfo<float>())
+            if (a.Type == BuiltinTypeInfo.Int && b.Type == BuiltinTypeInfo.Float)
             {
                 result = Operate<float>(a, b);
             }
-            else if (a.Type == new BuiltinTypeInfo<float>() && b.Type == new BuiltinTypeInfo<int>())
+            else if (a.Type == BuiltinTypeInfo.Float && b.Type == BuiltinTypeInfo.Int)
             {
                 result = Operate<float>(a, b);
             }

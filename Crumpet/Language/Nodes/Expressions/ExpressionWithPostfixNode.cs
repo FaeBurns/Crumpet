@@ -57,9 +57,9 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
 public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
     public IdentifierNode Identifier { get; }
-    public ArgumentExpressionListNode Arguments { get; }
+    public ArgumentExpressionListNode? Arguments { get; }
 
-    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, ArgumentExpressionListNode arguments) : base(identifier, arguments)
+    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, ArgumentExpressionListNode? arguments) : base(identifier, arguments)
     {
         Identifier = identifier;
         Arguments = arguments;
@@ -70,7 +70,7 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
         // evaluate all args
         yield return Arguments;
         // execute
-        yield return new ExecuteFunctionInstruction(Identifier.Terminal);
+        yield return new ExecuteFunctionInstruction(Identifier.Terminal, Arguments?.Expressions.Length ?? 0);
     }
 }
 

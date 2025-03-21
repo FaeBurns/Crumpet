@@ -72,15 +72,15 @@ public class TypeDefinitionTests
     public void TestTypeResolution()
     {
         UserObjectTypeInfo typeA = new UserObjectTypeInfo("TypeA",
-            new FieldInfo("a", new BuiltinTypeInfo<int>()),
-            new FieldInfo("b", new BuiltinTypeInfo<int>()),
-            new FieldInfo("c", new BuiltinTypeInfo<int>()),
+            new FieldInfo("a", BuiltinTypeInfo.Int),
+            new FieldInfo("b", BuiltinTypeInfo.Int),
+            new FieldInfo("c", BuiltinTypeInfo.Int),
             new FieldInfo("child", null!));
 
         UserObjectTypeInfo typeB = new UserObjectTypeInfo("TypeB",
             new FieldInfo("parent", typeA, VariableModifier.POINTER),
-            new FieldInfo("a", new BuiltinTypeInfo<string>()),
-            new FieldInfo("b", new BuiltinTypeInfo<float>()));
+            new FieldInfo("a", BuiltinTypeInfo.String),
+            new FieldInfo("b", BuiltinTypeInfo.Float));
 
         typeA.Fields[3].Type = typeB;
 

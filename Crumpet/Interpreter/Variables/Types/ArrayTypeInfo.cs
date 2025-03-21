@@ -3,16 +3,16 @@ using Shared;
 
 namespace Crumpet.Interpreter.Variables.Types;
 
-public class ArrayTypeInfo : TypeInfo
+public class ArrayTypeInfo : ArrayTypeInfoUnkownType
 {
-    public ArrayTypeInfo(TypeInfo innerType, VariableModifier innerTypeModifier)
+    public static readonly TypeInfo Any = new ArrayTypeInfoUnkownType(VariableModifier.COPY);
+    
+    public ArrayTypeInfo(TypeInfo innerType, VariableModifier innerTypeModifier) : base(innerTypeModifier)
     {
         InnerType = innerType;
-        InnerTypeModifier = innerTypeModifier;
     }
 
     public TypeInfo InnerType { get; }
-    public VariableModifier InnerTypeModifier { get; }
     public override string TypeName => InnerType.TypeName + "[]";
 
     protected override bool Equals(TypeInfo other)
@@ -48,5 +48,26 @@ public class ArrayTypeInfo : TypeInfo
         }
 
         throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(IList<Variable>), instance.GetType()));
+    }
+}
+
+public class ArrayTypeInfoUnkownType : TypeInfo
+{
+    public VariableModifier InnerTypeModifier { get; }
+
+    public ArrayTypeInfoUnkownType(VariableModifier innerTypeModifier)
+    {
+        InnerTypeModifier = innerTypeModifier;
+    }
+    
+    public override string TypeName => "[]";
+    public override Variable CreateVariable()
+    {
+        throw new InvalidOperationException();
+    }
+
+    public override object CreateCopy(object instance)
+    {
+        throw new InvalidOperationException();
     }
 }

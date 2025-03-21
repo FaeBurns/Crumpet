@@ -10,13 +10,15 @@ public static class BuiltInFunctions
 {
     public static IEnumerable<BuiltInFunction> GetFunctions()
     {
-        yield return new BuiltInFunction("count", Count);
-        yield return new BuiltInFunction("print", Print);
-        yield return new BuiltInFunction("println", PrintLine);
+        yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any);
+        yield return new BuiltInFunction("print", Print, new AnyTypeInfo());
+        yield return new BuiltInFunction("println", PrintLine, new AnyTypeInfo());
         yield return new BuiltInFunction("input", Input);
-        yield return new BuiltInFunction("pInt", ParseInt);
-        yield return new BuiltInFunction("pFloat", ParseFloat);
-        yield return new BuiltInFunction("pString", ToString);
+        yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String);
+        yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String);
+        yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo());
+        yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool, BuiltinTypeInfo.String);
+        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int);
     }
     
     public static void Count(InterpreterExecutionContext context)
@@ -28,7 +30,7 @@ public static class BuiltInFunctions
             int count = 0;
             foreach (object _ in enumerable) count++;
             
-            context.VariableStack.Push(Variable.Create(new BuiltinTypeInfo<int>(), count));
+            context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.Int, count));
             return;
         }
 
@@ -50,14 +52,14 @@ public static class BuiltInFunctions
     public static void Input(InterpreterExecutionContext context)
     {
         string input = context.ReadInputStreamLine(true);
-        context.VariableStack.Push(Variable.Create(new BuiltinTypeInfo<string>(), input));
+        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, input));
     }
 
     public static void ParseInt(InterpreterExecutionContext context)
     {
         string input = context.VariableStack.Pop().GetValue<string>();
         if (Int32.TryParse(input, out int result))
-            context.VariableStack.Push(new BuiltinTypeInfo<int>(), result);
+            context.VariableStack.Push(BuiltinTypeInfo.Int, result);
         else
             throw new RuntimeException(RuntimeExceptionNames.TYPE);
     }
@@ -66,7 +68,7 @@ public static class BuiltInFunctions
     {
         string input = context.VariableStack.Pop().GetValue<string>();
         if (Single.TryParse(input, out float result))
-            context.VariableStack.Push(new BuiltinTypeInfo<float>(), result);
+            context.VariableStack.Push(BuiltinTypeInfo.Float, result);
         
         throw new RuntimeException(RuntimeExceptionNames.TYPE);
     }
@@ -74,6 +76,20 @@ public static class BuiltInFunctions
     public static void ToString(InterpreterExecutionContext context)
     {
         Variable variable = context.VariableStack.Pop();
-        context.VariableStack.Push(new BuiltinTypeInfo<string>(), variable.Value.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
+        context.VariableStack.Push(BuiltinTypeInfo.String, variable.Value.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
+    }
+
+    public static void AssertMessage(InterpreterExecutionContext context)
+    {
+        string message = context.VariableStack.Pop().GetValue<string>();
+        Variable value = context.VariableStack.Pop();
+        if (!value.GetValue<bool>())
+            throw new RuntimeException(RuntimeExceptionNames.ASSERT, message);
+    }
+
+    public static void Exit(InterpreterExecutionContext context)
+    {
+        Variable value = context.VariableStack.Pop();
+        context.Exit(value.GetValue<int>());
     }
 }

@@ -28,7 +28,7 @@ public class LogicalBooleanInstruction : Instruction
             _ => throw new UnreachableException(),
         };
 
-        context.VariableStack.Push(Variable.Create(new BuiltinTypeInfo<bool>(), result));
+        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.Bool, result));
     }
 
     public enum Operation

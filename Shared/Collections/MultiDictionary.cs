@@ -80,6 +80,15 @@ public class MultiDictionary<TKey, TValue> : IDictionary<TKey, List<TValue>> whe
         return m_dictionary.TryGetValue(key, out value);
     }
 
+    public TValue? GetValueOrDefault(TKey key, Func<TValue, bool> elementPredicate)
+    {
+        List<TValue>? collection = m_dictionary.GetValueOrDefault(key);
+        if (collection is null)
+            return default;
+
+        return collection.FirstOrDefault(elementPredicate);
+    }
+
     public List<TValue> this[TKey key]
     {
         get => m_dictionary[key];

@@ -1,5 +1,14 @@
 ﻿namespace Crumpet.Interpreter.Variables.Types;
 
+// used to provide constants
+public abstract class BuiltinTypeInfo
+{
+    public static readonly BuiltinTypeInfo<string> String = new BuiltinTypeInfo<string>();
+    public static readonly BuiltinTypeInfo<int> Int = new BuiltinTypeInfo<int>();
+    public static readonly BuiltinTypeInfo<bool> Bool = new BuiltinTypeInfo<bool>();
+    public static readonly BuiltinTypeInfo<float> Float = new BuiltinTypeInfo<float>();
+}
+
 public class BuiltinTypeInfo<T> : TypeInfo, IBuiltinTypeInfo
 {
     public override string TypeName => typeof(T).Name;

@@ -19,10 +19,11 @@ public class EqualityInstruction : Instruction
         Variable a = context.VariableStack.Pop();
         Variable b = context.VariableStack.Pop();
 
-        bool result = a == b;
+        // use .Equals so a value comparison is done if necessary
+        bool result = a.Value.Equals(b.Value);
         if (m_invert)
             result = !result;
 
-        context.VariableStack.Push(new BuiltinTypeInfo<bool>(), result);
+        context.VariableStack.Push(BuiltinTypeInfo.Bool, result);
     }
 }

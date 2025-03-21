@@ -2,21 +2,29 @@
 using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 
 namespace Crumpet.Instructions.Flow;
 
 public class ExecuteFunctionInstruction : Instruction
 {
     private readonly string m_functionName;
+    private readonly int m_argumentCount;
 
-    public ExecuteFunctionInstruction(string functionName)
+    public ExecuteFunctionInstruction(string functionName, int argumentCount)
     {
         m_functionName = functionName;
+        m_argumentCount = argumentCount;
     }
 
     public override void Execute(InterpreterExecutionContext context)
     {
-        Function function = context.FunctionResolver.GetFunction(m_functionName);
+        // get arguments and their types
+        // then get a function that matches the parameters
+        // reverse the order too as they're on the stack in the reverse order to what we desire
+        IEnumerable<Variable> argumentVariables = context.VariableStack.Peek(m_argumentCount);
+        IEnumerable<TypeInfo> parameterTypes = argumentVariables.Select(v => v.Type).Reverse();
+        Function function = context.FunctionResolver.GetFunction(m_functionName, parameterTypes);
 
         switch (function)
         {

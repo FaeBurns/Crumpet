@@ -14,4 +14,16 @@
     int index;
     index = pInt(inVal);
     println("Outputting value at index " + pString(index) + " " + args[index]);
+    
+    assert(index == 0, "incorrect value received from input. Received " + inVal + " expected 0");
+    test(index);
+    test(inVal);
+}
+
+func void test(int a){
+    println("test int: " + pString(a));
+}
+
+func void test(string a){
+    println("test string " + a);
 }

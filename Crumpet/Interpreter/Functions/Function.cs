@@ -11,6 +11,13 @@ namespace Crumpet.Interpreter.Functions;
 public abstract class Function
 {
     public abstract string Name { get; }
+
+    public IReadOnlyList<TypeInfo> ParameterTypes { get; }
+
+    protected Function(IEnumerable<TypeInfo> parameters)
+    {
+        ParameterTypes = parameters.ToArray();
+    }
 }
 
 public class UserFunction : Function
@@ -18,9 +25,10 @@ public class UserFunction : Function
     private readonly Instruction[] m_instructions;
     public FunctionDefinition Definition { get; }
 
+
     public override string Name => Definition.Name;
 
-    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions)
+    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions) : base(definition.Parameters.Select(p => p.Type).ToArray())
     {
         // get instructions from child nodes
         m_instructions = instructions.ToArray();
@@ -86,10 +94,14 @@ public class BuiltInFunction : Function
     private readonly Action<InterpreterExecutionContext> m_function;
 
     public override string Name { get; }
+    public TypeInfo[] Parameters { get; }
 
-    public BuiltInFunction(string name, Action<InterpreterExecutionContext> function)
+    // ReSharper disable once PossibleMultipleEnumeration
+    public BuiltInFunction(string name, Action<InterpreterExecutionContext> function, params IEnumerable<TypeInfo> parameters) : base(parameters)
     {
         Name = name;
+        // ReSharper disable once PossibleMultipleEnumeration
+        Parameters = parameters.ToArray();
         m_function = function;
     }
     

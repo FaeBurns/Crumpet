@@ -3,6 +3,7 @@ using Crumpet.Instructions;
 using Crumpet.Instructions.Flow;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 using Shared;
 
 namespace Crumpet.Interpreter.Functions;
@@ -91,6 +92,12 @@ public class InterpreterExecutionContext
     {
         JumpToInstructionOfType<LoopBreakLabel>();
     }
+    
+    public void Exit(int exitCode)
+    {
+        LatestReturnValue = Variable.Create(BuiltinTypeInfo.Int, exitCode);
+        m_executionStack.Clear();
+    }
 
     public Instruction? StepNextInstruction()
     {
@@ -103,7 +110,7 @@ public class InterpreterExecutionContext
         
         // then check again?
         // that may have been the last unit
-        if (CurrentUnit == null)
+        if (CurrentUnit == null || CurrentUnit.IsComplete)
             return null;
         
         Instruction instruction = CurrentUnit.StepNextInstruction();
@@ -125,13 +132,13 @@ public class InterpreterExecutionContext
         UnbufferedStreamReader sr = new UnbufferedStreamReader(m_inputStream);
 
         if (!blockUntilInput)
-            return sr.ReadLine() ?? string.Empty;
+            return sr.ReadLine()?.TrimEnd() ?? string.Empty;
 
         while (true)
         {
             string? line = sr.ReadLine();
             if (line != null)
-                return line;
+                return line.TrimEnd();
         }
     }
 

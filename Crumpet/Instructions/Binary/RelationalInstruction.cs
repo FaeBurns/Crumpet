@@ -26,7 +26,7 @@ public class RelationalInstruction : Instruction
 
         bool result = Operate(context, a, b);
         
-        context.VariableStack.Push(new BuiltinTypeInfo<bool>(), result);
+        context.VariableStack.Push(BuiltinTypeInfo.Bool, result);
     }
 
     private bool Operate(InterpreterExecutionContext context, Variable a, Variable b)

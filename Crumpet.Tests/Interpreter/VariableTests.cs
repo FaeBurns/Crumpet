@@ -20,9 +20,9 @@ public class VariableTests
     {
         VariableCollection collection = new VariableCollection();
 
-        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
+        collection.Create(new VariableInfo("testVar", BuiltinTypeInfo.String));
         Assert.That(collection.Has("testVar"));
-        Assert.That(collection.CheckType("testVar", new BuiltinTypeInfo<string>()));
+        Assert.That(collection.CheckType("testVar", BuiltinTypeInfo.String));
         Assert.That(collection.GetVariable("testVar").Value, Is.EqualTo(String.Empty));
     }
 
@@ -30,7 +30,7 @@ public class VariableTests
     public void VariableCollection_Saves_Changes()
     {
         VariableCollection collection = new VariableCollection();
-        collection.Create(new VariableInfo("testVar", new BuiltinTypeInfo<string>()));
+        collection.Create(new VariableInfo("testVar", BuiltinTypeInfo.String));
 
         Assert.That(collection.GetVariable("testVar").Value, Is.EqualTo(String.Empty));
         collection.GetVariable("testVar").Value = "testValue";
@@ -41,8 +41,8 @@ public class VariableTests
     public void AssignVariable_Copy()
     {
         // setup variables
-        Variable initial = new BuiltinTypeInfo<int>().CreateVariable();
-        Variable copy = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable initial = BuiltinTypeInfo.Int.CreateVariable();
+        Variable copy = BuiltinTypeInfo.Int.CreateVariable();
 
         Assert.That(initial.Value, Is.EqualTo(default(int)));
         initial.Value = 10;
@@ -61,7 +61,7 @@ public class VariableTests
     public void AssignVariable_Pointer()
     {
         // setup variables
-        Variable initial = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable initial = BuiltinTypeInfo.Int.CreateVariable();
         Variable pointer = Variable.CreatePointer(initial);
 
         Assert.That(initial.Value, Is.EqualTo(default(int)));

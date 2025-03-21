@@ -26,10 +26,10 @@ public class PlaceholderTypeResolver
     public PlaceholderTypeResolver()
     {
         // initialize with default types
-        m_types.Add("string", new BuiltinTypeInfo<string>());
-        m_types.Add("int", new BuiltinTypeInfo<int>());
-        m_types.Add("float", new BuiltinTypeInfo<float>());
-        m_types.Add("bool", new BuiltinTypeInfo<bool>());
+        m_types.Add("string", BuiltinTypeInfo.String);
+        m_types.Add("int", BuiltinTypeInfo.Int);
+        m_types.Add("float", BuiltinTypeInfo.Float);
+        m_types.Add("bool", BuiltinTypeInfo.Bool);
         m_types.Add("void", new VoidTypeInfo());
     }
     

@@ -14,35 +14,35 @@ public class TypeTests
     [Test]
     public void TestPrimitiveString_Default_Value()
     {
-        Variable variable = new BuiltinTypeInfo<string>().CreateVariable();
+        Variable variable = BuiltinTypeInfo.String.CreateVariable();
         Assert.That(variable.Value, Is.EqualTo(""));
     }
 
     [Test]
     public void TestPrimitiveInt_Default_Value()
     {
-        Variable variable = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable variable = BuiltinTypeInfo.Int.CreateVariable();
         Assert.That(variable.Value, Is.EqualTo(0));
     }
 
     [Test]
     public void TestPrimitiveFloat_Default_Value()
     {
-        Variable variable = new BuiltinTypeInfo<float>().CreateVariable();
+        Variable variable = BuiltinTypeInfo.Float.CreateVariable();
         Assert.That(variable.Value, Is.EqualTo(0.0f));
     }
 
     [Test]
     public void TestPrimitiveBool_Default_Value()
     {
-        Variable variable = new BuiltinTypeInfo<bool>().CreateVariable();
+        Variable variable = BuiltinTypeInfo.Bool.CreateVariable();
         Assert.That(variable.Value, Is.EqualTo(false));
     }
 
     [Test]
     public void TestPrimitive_Sets_Value()
     {
-        Variable variable = new BuiltinTypeInfo<string>().CreateVariable();
+        Variable variable = BuiltinTypeInfo.String.CreateVariable();
         Assert.That(variable.Value, Is.EqualTo(String.Empty));
         variable.Value = "test";
         Assert.That(variable.Value, Is.EqualTo("test"));
@@ -51,7 +51,7 @@ public class TypeTests
     [Test]
     public void TestObject_Constructs_Simple()
     {
-        UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>())]);
+        UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int)]);
         Variable variable = testType.CreateVariable();
 
         Assert.That(variable.Value, Is.TypeOf<UserObjectInstance>());
@@ -64,7 +64,7 @@ public class TypeTests
     [Test]
     public void TestObject_Constructs_Layered()
     {
-        UserObjectTypeInfo typeC = new UserObjectTypeInfo("typeC", new FieldInfo("fieldC", new BuiltinTypeInfo<string>()));
+        UserObjectTypeInfo typeC = new UserObjectTypeInfo("typeC", new FieldInfo("fieldC", BuiltinTypeInfo.String));
         UserObjectTypeInfo typeB = new UserObjectTypeInfo("typeB", new FieldInfo("fieldB", typeC));
         UserObjectTypeInfo typeA = new UserObjectTypeInfo("typeA", new FieldInfo("fieldA", typeB));
 
@@ -81,7 +81,7 @@ public class TypeTests
         Assert.That(variableB.Fields["fieldB"].Value, Is.TypeOf<UserObjectInstance>());
 
         UserObjectInstance variableC = (UserObjectInstance)variableB.Fields["fieldB"].Value!;
-        Assert.That(variableC.Fields["fieldC"].Type, Is.EqualTo(new BuiltinTypeInfo<string>()));
+        Assert.That(variableC.Fields["fieldC"].Type, Is.EqualTo(BuiltinTypeInfo.String));
         Assert.That(variableC.Fields["fieldC"].Value, Is.EqualTo(""));
     }
 
@@ -89,7 +89,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindSingle()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
         ValueSearchResult testObjectSearchResult = valueSearcher.Find("testObject");
@@ -103,7 +103,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindDouble()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new BuiltinTypeInfo<string>()), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
 
@@ -117,7 +117,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindTripple()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new UserObjectTypeInfo("testType2", new FieldInfo("testVar2", new BuiltinTypeInfo<string>()))), new FieldInfo("testVar2", new BuiltinTypeInfo<int>()))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new UserObjectTypeInfo("testType2", new FieldInfo("testVar2", BuiltinTypeInfo.String))), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
 
@@ -131,7 +131,7 @@ public class TypeTests
     public void CloneValueTypes_Int()
     {
         // setup initial value
-        Variable initial = new BuiltinTypeInfo<int>().CreateVariable();
+        Variable initial = BuiltinTypeInfo.Int.CreateVariable();
         Assert.That(initial.Value, Is.EqualTo(default(int)));
         initial.Value = 10;
 
@@ -149,7 +149,7 @@ public class TypeTests
     public void CloneValueTypes_String()
     {
         // setup initial value
-        Variable initial = new BuiltinTypeInfo<string>().CreateVariable();
+        Variable initial = BuiltinTypeInfo.String.CreateVariable();
         Assert.That(initial.Value, Is.EqualTo(String.Empty));
         initial.Value = "test_1";
 

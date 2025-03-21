@@ -33,8 +33,8 @@ public class TreeWalkingInterpreter
         InterpreterExecutionContext context = new InterpreterExecutionContext(TypeResolver, FunctionResolver, m_inputStream, m_outputStream);
 
         // throws if fails to find
-        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(entryPointName);
         Variable[] arguments = TransformArguments(args);
+        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(entryPointName, arguments.Select(a => a.Type));
 
         // call immediately in context
         context.Call(entryPoint.CreateInvokableUnit(context, arguments));
@@ -68,20 +68,20 @@ public class TreeWalkingInterpreter
     {
         return Type.GetTypeCode(type) switch
         {
-            TypeCode.String => new BuiltinTypeInfo<string>(),
-            TypeCode.Single => new BuiltinTypeInfo<float>(),
+            TypeCode.String => BuiltinTypeInfo.String,
+            TypeCode.Single => BuiltinTypeInfo.Float,
             
             // convert all to int
-            TypeCode.Int64 => new BuiltinTypeInfo<int>(),
-            TypeCode.Int32 => new BuiltinTypeInfo<int>(),
-            TypeCode.Int16 => new BuiltinTypeInfo<int>(),
-            TypeCode.UInt64 => new BuiltinTypeInfo<int>(),
-            TypeCode.UInt32 => new BuiltinTypeInfo<int>(),
-            TypeCode.UInt16 => new BuiltinTypeInfo<int>(),
-            TypeCode.Byte => new BuiltinTypeInfo<int>(),
-            TypeCode.SByte => new BuiltinTypeInfo<int>(),
+            TypeCode.Int64 => BuiltinTypeInfo.Int,
+            TypeCode.Int32 => BuiltinTypeInfo.Int,
+            TypeCode.Int16 => BuiltinTypeInfo.Int,
+            TypeCode.UInt64 => BuiltinTypeInfo.Int,
+            TypeCode.UInt32 => BuiltinTypeInfo.Int,
+            TypeCode.UInt16 => BuiltinTypeInfo.Int,
+            TypeCode.Byte => BuiltinTypeInfo.Int,
+            TypeCode.SByte => BuiltinTypeInfo.Int,
             
-            TypeCode.Boolean => new BuiltinTypeInfo<bool>(),
+            TypeCode.Boolean => BuiltinTypeInfo.Bool,
             _ => throw new UnreachableException()
         };
     }
@@ -146,7 +146,7 @@ public class InterpreterExecutor
         }
 
         // return last returned value or default of 0
-        return m_context.LatestReturnValue ?? new BuiltinTypeInfo<int>().CreateVariable();
+        return m_context.LatestReturnValue ?? BuiltinTypeInfo.Int.CreateVariable();
     }
     
     private bool StepSingleInstruction()
