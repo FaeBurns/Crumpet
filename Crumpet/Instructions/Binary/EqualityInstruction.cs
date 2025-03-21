@@ -21,7 +21,10 @@ public class EqualityInstruction : Instruction
         Variable b = context.VariableStack.Pop();
 
         // use .Equals so a value comparison is done if necessary
-        bool result = a.Value.Equals(b.Value);
+        // bool result = a.Value.Equals(b.Value);
+        
+        // compare via dynamic to allow cross-type comparisons. e.g. float(3) == int(3)
+        bool result = (dynamic)a.Value == (dynamic)b.Value;
         if (m_invert)
             result = !result;
 

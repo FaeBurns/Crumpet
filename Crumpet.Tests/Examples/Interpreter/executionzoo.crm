@@ -38,7 +38,7 @@
     
     // chaining
     float addResult = addTwo(returnTest1(), returnTest2());
-    assert(addResult == 7.0);
+    assert(addResult == 7);
 }
 
 func void test(int a){
