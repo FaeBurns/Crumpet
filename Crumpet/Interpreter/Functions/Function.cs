@@ -48,8 +48,10 @@ public class UserFunction : Function
             // default on source location will occur if it's the first invocable called
             throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
 
-        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation);
-        unit.AcceptsReturn = true;
+        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation, true)
+        {
+            AcceptsReturn = true,
+        };
 
         for (int i = 0; i < Definition.Parameters.Count; i++)
         {
@@ -94,14 +96,10 @@ public class BuiltInFunction : Function
     private readonly Action<InterpreterExecutionContext> m_function;
 
     public override string Name { get; }
-    public TypeInfo[] Parameters { get; }
-
-    // ReSharper disable once PossibleMultipleEnumeration
+    
     public BuiltInFunction(string name, Action<InterpreterExecutionContext> function, params IEnumerable<TypeInfo> parameters) : base(parameters)
     {
         Name = name;
-        // ReSharper disable once PossibleMultipleEnumeration
-        Parameters = parameters.ToArray();
         m_function = function;
     }
     

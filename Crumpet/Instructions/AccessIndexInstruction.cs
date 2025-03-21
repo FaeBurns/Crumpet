@@ -20,10 +20,10 @@ public class AccessIndexInstruction : Instruction
         Variable target = context.VariableStack.Pop();
 
         if (target.Type is not ArrayTypeInfo and not BuiltinTypeInfo<string>)
-            throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format($"{typeof(ArrayTypeInfo)}|{typeof(string)}", target.Type));
+            throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format($"{typeof(ArrayTypeInfo)}|{typeof(string)}", target.Type));
         
         if (!index.AssertType<int>())
-            throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format(typeof(int), index.Type));
+            throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format(typeof(int), index.Type));
 
         int indexInto = index.GetValue<int>();
         if (target.Type is ArrayTypeInfo)

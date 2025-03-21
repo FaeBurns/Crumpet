@@ -48,7 +48,6 @@ public class ForStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return Initializer;
         // hold everything inside it's own executable unit - helps make label searching easier during execution
         yield return new ExecuteUnitInstruction(new InstructionCollator(GetLoopInstructions()), Location);
     }
@@ -63,6 +62,9 @@ public class ForStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
         
         Guid conditionLabel = Guid.NewGuid();
         Guid exitLabel = Guid.NewGuid();
+        
+        // have the initializer above the loop label so it doesn't get called again
+        yield return Initializer;
         
         // start of loop label
         yield return new LabelInstruction(conditionLabel, Location){FriendlyName = "For Condition"};

@@ -26,9 +26,10 @@ public class MathematicalInstruction : Instruction
         
         // string concat
         // kinda stinky putting it here but it works?
-        if (a.Type == b.Type && a.Type == BuiltinTypeInfo.String && m_operation == Operation.ADD)
+        // do concat if either arg is a string
+        if ((a.Type == BuiltinTypeInfo.String || b.Type == BuiltinTypeInfo.String) && m_operation == Operation.ADD)
         {
-            string stringResult = a.GetValue<string>() + b.GetValue<string>();
+            string stringResult = a.Value.ToString()! + b.Value.ToString()!;
             context.VariableStack.Push(BuiltinTypeInfo.String, stringResult);
             return;
         }
@@ -48,7 +49,7 @@ public class MathematicalInstruction : Instruction
             }
             
             // not a valid type
-            else throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format("{NUMBER}", a.Type));
+            else throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format("{NUMBER}", a.Type));
         }
         // both values are not the same type
         else
@@ -64,7 +65,7 @@ public class MathematicalInstruction : Instruction
             }
             
             // both are not valid types
-            else throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format("{float|int}", $"{a.Type}, {b.Type}"));
+            else throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format("{float|int}", $"{a.Type}, {b.Type}"));
         }
         
         context.VariableStack.Push(result);
@@ -75,25 +76,15 @@ public class MathematicalInstruction : Instruction
         T aVal = a.GetValue<T>();
         T bVal = b.GetValue<T>();
 
-        T result;
-
-        switch (m_operation)
+        T result = m_operation switch
         {
-            case Operation.MULTIPLY:
-                result = aVal * bVal;
-                break;
-            case Operation.DIVIDE:
-                result = aVal / bVal;
-                break;
-            case Operation.ADD:
-                result = aVal + bVal;
-                break;
-            case Operation.SUBTRACT:
-                result = aVal - bVal;
-                break;
-            default:
-                throw new UnreachableException();
-        }
+            Operation.MULTIPLY => aVal * bVal,
+            Operation.DIVIDE => aVal / bVal,
+            Operation.ADD => aVal + bVal,
+            Operation.SUBTRACT => aVal - bVal,
+            Operation.MODULO => aVal % bVal,
+            _ => throw new UnreachableException()
+        };
 
         return Variable.Create(a.Type, result);
     }
@@ -104,5 +95,6 @@ public class MathematicalInstruction : Instruction
         DIVIDE,
         ADD,
         SUBTRACT,
+        MODULO,
     }
 }

@@ -47,17 +47,14 @@ public class NonTerminalInstanceConstructor<T> where T : Enum
         object[] arguments = element.TransformForConstructor().ToArray();
 
         ParameterInfo[] parameters = m_definition.Constructor.GetParameters();
-
-        if (arguments.Length != parameters.Length && Debugger.IsAttached)
-        {
-            Debugger.Break();
-            // redo but now with debugger
-            arguments = element.TransformForConstructor().ToArray();
-        }
+        
+        // throw if there are too many arguments
+        if (arguments.Length > parameters.Length)
+            throw new ArgumentException(ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(parameters.Length, arguments.Length));
             
         // convert any arrays to the expected type
-        object[] parameterizedArguments = new object[arguments.Length];
-            
+        object[] parameterizedArguments = new object[parameters.Length];
+        
         for (int i = 0; i < arguments.Length; i++)
         {
             parameterizedArguments[i] = ConvertParameter(arguments[i], parameters[i]);

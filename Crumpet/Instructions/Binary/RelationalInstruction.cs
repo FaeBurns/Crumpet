@@ -37,7 +37,7 @@ public class RelationalInstruction : Instruction
             {
                 return Operate<float>(a, b);
             }
-            throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format("{float|int}", $"{a.Type}, {b.Type}"));
+            throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format("{float|int}", $"{a.Type}, {b.Type}"));
         }
         else if (a.Type == b.Type)
         {
@@ -51,7 +51,7 @@ public class RelationalInstruction : Instruction
             }
         }
 
-        throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format("{NUMBER}", a.Type));
+        throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format("{NUMBER}", a.Type));
     }
 
     private bool Operate<T>(Variable a, Variable b) where T : INumber<T>

@@ -173,6 +173,8 @@ public class InterpreterExecutionContext
             
             // pop from execution to search in the unit above 
             m_executionStack.Pop();
+            // get the searching unit from the peek as we want the unit with the target instruction to be on the stack
+            searchingUnit = m_executionStack.Peek();
         }
     }
 }

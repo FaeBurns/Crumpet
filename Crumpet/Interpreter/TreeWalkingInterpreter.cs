@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Crumpet.Interpreter.Functions;
-using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Preparse;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
@@ -122,46 +121,5 @@ public class TreeWalkingInterpreter
         public override bool CanWrite => false;
         public override long Length => 1;
         public override long Position { get; set; } = 0;
-    }
-}
-
-public class InterpreterExecutor
-{
-    private readonly InterpreterExecutionContext m_context;
-    
-    internal InterpreterExecutor(InterpreterExecutionContext context)
-    {
-        m_context = context;
-    }
-    
-    public Variable StepUntilComplete()
-    {
-        // return null if invalid
-        if (m_context.CurrentUnit == null)
-            return null!;
-
-        // execute all instructions
-        while (StepSingleInstruction())
-        {
-        }
-
-        // return last returned value or default of 0
-        return m_context.ExecutionResult ?? BuiltinTypeInfo.Int.CreateVariable();
-    }
-    
-    private bool StepSingleInstruction()
-    {
-        if (m_context.CurrentUnit == null)
-            return false;
-
-        // get the next instruction
-        // null case means that there were no units left to get instructions from and the program is complete
-        Instruction? instruction = m_context.StepNextInstruction();
-        if (instruction == null)
-            return false;
-        
-        instruction.Execute(m_context);
-
-        return true;
     }
 }

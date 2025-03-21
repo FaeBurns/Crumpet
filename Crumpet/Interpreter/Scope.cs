@@ -34,7 +34,7 @@ public class Scope : IVariableCollection
         if (FindVariable(name) is Variable variable)
             return variable;
 
-        throw new ArgumentException(ExceptionConstants.VARIABLE_NOT_FOUND.Format(name));
+        throw new KeyNotFoundException(ExceptionConstants.VARIABLE_NOT_FOUND.Format(name));
     }
 
     public bool Has(string name)

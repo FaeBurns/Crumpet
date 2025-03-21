@@ -136,7 +136,7 @@ public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixN
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Expression;
-        yield return new PopAndSearchField(IdentifierSections.Select(s => s.Terminal), Location);
+        yield return new PopAndSearchFieldInstruction(IdentifierSections.Select(s => s.Terminal), Location);
     }
 }
 

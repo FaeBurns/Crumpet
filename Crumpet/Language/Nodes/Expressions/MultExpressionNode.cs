@@ -1,4 +1,5 @@
-﻿using Crumpet.Instructions;
+﻿using System.Diagnostics;
+using Crumpet.Instructions;
 using Crumpet.Instructions.Binary;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -40,7 +41,8 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIns
             new SequenceConstraint(
                 new OrConstraint(
                     new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY),
-                    new CrumpetTerminalConstraint(CrumpetToken.DIVIDE)),
+                    new CrumpetTerminalConstraint(CrumpetToken.DIVIDE),
+                    new CrumpetTerminalConstraint(CrumpetToken.MODULO)),
                 new NonTerminalConstraint<UnaryExpressionNode>()),
             GetNodeConstructor<MultExpressionNodeArgumentCollator>());
     }
@@ -61,6 +63,12 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIns
                 case CrumpetToken.DIVIDE:
                     yield return new MathematicalInstruction(MathematicalInstruction.Operation.DIVIDE, Location);
                     break;
+                case CrumpetToken.MODULO:
+                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.MODULO, Location);
+                    break;
+                
+                default:
+                    throw new UnreachableException();
             }
         }
     }

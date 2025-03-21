@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
+using Crumpet.Exceptions;
 using Crumpet.Interpreter;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
 using Lexer;
 using Parser;
+using Shared;
 using MemoryStream = System.IO.MemoryStream;
 
 namespace Crumpet.Tests.Interpreter;
@@ -72,5 +74,12 @@ public class FullInterpreterTests
         Assert.That(outputReader.ReadToEnd(), Does.StartWith("output1\noutput2\nwriteback"));
         outputStream.Seek(0, SeekOrigin.Begin);
         TestContext.Out.Write(outputReader.ReadToEnd());
+    }
+
+    [Test]
+    public void TestBlocksScope()
+    {
+        string path = Path.Combine("Examples//", "Interpreter/blocks_scope") + ".crm";
+        Assert.Throws<InterpreterException>(() => RunProgramFile(path, []), ExceptionConstants.RUNTIME_EXCEPTION);
     }
 }

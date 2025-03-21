@@ -24,7 +24,7 @@ public class NegativeNumberInstruction : Instruction
         if (number.Type is BuiltinTypeInfo<float>)
             result = MakeNegativeNumber<float>(number);
         else
-            throw new InterpreterException(context, ExceptionConstants.INVALID_TYPE.Format("int|float", number.Type));
+            throw new TypeMismatchException(ExceptionConstants.INVALID_TYPE.Format("int|float", number.Type));
         
         context.VariableStack.Push(result);
     }

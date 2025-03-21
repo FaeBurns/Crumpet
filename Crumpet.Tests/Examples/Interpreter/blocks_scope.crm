@@ -1,0 +1,11 @@
+﻿func void main(){
+    int a = 5;
+    InnerFunction();
+    
+    // should error before here anyway
+    assert(a == 5);
+}
+
+func void InnerFunction(){
+    a = 3;
+}

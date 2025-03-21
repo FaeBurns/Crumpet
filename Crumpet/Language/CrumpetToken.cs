@@ -117,6 +117,9 @@ public enum CrumpetToken : byte
 
     [Token("\\/")]
     DIVIDE,
+    
+    [Token("\\%")]
+    MODULO,
 
     [Token(",")]
     COMMA,

@@ -5,6 +5,10 @@ namespace Crumpet.Exceptions;
 
 public class TypeMismatchException : Exception
 {
+    public TypeMismatchException(string message) : base(message)
+    {
+    }
+    
     public TypeMismatchException(Type expected, Type encountered) : base(ExceptionConstants.INVALID_TYPE.Format(expected, encountered))
     {
     }

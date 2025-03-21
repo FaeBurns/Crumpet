@@ -39,6 +39,8 @@
     // chaining
     float addResult = addTwo(returnTest1(), returnTest2());
     assert(addResult == 7);
+    
+    NestedLoops();
 }
 
 func void test(int a){
@@ -59,4 +61,46 @@ func float returnTest2(){
 
 func float addTwo(float a, float b){
     return a + b;
+}
+
+func void NestedLoops(){
+    int total = 0;
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 5; j++){
+            if (total % 5 == 0){
+                println("Skipping at " + total);
+            }
+            
+            total++;
+        }    
+    }
+    
+    println("Again but with continue");
+    total = 0;
+    int realTotal = 0;
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 5; j++){
+            if (realTotal % 5 == 0){
+                println("Skipping at " + realTotal + ", " + total);
+                realTotal++;
+                continue;
+            }
+            realTotal++;
+            total++;
+        }
+    }
+
+    // for every 5 realTotal has increased by, total should have increased by 4    
+    assert(realTotal == 50);
+    assert(total == 40);
+    
+    total = 0;
+    while(true){
+        if (total == 30){
+            break;
+        }
+        total++;
+    }
+    
+    assert(total == 30);
 }

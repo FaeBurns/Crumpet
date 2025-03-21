@@ -35,4 +35,5 @@ public static class ExceptionConstants
     public const string VALUE_SEARCH_FAILED = "Failed to find target field in value. Reached \"{0}\" from to \"{1}\"";
     public const string NO_EXECUTING_UNIT = "No unit to execute";
     public const string PASSING_RETURNABLE_UNIT = "Cannot pass ";
+    public const string RUNTIME_EXCEPTION = "An Exception occured while running the program";
 }

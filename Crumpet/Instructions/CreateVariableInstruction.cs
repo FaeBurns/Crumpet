@@ -29,7 +29,7 @@ public class CreateVariableInstruction : Instruction
     {
         TypeInfo? type = context.TypeResolver.ResolveType(m_typeName);
         if (type is null)
-            throw new InterpreterException(context, ExceptionConstants.UNKOWN_TYPE);
+            throw new TypeMismatchException(ExceptionConstants.UNKOWN_TYPE);
 
         // if it's an array, encapsulate the type in an array
         if (m_isArray)

@@ -19,7 +19,7 @@ public class PushTypeIdentifierConstantInstruction : Instruction
     {
         TypeInfo? type = context.TypeResolver.ResolveType(m_typeName);
         if (type is null)
-            throw new InterpreterException(context, ExceptionConstants.UNKOWN_TYPE.Format(m_typeName));
+            throw new TypeMismatchException(ExceptionConstants.UNKOWN_TYPE.Format(m_typeName));
         
         context.VariableStack.Push(new TypeTypeInfo(type), type);
     }
