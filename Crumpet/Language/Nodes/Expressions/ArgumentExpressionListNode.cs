@@ -9,16 +9,16 @@ namespace Crumpet.Language.Nodes.Expressions;
 
 public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
-    public ExpressionNode[] Expressions { get; }
+    public NonTerminalNode[] Expressions { get; }
 
-    public ArgumentExpressionListNode(ExpressionNode firstExpression, IEnumerable<ExpressionNode> otherExpressions)
+    public ArgumentExpressionListNode(NonTerminalNode firstExpression, IEnumerable<NonTerminalNode> otherExpressions)
     {
         Expressions = otherExpressions.Prepend(firstExpression).ToArray();
     }
 
     protected override IEnumerable<ASTNode> EnumerateChildrenDerived()
     {
-        foreach (ExpressionNode node in Expressions)
+        foreach (NonTerminalNode node in Expressions)
         {
             yield return node;
         }
@@ -26,13 +26,15 @@ public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFacto
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
+        NodeConstraint elementConstraint = new OrConstraint(new NonTerminalConstraint<ExpressionNode>(), new NonTerminalConstraint<TypeNode>());
+        
         yield return new NonTerminalDefinition<ArgumentExpressionListNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint<ExpressionNode>(),
+                elementConstraint,
                 new ZeroOrMoreConstraint(
                     new SequenceConstraint(
                         new CrumpetRawTerminalConstraint(CrumpetToken.COMMA),
-                        new NonTerminalConstraint<ExpressionNode>()))),
+                        elementConstraint))),
             GetNodeConstructor<ArgumentExpressionListNode>());
     }
 

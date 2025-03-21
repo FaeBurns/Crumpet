@@ -2,6 +2,7 @@
 using Crumpet.Interpreter.Preparse;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
+using Crumpet.Language;
 using Shared;
 
 namespace Crumpet.Interpreter.Functions;
@@ -17,8 +18,10 @@ public static class BuiltInFunctions
         yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String);
         yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String);
         yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo());
+        yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool);
         yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool, BuiltinTypeInfo.String);
         yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int);
+        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownType(), new AnyTypeInfo());
     }
     
     public static void Count(InterpreterExecutionContext context)
@@ -78,6 +81,13 @@ public static class BuiltInFunctions
         Variable variable = context.VariableStack.Pop();
         context.VariableStack.Push(BuiltinTypeInfo.String, variable.Value.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
     }
+    
+    public static void Assert(InterpreterExecutionContext context)
+    {
+        Variable value = context.VariableStack.Pop();
+        if (!value.GetValue<bool>())
+            throw new RuntimeException(RuntimeExceptionNames.ASSERT);
+    }
 
     public static void AssertMessage(InterpreterExecutionContext context)
     {
@@ -91,5 +101,25 @@ public static class BuiltInFunctions
     {
         Variable value = context.VariableStack.Pop();
         context.Exit(value.GetValue<int>());
+    }
+
+    public static void ListConstructor(InterpreterExecutionContext context)
+    {
+        Variable count = context.VariableStack.Pop();
+        Variable type = context.VariableStack.Pop();
+
+        TypeInfo typeArg = type.GetValue<TypeInfo>();
+        if (type.GetValue<TypeInfo>() != typeArg)
+            throw new RuntimeException(RuntimeExceptionNames.TYPE);
+
+        ArrayTypeInfo arrayType = new ArrayTypeInfo(typeArg, VariableModifier.COPY);
+        Variable result = Variable.Create(arrayType);
+
+        for (int i = 0; i < count.GetValue<int>(); i++)
+        {
+            arrayType.AddElement(result);
+        }
+        
+        context.VariableStack.Push(result);
     }
 }

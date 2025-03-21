@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter;
+﻿using System.Diagnostics;
+using Crumpet.Interpreter;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
 using Lexer;
@@ -35,7 +36,18 @@ public class FullInterpreterTests
         Assert.That(result.Success);
         
         TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(result.Root!, inputStream, outputStream);
-        InterpreterExecutor executor = interpreter.Run("main", args);
+        InterpreterExecutor executor;
+        try
+        {
+             executor = interpreter.Run("main", args);
+        }
+        catch (KeyNotFoundException e)
+        {
+            if (e.Message.Contains("Function \"main\" not found"))
+                Assert.Fail($"Failed to find main function. Last termianl was {result.LastTerminalHit.Terminal} at {result.LastTerminalHit.Token.Location}");
+            else throw;
+            return null!;
+        }
         return executor.StepUntilComplete().Value;
     }
 

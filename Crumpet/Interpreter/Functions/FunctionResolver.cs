@@ -19,7 +19,7 @@ public class FunctionResolver
     public Function GetFunction(string functionName, IEnumerable<TypeInfo> passingParameters)
     {
         return m_functions.GetValueOrDefault(functionName, f => MatchParameters(f.ParameterTypes, passingParameters))
-               ?? throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(functionName));
+               ?? throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(functionName, String.Join(", ", passingParameters.Select(p => p.ToString()))));
     }
 
     private bool MatchParameters(IEnumerable<TypeInfo> functionParameters, IEnumerable<TypeInfo> passingParameters)
@@ -49,6 +49,9 @@ public class FunctionResolver
             // if the function allows any array type
             // exclude specific array types for this check
             if (funcParams[i] is ArrayTypeInfoUnkownType and not ArrayTypeInfo && passingParams[i] is ArrayTypeInfo)
+                continue;
+            
+            if (funcParams[i] is TypeTypeInfoUnknownType and not TypeTypeInfo && passingParams[i] is TypeTypeInfo)
                 continue;
 
             // if none of the conditions pass this will be hit

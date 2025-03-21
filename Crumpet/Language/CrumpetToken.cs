@@ -29,17 +29,11 @@ public enum CrumpetToken : byte
     [Token("\\]")]
     RINDEX,
 
-    [Token("toast")]
-    KW_TOAST,
-
-    [Token("scrape")]
-    KW_SCRAPE,
-
-    [Token("burn")]
-    KW_BURN,
-
     [Token("while")]
     KW_WHILE,
+    
+    [Token("for")]
+    KW_FOR,
 
     [Token("if")]
     KW_IF,
@@ -109,9 +103,15 @@ public enum CrumpetToken : byte
     [Token(">")]
     GREATER,
 
+    [Token("--")]
+    MINUSMINUS,
+    
     [Token("-")]
     MINUS,
 
+    [Token("\\+\\+")]
+    PLUSPLUS,
+    
     [Token("\\+")]
     PLUS,
 

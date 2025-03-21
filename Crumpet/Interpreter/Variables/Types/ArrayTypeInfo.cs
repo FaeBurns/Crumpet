@@ -49,6 +49,13 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
 
         throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(IList<Variable>), instance.GetType()));
     }
+
+    public void AddElement(Variable array)
+    {
+        List<Variable> list = array.GetValue<List<Variable>>();
+        Variable element = Variable.CreateModifier(InnerType, InnerTypeModifier, Variable.Create(InnerType));
+        list.Add(element);
+    }
 }
 
 public class ArrayTypeInfoUnkownType : TypeInfo

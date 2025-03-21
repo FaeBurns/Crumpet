@@ -49,8 +49,34 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
             GetNodeConstructor<ExpressionWithPostfixNodeIdentifierVariant>());
 
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
+            new SequenceConstraint(
+                new NonTerminalConstraint<PrimaryExpressionNode>(),
+                new OrConstraint(
+                    new CrumpetTerminalConstraint(CrumpetToken.PLUSPLUS),
+                    new CrumpetTerminalConstraint(CrumpetToken.MINUSMINUS))),
+            GetNodeConstructor<ExpressionWithPostfixNodeIncrementVariant>());
+
+        yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new NonTerminalConstraint<PrimaryExpressionNode>(),
             GetNodeConstructor<ExpressionWithPostfixNodePassthroughVariant>());
+    }
+}
+
+public class ExpressionWithPostfixNodeIncrementVariant : ExpressionWithPostfixNode, IInstructionProvider
+{
+    public PrimaryExpressionNode Expression { get; }
+    public TerminalNode<CrumpetToken> Sugar { get; }
+
+    public ExpressionWithPostfixNodeIncrementVariant(PrimaryExpressionNode expression, TerminalNode<CrumpetToken> sugar) : base(expression, sugar)
+    {
+        Expression = expression;
+        Sugar = sugar;
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return Expression;
+        yield return new IncrementInstruction(Sugar.Token.TokenId == CrumpetToken.PLUSPLUS);
     }
 }
 

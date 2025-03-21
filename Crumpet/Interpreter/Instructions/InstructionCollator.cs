@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 using Crumpet.Instructions;
+using Parser;
 
 namespace Crumpet.Interpreter.Instructions;
 
@@ -48,6 +49,8 @@ public class InstructionCollator : IEnumerable<Instruction>
                     break;
                 case Instruction instruction: // yielding an instruction
                     target.Add(instruction);
+                    break;
+                case ASTNode and not IInstructionProvider:
                     break;
                 default:
                     throw new UnreachableException();

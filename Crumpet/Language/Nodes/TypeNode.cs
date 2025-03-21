@@ -1,4 +1,6 @@
-﻿using Crumpet.Language.Nodes.Constraints;
+﻿using Crumpet.Instructions;
+using Crumpet.Interpreter.Instructions;
+using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
 
 
@@ -8,7 +10,7 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes;
 
-public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory
+public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public required string FullName { get; init; }
     
@@ -30,6 +32,11 @@ public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory
     public override string ToString()
     {
         return FullName;
+    }
+
+    public IEnumerable GetInstructionsRecursive()
+    {
+        yield return new PushTypeIdentifierConstant(FullName);
     }
 }
 

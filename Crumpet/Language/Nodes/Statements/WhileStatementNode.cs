@@ -11,12 +11,12 @@ using Parser.Nodes;
 
 namespace Crumpet.Language.Nodes.Statements;
 
-public class IterationStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
+public class WhileStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstructionProvider
 {
     public ExpressionNode Expression { get; }
     public StatementBodyNode Body { get; }
 
-    public IterationStatementNode(ExpressionNode expression, StatementBodyNode body) : base(expression, body)
+    public WhileStatementNode(ExpressionNode expression, StatementBodyNode body) : base(expression, body)
     {
         Expression = expression;
         Body = body;
@@ -24,14 +24,14 @@ public class IterationStatementNode : NonTerminalNode, INonTerminalNodeFactory, 
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition<IterationStatementNode>(
+        yield return new NonTerminalDefinition<WhileStatementNode>(
             new SequenceConstraint(
                 new CrumpetRawTerminalConstraint(CrumpetToken.KW_WHILE),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
                 new NonTerminalConstraint<ExpressionNode>(),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
                 new NonTerminalConstraint<StatementBodyNode>()),
-            GetNodeConstructor<IterationStatementNode>());
+            GetNodeConstructor<WhileStatementNode>());
     }
 
     public IEnumerable GetInstructionsRecursive()

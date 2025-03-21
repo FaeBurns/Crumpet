@@ -13,9 +13,5 @@
     <ItemGroup>
         <Using Include="System.Collections"/>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Instructions\Comparison\" />
-    </ItemGroup>
 
 </Project>
