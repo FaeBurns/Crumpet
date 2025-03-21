@@ -10,6 +10,10 @@ namespace Crumpet.Instructions.Unary;
 
 public class NegativeNumberInstruction : Instruction
 {
+    public NegativeNumberInstruction(SourceLocation location) : base(location)
+    {
+    }
+
     public override void Execute(InterpreterExecutionContext context)
     {
         Variable number = context.VariableStack.Pop();

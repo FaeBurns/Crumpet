@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Shared;
 
 namespace Crumpet.Instructions.Flow;
 
@@ -9,7 +10,7 @@ public class ConditionalJumpInstruction : Instruction
     private readonly Guid? m_trueLabel;
     private readonly Guid? m_falseLabel;
 
-    public ConditionalJumpInstruction(Guid? trueLabel, Guid? falseLabel)
+    public ConditionalJumpInstruction(Guid? trueLabel, Guid? falseLabel, SourceLocation location) : base(location)
     {
         m_trueLabel = trueLabel;
         m_falseLabel = falseLabel;

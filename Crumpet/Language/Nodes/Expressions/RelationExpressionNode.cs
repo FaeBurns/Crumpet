@@ -60,16 +60,16 @@ public class RelationExpressionNode : NonTerminalNode, INonTerminalNodeFactory, 
             switch (Sugar.Token.TokenId)
             {
                 case CrumpetToken.LESS:
-                    yield return new RelationalInstruction(RelationalInstruction.Operation.LESS);
+                    yield return new RelationalInstruction(RelationalInstruction.Operation.LESS, Location);
                     break;
                 case CrumpetToken.LESS_OR_EQUAL:
-                    yield return new RelationalInstruction(RelationalInstruction.Operation.LESS);
+                    yield return new RelationalInstruction(RelationalInstruction.Operation.LESS, Location);
                     break;
                 case CrumpetToken.GREATER:
-                    yield return new RelationalInstruction(RelationalInstruction.Operation.GREATER);
+                    yield return new RelationalInstruction(RelationalInstruction.Operation.GREATER, Location);
                     break;
                 case CrumpetToken.GREATER_OR_EQUAL:
-                    yield return new RelationalInstruction(RelationalInstruction.Operation.GREATER_OR_EQUAL);
+                    yield return new RelationalInstruction(RelationalInstruction.Operation.GREATER_OR_EQUAL, Location);
                     break;
             }
         }

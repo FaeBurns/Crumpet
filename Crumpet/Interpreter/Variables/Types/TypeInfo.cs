@@ -39,9 +39,19 @@ public abstract class TypeInfo
         return !(a == b);
     }
 
-    public virtual bool ConvertableTo(TypeInfo other) => false;
+    public virtual bool ConvertableTo(TypeInfo other)
+    {
+        // implicit string conversion
+        return other is BuiltinTypeInfo<string>;
+    }
 
-    public virtual object ConvertValidObject(TypeInfo type, object value) => throw new NotImplementedException();
+    public virtual object ConvertValidObjectTo(TypeInfo type, object value)
+    {
+        if (type is BuiltinTypeInfo<string>)
+            return value.ToString()!;
+
+        throw new InvalidOperationException();
+    }
 
     public abstract object CreateCopy(object instance);
 

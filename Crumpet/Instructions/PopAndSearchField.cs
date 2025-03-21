@@ -11,7 +11,7 @@ public class PopAndSearchField : Instruction
 {
     private readonly string[] m_path;
 
-    public PopAndSearchField(IEnumerable<string> path)
+    public PopAndSearchField(IEnumerable<string> path, SourceLocation location) : base(location)
     {
         m_path = path.ToArray();
     }

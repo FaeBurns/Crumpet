@@ -10,6 +10,10 @@ namespace Crumpet.Instructions;
 
 public class AccessIndexInstruction : Instruction
 {
+    public AccessIndexInstruction(SourceLocation location) : base(location)
+    {
+    }
+
     public override void Execute(InterpreterExecutionContext context)
     {
         Variable index = context.VariableStack.Pop();

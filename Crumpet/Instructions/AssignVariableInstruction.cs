@@ -9,6 +9,10 @@ namespace Crumpet.Instructions;
 
 public class AssignVariableInstruction : Instruction
 {
+    public AssignVariableInstruction(SourceLocation location) : base(location)
+    {
+    }
+
     public override void Execute(InterpreterExecutionContext context)
     {
         Variable source = context.VariableStack.Pop();

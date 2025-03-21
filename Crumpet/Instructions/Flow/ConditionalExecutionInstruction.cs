@@ -7,13 +7,11 @@ namespace Crumpet.Instructions.Flow;
 
 public class ConditionalExecutionInstruction : Instruction
 {
-    private readonly SourceLocation m_location;
     private readonly Instruction[] m_trueInstructions;
     private readonly Instruction[] m_falseInstructions;
 
-    public ConditionalExecutionInstruction(SourceLocation location, IEnumerable<Instruction> trueInstructions, IEnumerable<Instruction> falseInstructions)
+    public ConditionalExecutionInstruction(IEnumerable<Instruction> trueInstructions, IEnumerable<Instruction> falseInstructions, SourceLocation location) : base(location)
     {
-        m_location = location;
         m_trueInstructions = trueInstructions.ToArray();
         m_falseInstructions = falseInstructions.ToArray();
     }
@@ -35,7 +33,7 @@ public class ConditionalExecutionInstruction : Instruction
 
     private void ExecuteInstructionSet(InterpreterExecutionContext context, Instruction[] instructions)
     {
-        ExecutableUnit unit = new ExecutableUnit(context, instructions, m_location);
+        ExecutableUnit unit = new ExecutableUnit(context, instructions, Location);
         context.Call(unit);
     }
 }

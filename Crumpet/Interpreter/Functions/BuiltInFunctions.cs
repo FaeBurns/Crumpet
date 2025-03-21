@@ -86,7 +86,7 @@ public static class BuiltInFunctions
     {
         Variable value = context.VariableStack.Pop();
         if (!value.GetValue<bool>())
-            throw new RuntimeException(RuntimeExceptionNames.ASSERT);
+            throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.LastEqualityComparedVariables[1].Value} != {context.LastEqualityComparedVariables[0].Value}");
     }
 
     public static void AssertMessage(InterpreterExecutionContext context)

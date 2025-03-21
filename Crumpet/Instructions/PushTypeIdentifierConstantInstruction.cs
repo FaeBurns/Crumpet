@@ -6,11 +6,11 @@ using Shared;
 
 namespace Crumpet.Instructions;
 
-public class PushTypeIdentifierConstant : Instruction
+public class PushTypeIdentifierConstantInstruction : Instruction
 {
     private readonly string m_typeName;
 
-    public PushTypeIdentifierConstant(string typeName)
+    public PushTypeIdentifierConstantInstruction(string typeName, SourceLocation location) : base(location)
     {
         m_typeName = typeName;
     }

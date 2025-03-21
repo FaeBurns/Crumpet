@@ -24,6 +24,6 @@ public class BoolLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushConstantInstruction(BuiltinTypeInfo.Bool, BoolLiteral);
+        yield return new PushConstantInstruction(BuiltinTypeInfo.Bool, BoolLiteral, Location);
     }
 }

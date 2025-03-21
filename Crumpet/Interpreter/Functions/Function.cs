@@ -72,7 +72,7 @@ public class UserFunction : Function
                     throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
 
                 // convert instance with a copy of
-                convertedArg.Value = defType.ConvertValidObject(argType, arguments[i].Value);
+                convertedArg.Value = argType.ConvertValidObjectTo(defType, arguments[i].Value);
             }
             else
             {

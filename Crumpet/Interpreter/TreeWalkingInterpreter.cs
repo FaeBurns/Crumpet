@@ -146,7 +146,7 @@ public class InterpreterExecutor
         }
 
         // return last returned value or default of 0
-        return m_context.LatestReturnValue ?? BuiltinTypeInfo.Int.CreateVariable();
+        return m_context.ExecutionResult ?? BuiltinTypeInfo.Int.CreateVariable();
     }
     
     private bool StepSingleInstruction()

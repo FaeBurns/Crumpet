@@ -38,6 +38,6 @@ public class AndExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInst
         yield return Secondary;
         
         if (Secondary is not null)
-            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.AND);
+            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.AND, Location);
     }
 }

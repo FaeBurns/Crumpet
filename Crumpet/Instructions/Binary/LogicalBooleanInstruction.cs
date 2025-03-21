@@ -3,6 +3,7 @@ using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
+using Shared;
 
 namespace Crumpet.Instructions.Binary;
 
@@ -10,7 +11,7 @@ public class LogicalBooleanInstruction : Instruction
 {
     private readonly Operation m_operation;
 
-    public LogicalBooleanInstruction(Operation operation)
+    public LogicalBooleanInstruction(Operation operation, SourceLocation location) : base(location)
     {
         m_operation = operation;
     }

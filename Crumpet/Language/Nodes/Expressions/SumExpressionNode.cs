@@ -55,10 +55,10 @@ public class SumExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInst
             switch (argument.Sugar.Token.TokenId)
             {
                 case CrumpetToken.PLUS:
-                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.ADD);
+                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.ADD, Location);
                     break;
                 case CrumpetToken.MINUS:
-                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.SUBTRACT);
+                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.SUBTRACT, Location);
                     break;
             }
         }

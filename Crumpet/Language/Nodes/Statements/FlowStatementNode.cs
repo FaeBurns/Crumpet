@@ -44,9 +44,9 @@ public class FlowStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInst
         
         yield return Keyword.Token.TokenId switch
         {
-            CrumpetToken.KW_CONTINUE => new ContinueInstruction(),
-            CrumpetToken.KW_BREAK => new BreakInstruction(),
-            CrumpetToken.KW_RETURN => new ReturnInstruction(Expression is not null),
+            CrumpetToken.KW_CONTINUE => new ContinueInstruction(Location),
+            CrumpetToken.KW_BREAK => new BreakInstruction(Location),
+            CrumpetToken.KW_RETURN => new ReturnInstruction(Expression is not null, Location),
             _ => throw new UnreachableException(),
         };
     }

@@ -32,12 +32,12 @@ public class BuiltinTypeInfo<T> : TypeInfo, IBuiltinTypeInfo
         return base.ConvertableTo(other);
     }
 
-    public override object ConvertValidObject(TypeInfo type, object value)
+    public override object ConvertValidObjectTo(TypeInfo type, object value)
     {
-        if (this is BuiltinTypeInfo<float> && type is BuiltinTypeInfo<int>)
-            return (float)value;
+        if (this is BuiltinTypeInfo<int> && type is BuiltinTypeInfo<float>)
+            return (float)(int)value;
 
-        return base.ConvertValidObject(type, value);
+        return base.ConvertValidObjectTo(type, value);
     }
 
     public override object CreateCopy(object instance)

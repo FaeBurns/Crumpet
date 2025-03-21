@@ -39,6 +39,6 @@ public class OrExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
         
         // only push primary if there is no secondary section
         if (Secondary is not null)
-            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.OR);
+            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.OR, Location);
     }
 }

@@ -13,7 +13,7 @@ public class RelationalInstruction : Instruction
 {
     private readonly Operation m_operation;
 
-    public RelationalInstruction(Operation operation)
+    public RelationalInstruction(Operation operation, SourceLocation location) : base(location)
     {
         m_operation = operation;
     }

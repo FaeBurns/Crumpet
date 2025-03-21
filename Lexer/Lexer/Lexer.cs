@@ -81,36 +81,40 @@ public class Lexer<T> : ILexer<T> where T : Enum
 
     private TokenSearchResult? FindNextToken(ReadOnlySpan<char> searchArea)
     {
+        bool found = false;
+        int longest = 0;
+        TokenRule<T> longestRule = null!;
         foreach (TokenRule<T> rule in m_rules)
         {
-            bool found = false;
-            int length = 0;
             // using EnumerateMatches allows for a ReadOnlySpan to be used
             foreach (ValueMatch match in rule.Regex.EnumerateMatches(searchArea))
             {
                 if (match.Index == 0)
                 {
-                    length = match.Length;
-                    found = true;
-                    break;
+                    if (match.Length > longest)
+                    {
+                        longest = match.Length;
+                        longestRule = rule;
+                        found = true;
+                    }
                 }
             }
+        }
+        
+        // if a match was found then return it
+        // otherwise fail down and exit
+        if (found)
+        {
+            string matchString = searchArea.Slice(0, longest).ToString();
 
-            // if a match was found then return it
-            // otherwise fail down and exit
-            if (found)
-            {
-                string matchString = searchArea.Slice(0, length).ToString();
-
-                return new TokenSearchResult(
-                    new Token<T>(
-                        rule.TokenId,
-                        matchString,
-                        new SourceLocation()),
-                    rule,
-                    length
-                );
-            }
+            return new TokenSearchResult(
+                new Token<T>(
+                    longestRule.TokenId,
+                    matchString,
+                    new SourceLocation()),
+                longestRule,
+                longest
+            );
         }
 
         // failed to find any token, cry about it and return null

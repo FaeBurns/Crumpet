@@ -38,6 +38,6 @@ public class ExclusiveOrExpressionNode : NonTerminalNode, INonTerminalNodeFactor
         
         // only push primary if there is no secondary section
         if (Secondary is not null)
-            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.XOR);
+            yield return new LogicalBooleanInstruction(LogicalBooleanInstruction.Operation.XOR, Location);
     }
 }

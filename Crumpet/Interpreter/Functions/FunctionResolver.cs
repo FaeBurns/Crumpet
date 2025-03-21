@@ -54,6 +54,11 @@ public class FunctionResolver
             if (funcParams[i] is TypeTypeInfoUnknownType and not TypeTypeInfo && passingParams[i] is TypeTypeInfo)
                 continue;
 
+            // type specific check
+            // tbh all of this should be in there but that involves some pretty funky coupling and I don't like that
+            if (funcParams[i].IsAssignableFrom(passingParams[i]))
+                continue;
+
             // if none of the conditions pass this will be hit
             return false;
         }

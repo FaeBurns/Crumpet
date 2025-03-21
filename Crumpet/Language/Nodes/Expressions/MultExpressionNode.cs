@@ -56,10 +56,10 @@ public class MultExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIns
             switch (argument.Sugar.Token.TokenId)
             {
                 case CrumpetToken.MULTIPLY:
-                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.MULTIPLY);
+                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.MULTIPLY, Location);
                     break;
                 case CrumpetToken.DIVIDE:
-                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.DIVIDE);
+                    yield return new MathematicalInstruction(MathematicalInstruction.Operation.DIVIDE, Location);
                     break;
             }
         }

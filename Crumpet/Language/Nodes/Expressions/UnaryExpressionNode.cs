@@ -38,8 +38,8 @@ public class UnaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIn
             yield break;
 
         if (Variant.Token.TokenId == CrumpetToken.MINUS)
-            yield return new NegativeNumberInstruction();
+            yield return new NegativeNumberInstruction(Location);
         else if (Variant.Token.TokenId == CrumpetToken.NOT)
-            yield return new LogicalNotInstruction();
+            yield return new LogicalNotInstruction(Location);
     }
 }

@@ -50,7 +50,7 @@ public class ForStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
     {
         yield return Initializer;
         // hold everything inside it's own executable unit - helps make label searching easier during execution
-        yield return new ExecuteUnitInstruction(Location, new InstructionCollator(GetLoopInstructions()));
+        yield return new ExecuteUnitInstruction(new InstructionCollator(GetLoopInstructions()), Location);
     }
     
     private IEnumerable GetLoopInstructions()
@@ -65,26 +65,26 @@ public class ForStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
         Guid exitLabel = Guid.NewGuid();
         
         // start of loop label
-        yield return new LabelInstruction(conditionLabel);
+        yield return new LabelInstruction(conditionLabel, Location){FriendlyName = "For Condition"};
         
         // evaluate condition
         yield return Expression;
         // don't jump if true, jump to exit if false
-        yield return new ConditionalJumpInstruction(null, exitLabel);
+        yield return new ConditionalJumpInstruction(null, exitLabel, Location);
         
         // execute body
         yield return Body;
 
         // jump target for continue statements
-        yield return new LoopContinueLabel();
+        yield return new LoopContinueLabel(Location);
         // loop finalizer (i++)
         yield return Finalizer;
         // jump back to the condition
-        yield return new JumpInstruction(conditionLabel);
+        yield return new JumpInstruction(conditionLabel, Location);
         
         // jump target for break statements
-        yield return new LoopBreakLabel();
+        yield return new LoopBreakLabel(Location);
         // exit - we're free from the loop
-        yield return new LabelInstruction(exitLabel);
+        yield return new LabelInstruction(exitLabel, Location) {FriendlyName = "For Exit"};
     }
 }

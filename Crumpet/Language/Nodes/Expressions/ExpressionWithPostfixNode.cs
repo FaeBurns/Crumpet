@@ -76,7 +76,7 @@ public class ExpressionWithPostfixNodeIncrementVariant : ExpressionWithPostfixNo
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Expression;
-        yield return new IncrementInstruction(Sugar.Token.TokenId == CrumpetToken.PLUSPLUS);
+        yield return new IncrementInstruction(Sugar.Token.TokenId == CrumpetToken.PLUSPLUS, Location);
     }
 }
 
@@ -96,7 +96,7 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
         // evaluate all args
         yield return Arguments;
         // execute
-        yield return new ExecuteFunctionInstruction(Identifier.Terminal, Arguments?.Expressions.Length ?? 0);
+        yield return new ExecuteFunctionInstruction(Identifier.Terminal, Arguments?.Expressions.Length ?? 0, Location);
     }
 }
 
@@ -115,7 +115,7 @@ public class ExpressionWithPostfixNodeIndexVariant : ExpressionWithPostfixNode, 
     {
         yield return Expression;
         yield return Argument;
-        yield return new AccessIndexInstruction();
+        yield return new AccessIndexInstruction(Location);
     }
 }
 
@@ -136,7 +136,7 @@ public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixN
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Expression;
-        yield return new PopAndSearchField(IdentifierSections.Select(s => s.Terminal));
+        yield return new PopAndSearchField(IdentifierSections.Select(s => s.Terminal), Location);
     }
 }
 

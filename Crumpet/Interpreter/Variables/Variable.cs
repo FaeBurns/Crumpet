@@ -17,6 +17,11 @@ public class Variable
     public VariableModifier Modifier { get; }
 
     public TypeInfo Type { get; }
+    
+    /// <summary>
+    /// The name used in debugging to denote the source of this variable
+    /// </summary>
+    public string? SourceName { get; set; }
 
     public object Value
     {

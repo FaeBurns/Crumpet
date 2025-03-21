@@ -16,7 +16,7 @@ public class CreateVariableInstruction : Instruction
     private readonly bool m_isArray;
     private readonly VariableModifier m_arrayModifier;
 
-    public CreateVariableInstruction(string name, string typeName, VariableModifier modifier, bool isArray, VariableModifier arrayModifier = VariableModifier.COPY)
+    public CreateVariableInstruction(string name, string typeName, VariableModifier modifier, bool isArray, VariableModifier arrayModifier, SourceLocation location) : base(location)
     {
         m_name = name;
         m_typeName = typeName;

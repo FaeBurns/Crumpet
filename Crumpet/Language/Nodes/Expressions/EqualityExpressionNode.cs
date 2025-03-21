@@ -50,7 +50,7 @@ public class EqualityExpressionNode : NonTerminalNode, INonTerminalNodeFactory, 
         foreach (EqualityExpressionNodeArgumentCollator argument in Arguments)
         {
             yield return argument.Secondary;
-            yield return new EqualityInstruction(argument.Sugar.Token.TokenId == CrumpetToken.NOT_EQUALS);
+            yield return new EqualityInstruction(argument.Sugar.Token.TokenId == CrumpetToken.NOT_EQUALS, Location);
         }
     }
 

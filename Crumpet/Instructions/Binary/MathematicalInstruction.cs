@@ -13,7 +13,7 @@ public class MathematicalInstruction : Instruction
 {
     private readonly Operation m_operation;
 
-    public MathematicalInstruction(Operation operation)
+    public MathematicalInstruction(Operation operation, SourceLocation location) : base(location)
     {
         m_operation = operation;
     }

@@ -43,8 +43,9 @@ public class IfStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstru
     public IEnumerable GetInstructionsRecursive()
     {
         yield return Expression;
-        yield return new ConditionalExecutionInstruction(Location, 
+        yield return new ConditionalExecutionInstruction(
             new InstructionCollator(TrueBody),
-            new InstructionCollator(FalseBody));
+            new InstructionCollator(FalseBody), 
+            Location);
     }
 }

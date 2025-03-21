@@ -18,10 +18,13 @@ public class InterpreterExecutionContext
     public UnitExecutionContext? CurrentUnit => m_executionStack.Any() ? m_executionStack.Peek() : null;
     public Scope CurrentScope => CurrentUnit?.Unit.Scope ?? m_rootScope;
     public ValueSearcher ValueSearcher => new ValueSearcher(CurrentScope);
-    public Variable? LatestReturnValue { get; private set; }
     public VariableStack VariableStack { get; } = new VariableStack();
     public TypeResolver TypeResolver { get; }
     public FunctionResolver FunctionResolver { get; }
+
+    // kinda hacky way of getting assertions to know the values compared
+    public Variable[] LastEqualityComparedVariables { get; } = new Variable[2];
+    public Variable? ExecutionResult { get; set; }
 
     public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream)
     {
@@ -66,8 +69,14 @@ public class InterpreterExecutionContext
         // invalid if no unit is currently active
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
-
-        LatestReturnValue = value;
+        
+        // push the return value if its not a void function
+        if (value is not null)
+            VariableStack.Push(value);
+        
+        // record to execution result
+        // this will not occur during a built in function but those should never be an entry point so it's ok?
+        ExecutionResult = value;
 
         UnitExecutionContext lastUnit = CurrentUnit;
         while(!lastUnit.Unit.AcceptsReturn)
@@ -95,7 +104,7 @@ public class InterpreterExecutionContext
     
     public void Exit(int exitCode)
     {
-        LatestReturnValue = Variable.Create(BuiltinTypeInfo.Int, exitCode);
+        ExecutionResult = Variable.Create(BuiltinTypeInfo.Int, exitCode);
         m_executionStack.Clear();
     }
 

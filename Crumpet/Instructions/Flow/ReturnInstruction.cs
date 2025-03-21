@@ -1,6 +1,7 @@
 ﻿using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Shared;
 
 namespace Crumpet.Instructions.Flow;
 
@@ -8,7 +9,7 @@ public class ReturnInstruction : Instruction
 {
     private readonly bool m_returnsValue;
 
-    public ReturnInstruction(bool returnsValue)
+    public ReturnInstruction(bool returnsValue, SourceLocation location) : base(location)
     {
         m_returnsValue = returnsValue;
     }

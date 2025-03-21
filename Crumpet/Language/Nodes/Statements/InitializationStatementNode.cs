@@ -81,16 +81,16 @@ public class InitializationStatementNodeBasicVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), false);
+        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), false, VariableModifier.COPY, Location);
 
         if (Assignment != null)
         {
             // target
-            yield return new PushNamedVariableInstruction(Name.Terminal);
+            yield return new PushNamedVariableInstruction(Name.Terminal, Location);
             // source
             yield return Assignment;
             // assign
-            yield return new AssignVariableInstruction();
+            yield return new AssignVariableInstruction(Location);
         }
     }
 }
@@ -120,16 +120,16 @@ public class InitializationStatementNodeArrayVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), true, GetModifier(ArrayModifierSugar));
+        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), true, GetModifier(ArrayModifierSugar), Location);
         
         if (Assignment != null)
         {
             // target
-            yield return new PushNamedVariableInstruction(Name.Terminal);
+            yield return new PushNamedVariableInstruction(Name.Terminal, Location);
             // source
             yield return Assignment;
             // assign
-            yield return new AssignVariableInstruction();
+            yield return new AssignVariableInstruction(Location);
         }
     }
 }

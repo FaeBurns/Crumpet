@@ -3,6 +3,7 @@ using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
+using Shared;
 
 namespace Crumpet.Instructions.Flow;
 
@@ -11,7 +12,7 @@ public class ExecuteFunctionInstruction : Instruction
     private readonly string m_functionName;
     private readonly int m_argumentCount;
 
-    public ExecuteFunctionInstruction(string functionName, int argumentCount)
+    public ExecuteFunctionInstruction(string functionName, int argumentCount, SourceLocation location) : base(location)
     {
         m_functionName = functionName;
         m_argumentCount = argumentCount;

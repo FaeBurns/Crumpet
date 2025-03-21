@@ -44,7 +44,7 @@ public class FullInterpreterTests
         catch (KeyNotFoundException e)
         {
             if (e.Message.Contains("Function \"main\" not found"))
-                Assert.Fail($"Failed to find main function. Last termianl was {result.LastTerminalHit.Terminal} at {result.LastTerminalHit.Token.Location}");
+                Assert.Fail($"Failed to find main function. Last terminal was {result.LastTerminalHit.Terminal} at {result.LastTerminalHit.Token.Location}");
             else throw;
             return null!;
         }

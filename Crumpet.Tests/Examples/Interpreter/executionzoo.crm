@@ -31,9 +31,14 @@
     assert(arrayTest[3] == 6);
     assert(arrayTest[4] == 8);
     
+    assert(true);
     assert(true == true);
     assert(false != true);
     assert(!(false == true));
+    
+    // chaining
+    float addResult = addTwo(returnTest1(), returnTest2());
+    assert(addResult == 7.0);
 }
 
 func void test(int a){
@@ -42,4 +47,16 @@ func void test(int a){
 
 func void test(string a){
     println("test string " + a);
+}
+
+func float returnTest1(){
+    return 3;
+}
+
+func float returnTest2(){
+    return 4;
+}
+
+func float addTwo(float a, float b){
+    return a + b;
 }

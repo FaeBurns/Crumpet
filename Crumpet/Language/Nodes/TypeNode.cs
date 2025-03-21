@@ -36,7 +36,7 @@ public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory, IInst
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushTypeIdentifierConstant(FullName);
+        yield return new PushTypeIdentifierConstantInstruction(FullName, Location);
     }
 }
 

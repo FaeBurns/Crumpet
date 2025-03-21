@@ -2,6 +2,7 @@
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
+using Shared;
 
 namespace Crumpet.Instructions;
 
@@ -10,7 +11,7 @@ public class PushConstantInstruction : Instruction
     private readonly TypeInfo m_type;
     private readonly object m_value;
 
-    public PushConstantInstruction(TypeInfo type, object value)
+    public PushConstantInstruction(TypeInfo type, object value, SourceLocation location) : base(location)
     {
         m_type = type;
         m_value = value;

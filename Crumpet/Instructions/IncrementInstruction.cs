@@ -2,6 +2,7 @@
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
+using Shared;
 
 namespace Crumpet.Instructions;
 
@@ -9,7 +10,7 @@ public class IncrementInstruction : Instruction
 {
     private readonly bool m_add;
 
-    public IncrementInstruction(bool add)
+    public IncrementInstruction(bool add, SourceLocation location) : base(location)
     {
         m_add = add;
     }

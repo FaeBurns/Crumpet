@@ -59,6 +59,6 @@ public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNod
     {
         yield return UnaryExpression;
         yield return AssignmentExpression;
-        yield return new AssignVariableInstruction();
+        yield return new AssignVariableInstruction(Location);
     }
 }

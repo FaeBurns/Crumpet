@@ -1,17 +1,17 @@
 ﻿using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
+using Shared;
 
 namespace Crumpet.Instructions.Flow;
 
 public class LabelInstruction : Instruction
 {
     public Guid ID { get; }
-    public string FriendlyName { get; }
+    public required string FriendlyName { get; init; }
 
-    public LabelInstruction(Guid id, string friendlyName = "")
+    public LabelInstruction(Guid id, SourceLocation location) : base(location)
     {
         ID = id;
-        FriendlyName = friendlyName;
     }
 
     public override string ToString()

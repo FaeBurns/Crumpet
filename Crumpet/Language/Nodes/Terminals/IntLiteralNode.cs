@@ -24,6 +24,6 @@ public class IntLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory<C
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushConstantInstruction(BuiltinTypeInfo.Int, IntLiteral);
+        yield return new PushConstantInstruction(BuiltinTypeInfo.Int, IntLiteral, Location);
     }
 }

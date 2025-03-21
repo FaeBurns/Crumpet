@@ -6,5 +6,12 @@ namespace Crumpet.Interpreter.Instructions;
 
 public abstract class Instruction
 {
+    public SourceLocation Location { get; }
+
+    protected Instruction(SourceLocation location)
+    {
+        Location = location;
+    }
+    
     public abstract void Execute(InterpreterExecutionContext context);
 }
