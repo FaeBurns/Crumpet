@@ -23,6 +23,7 @@ public class CrumpetNodeFactoryCollection : INodeFactoryCollection
         yield return typeof(IfStatementNode);
         yield return typeof(WhileStatementNode);
         yield return typeof(ForStatementNode);
+        yield return typeof(TryCatchStatementNode);
         yield return typeof(InitializationStatementNode);
         yield return typeof(TypeNode);
         yield return typeof(ExpressionNode);

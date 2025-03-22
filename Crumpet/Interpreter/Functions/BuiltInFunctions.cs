@@ -22,6 +22,7 @@ public static class BuiltInFunctions
         yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool, BuiltinTypeInfo.String);
         yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int);
         yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownType(), new AnyTypeInfo());
+        yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String);
     }
     
     public static void Count(InterpreterExecutionContext context)
@@ -109,10 +110,7 @@ public static class BuiltInFunctions
         Variable type = context.VariableStack.Pop();
 
         TypeInfo typeArg = type.GetValue<TypeInfo>();
-        if (type.GetValue<TypeInfo>() != typeArg)
-            throw new RuntimeException(RuntimeExceptionNames.TYPE);
-
-        ArrayTypeInfo arrayType = new ArrayTypeInfo(typeArg, VariableModifier.COPY);
+        ArrayTypeInfo arrayType = new ArrayTypeInfo(typeArg);
         Variable result = Variable.Create(arrayType);
 
         for (int i = 0; i < count.GetValue<int>(); i++)
@@ -121,5 +119,16 @@ public static class BuiltInFunctions
         }
         
         context.VariableStack.Push(result);
+    }
+
+    public static void ListAdd(InterpreterExecutionContext context)
+    {
+        
+    }
+
+    public static void Throw(InterpreterExecutionContext context)
+    {
+        Variable message = context.VariableStack.Pop();
+        context.Throw(message.GetValue<string>());
     }
 }

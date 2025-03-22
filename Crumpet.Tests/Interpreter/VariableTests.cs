@@ -62,7 +62,7 @@ public class VariableTests
     {
         // setup variables
         Variable initial = BuiltinTypeInfo.Int.CreateVariable();
-        Variable pointer = Variable.CreatePointer(initial);
+        Variable pointer = Variable.CreatePointer(BuiltinTypeInfo.Int, initial);
 
         Assert.That(initial.Value, Is.EqualTo(default(int)));
         initial.Value = 10;

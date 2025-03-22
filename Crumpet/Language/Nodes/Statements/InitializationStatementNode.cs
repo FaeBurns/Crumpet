@@ -37,7 +37,6 @@ public abstract class InitializationStatementNode : NonTerminalNode, INonTermina
         yield return new NonTerminalDefinition<InitializationStatementNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX),
                 new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
@@ -81,7 +80,7 @@ public class InitializationStatementNodeBasicVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), false, VariableModifier.COPY, Location);
+        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), false, Location);
 
         if (Assignment != null)
         {
@@ -105,14 +104,12 @@ public class InitializationStatementNodeArrayVariant : InitializationStatementNo
 
     public InitializationStatementNodeArrayVariant(
         TypeNode type,
-        TerminalNode<CrumpetToken>? modifierSugar,
-        TerminalNode<CrumpetToken>? arrayModifierSugar, 
+        TerminalNode<CrumpetToken>? modifierSugar, 
         IdentifierNode name, 
         AssignmentExpressionNode? assignment) 
-        : base(type, modifierSugar, arrayModifierSugar, name, assignment)
+        : base(type, modifierSugar, name, assignment)
     {
         Type = type;
-        ArrayModifierSugar = arrayModifierSugar;
         ModifierSugar = modifierSugar;
         Name = name;
         Assignment = assignment;
@@ -120,7 +117,7 @@ public class InitializationStatementNodeArrayVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), true, GetModifier(ArrayModifierSugar), Location);
+        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), true, Location);
         
         if (Assignment != null)
         {

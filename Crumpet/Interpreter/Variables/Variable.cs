@@ -59,9 +59,9 @@ public class Variable
         return new Variable(source.Type, source.Value, VariableModifier.COPY);
     }
 
-    public static Variable CreatePointer(Variable target)
+    public static Variable CreatePointer(TypeInfo type, Variable target)
     {
-        return new Variable(target.Type, null!, VariableModifier.POINTER)
+        return new Variable(type, null!, VariableModifier.POINTER)
         {
             m_referencedVariable = target,
         };
@@ -72,7 +72,7 @@ public class Variable
         return modifier switch
         {
             VariableModifier.COPY => Create(type),
-            VariableModifier.POINTER => CreatePointer(potentiallyReferencedVariable),
+            VariableModifier.POINTER => CreatePointer(type, potentiallyReferencedVariable),
             _ => throw new UnreachableException(),
         };
     }
@@ -104,11 +104,24 @@ public class Variable
         {
             case VariableModifier.COPY:
                 if (value is Variable varCopy)
-                    m_value = Type.CreateCopy(varCopy.Value);
+                {
+                    if (!varCopy.Type.IsAssignableTo(Type))
+                        throw new TypeMismatchException(Type, varCopy.Type);
+                    
+                    // ensure it's converted to the correct value first
+                    m_value = varCopy.Type.ConvertValidObjectTo(Type, Type.CreateCopy(varCopy.Value));
+                }
                 else
                     m_value = Type.CreateCopy(value);
                 break;
             case VariableModifier.POINTER:
+                if (value is Variable varPointer)
+                {
+                    // do a direct check instead of an IsAssignableTo as it's a reference and will not get converted
+                    if (varPointer.Type != Type)
+                        throw new TypeMismatchException(Type, varPointer.Type);
+                }
+                
                 // set value on target pointed variable
                 m_referencedVariable!.Value = value;
                 break;

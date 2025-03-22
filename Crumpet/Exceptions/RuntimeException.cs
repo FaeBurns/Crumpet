@@ -20,4 +20,5 @@ public static class RuntimeExceptionNames
     public const string ARGUMENT = "argument";
     public const string TYPE = "type";
     public const string ASSERT = "assert";
+    public const string UNCAUGHT = "uncaught";
 }

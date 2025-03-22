@@ -58,6 +58,12 @@ public enum CrumpetToken : byte
 
     [Token("return")]
     KW_RETURN,
+    
+    [Token("try")]
+    KW_TRY,
+    
+    [Token("catch")]
+    KW_CATCH,
 
     [Token("-?[0-9]+\\.[0-9]+")]
     FLOAT,

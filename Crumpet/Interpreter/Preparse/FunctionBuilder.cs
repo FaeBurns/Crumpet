@@ -55,9 +55,8 @@ public class FunctionBuilder
                     array.Name.Terminal,
                     new ArrayTypeInfo(
                         m_typeResolver.ResolveType(array.Type.FullName)
-                            ?? throw new CompilationException(array, ExceptionConstants.UNKOWN_TYPE.Format(array.Type)),
-                        array.GetModifier(array.ModifierSugar)),
-                    array.GetModifier(array.ArrayModifierSugar));
+                            ?? throw new CompilationException(array, ExceptionConstants.UNKOWN_TYPE.Format(array.Type))),
+                    array.GetModifier(array.ModifierSugar));
             default:
                 throw new UnreachableException();
         }

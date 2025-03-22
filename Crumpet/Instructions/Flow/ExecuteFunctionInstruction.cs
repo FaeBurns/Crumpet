@@ -53,7 +53,7 @@ public class ExecuteFunctionInstruction : Instruction
             args[i] = context.VariableStack.Pop();
         }
         
-        context.Call(function.CreateInvokableUnit(context, args));
+        context.Call(function.CreateInvokableUnit(context, args), function.Definition.ReturnType);
     }
 
     private void ExecuteBuiltInFunction(InterpreterExecutionContext context, BuiltInFunction function)

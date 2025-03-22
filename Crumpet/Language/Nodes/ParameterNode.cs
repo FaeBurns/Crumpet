@@ -27,7 +27,6 @@ public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<ParameterNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX),
                 new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
@@ -65,13 +64,11 @@ public class ParameterNodeArrayVariant : ParameterNode
 {
     public TypeNode Type { get; }
     public TerminalNode<CrumpetToken>? ModifierSugar { get; }
-    public TerminalNode<CrumpetToken>? ArrayModifierSugar { get; }
     public IdentifierNode Name { get; }
-    public ParameterNodeArrayVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, TerminalNode<CrumpetToken>? arrayModifierSugar, IdentifierNode name) : base(type, modifierSugar, arrayModifierSugar, name)
+    public ParameterNodeArrayVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
     {
         Type = type;
         ModifierSugar = modifierSugar;
-        ArrayModifierSugar = arrayModifierSugar;
         Name = name;
     }
 }

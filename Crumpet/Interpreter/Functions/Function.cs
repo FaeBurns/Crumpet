@@ -46,7 +46,7 @@ public class UserFunction : Function
     {
         if (arguments.Length != Definition.Parameters.Count)
             // default on source location will occur if it's the first invocable called
-            throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
+            throw new ArgumentException(ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
 
         ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation, true)
         {
@@ -71,7 +71,7 @@ public class UserFunction : Function
             {
                 // cannot use a convert with a reference or pointer
                 if (modifier != VariableModifier.COPY)
-                    throw new InterpreterException(context.CurrentUnit?.UnitLocation ?? new SourceLocation(), ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
+                    throw new TypeMismatchException(ExceptionConstants.CONVERT_REFERENCE_ASSIGN);
 
                 // convert instance with a copy of
                 convertedArg.Value = argType.ConvertValidObjectTo(defType, arguments[i].Value);

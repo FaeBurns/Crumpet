@@ -49,7 +49,7 @@ public class TreeWalkingInterpreter
             object arg = args[i];
             if (arg is IEnumerable<object> enumerable)
             {
-                TypeInfo type = new ArrayTypeInfo(GetTypeInfo(arg.GetType().GetElementType()!), VariableModifier.COPY);
+                TypeInfo type = new ArrayTypeInfo(GetTypeInfo(arg.GetType().GetElementType()!));
                 List<Variable> arrayElements = TransformArguments(enumerable.ToArray()).ToList();
                 arguments[i] = Variable.Create(type, arrayElements);
             }

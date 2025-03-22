@@ -42,13 +42,19 @@ public abstract class TypeInfo
     public virtual bool ConvertableTo(TypeInfo other)
     {
         // implicit string conversion
-        return other is BuiltinTypeInfo<string>;
+        return other is BuiltinTypeInfo<string> or AnyTypeInfo;
     }
 
     public virtual object ConvertValidObjectTo(TypeInfo type, object value)
     {
         if (type is BuiltinTypeInfo<string>)
             return value.ToString()!;
+
+        if (type is AnyTypeInfo)
+            return value;
+
+        if (type == this)
+            return value;
 
         throw new InvalidOperationException();
     }

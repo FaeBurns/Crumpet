@@ -80,6 +80,6 @@ public class FullInterpreterTests
     public void TestBlocksScope()
     {
         string path = Path.Combine("Examples//", "Interpreter/blocks_scope") + ".crm";
-        Assert.Throws<InterpreterException>(() => RunProgramFile(path, []), ExceptionConstants.RUNTIME_EXCEPTION);
+        Assert.Throws<InterpreterException>(() => RunProgramFile(path, []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
     }
 }

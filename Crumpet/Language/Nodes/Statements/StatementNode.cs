@@ -20,28 +20,39 @@ public class StatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstruct
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
+        // expression
         yield return new NonTerminalDefinition<StatementNode>(
             new SequenceConstraint(
                 new OptionalConstraint(new NonTerminalConstraint<ExpressionNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<StatementNode>());
 
+        // if
         yield return new NonTerminalDefinition<StatementNode>(
             new NonTerminalConstraint<IfStatementNode>(),
             GetNodeConstructor<StatementNode>());
 
+        // while
         yield return new NonTerminalDefinition<StatementNode>(
             new NonTerminalConstraint<WhileStatementNode>(),
             GetNodeConstructor<StatementNode>());
         
+        // for
         yield return new NonTerminalDefinition<StatementNode>(
             new NonTerminalConstraint<ForStatementNode>(),
             GetNodeConstructor<StatementNode>());
 
+        // flow
         yield return new NonTerminalDefinition<StatementNode>(
             new NonTerminalConstraint<FlowStatementNode>(),
             GetNodeConstructor<StatementNode>());
+        
+        // try catch
+        yield return new NonTerminalDefinition<StatementNode>(
+            new NonTerminalConstraint<TryCatchStatementNode>(),
+            GetNodeConstructor<StatementNode>());
 
+        // initialization
         yield return new NonTerminalDefinition<StatementNode>(
             new SequenceConstraint(
                 new OptionalConstraint(new NonTerminalConstraint<InitializationStatementNode>()),

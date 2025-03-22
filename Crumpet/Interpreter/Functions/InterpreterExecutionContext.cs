@@ -1,5 +1,4 @@
 ﻿using Crumpet.Exceptions;
-using Crumpet.Instructions;
 using Crumpet.Instructions.Flow;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
@@ -59,9 +58,9 @@ public class InterpreterExecutionContext
         }
     }
 
-    public void Call(ExecutableUnit unit)
+    public void Call(ExecutableUnit unit, TypeInfo? expectedTopmostValueType = null)
     {
-        m_executionStack.Push(new UnitExecutionContext(unit));
+        m_executionStack.Push(new UnitExecutionContext(unit, expectedTopmostValueType ?? new AnyTypeInfo()));
     }
 
     public void Return(Variable? value)
@@ -86,6 +85,13 @@ public class InterpreterExecutionContext
             lastUnit = m_executionStack.Pop();
         }
 
+        // return type check
+        if (value is not null)
+        {
+            if (!value.Type.IsAssignableTo(lastUnit.ExpectedReturnType))
+                throw new TypeMismatchException(lastUnit.ExpectedReturnType, value.Type);
+        }
+
         // pop another one off
         // this one was the one accepting the return
         m_executionStack.Pop();
@@ -94,18 +100,36 @@ public class InterpreterExecutionContext
 
     public void Continue()
     {
-        JumpToInstructionOfType<LoopContinueLabel>();
+        JumpToInstructionOfType<LoopContinueLabel>(true);
     }
 
     public void Break()
     {
-        JumpToInstructionOfType<LoopBreakLabel>();
+        JumpToInstructionOfType<LoopBreakLabel>(true);
     }
     
     public void Exit(int exitCode)
     {
         ExecutionResult = Variable.Create(BuiltinTypeInfo.Int, exitCode);
         m_executionStack.Clear();
+    }
+    
+    /// <summary>
+    /// Throws an exception inside user code. 
+    /// </summary>
+    /// <param name="message">The exception message.</param>
+    /// <exception cref="UncaughtRuntimeExceptionException">The exception was not caught by user code.</exception>
+    public void Throw(string message)
+    {
+        try
+        {
+            JumpToInstructionOfType<CatchLabelInstruction>(false);
+            VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, message));
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new UncaughtRuntimeExceptionException(message);
+        }
     }
 
     public Instruction? StepNextInstruction()
@@ -151,7 +175,7 @@ public class InterpreterExecutionContext
         }
     }
 
-    private void JumpToInstructionOfType<T>() where T : Instruction
+    private void JumpToInstructionOfType<T>(bool blockedByReturn) where T : Instruction
     {
         // invalid if no unit is currently active
         if (CurrentUnit == null)
@@ -161,6 +185,10 @@ public class InterpreterExecutionContext
 
         while (m_executionStack.Any())
         {
+            // exit the loop if the unit blocks this
+            if (searchingUnit.Unit.AcceptsReturn && blockedByReturn)
+                break;
+            
             foreach (Instruction instruction in searchingUnit.Unit.Instructions)
             {
                 if (instruction is T)
@@ -174,14 +202,17 @@ public class InterpreterExecutionContext
             // pop from execution to search in the unit above 
             m_executionStack.Pop();
             // get the searching unit from the peek as we want the unit with the target instruction to be on the stack
-            searchingUnit = m_executionStack.Peek();
+            searchingUnit = CurrentUnit;
         }
+
+        throw new KeyNotFoundException(ExceptionConstants.COULD_NOT_FIND_INSTRUCTION_TO_JUMP_TO.Format(typeof(T)));
     }
 }
 
-public class UnitExecutionContext(ExecutableUnit unit)
+public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnType)
 {
     public ExecutableUnit Unit { get; } = unit;
+    public TypeInfo ExpectedReturnType { get; } = expectedReturnType;
     public int InstructionPointer { get; set; }
     public Instruction CurrentInstruction => Unit.Instructions[InstructionPointer];
     public bool IsComplete => InstructionPointer >= Unit.Instructions.Count;

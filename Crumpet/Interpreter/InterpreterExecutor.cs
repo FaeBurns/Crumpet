@@ -46,9 +46,22 @@ public class InterpreterExecutor
         {
             instruction.Execute(m_context);
         }
+        catch (UncaughtRuntimeExceptionException e)
+        {
+            throw new InterpreterException(instruction.Location, ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION, e);
+        }
         catch (Exception e)
         {
-            throw new InterpreterException(instruction.Location, ExceptionConstants.RUNTIME_EXCEPTION, e);
+            // if it's not coming from a throw then throw it in user context
+            try
+            {
+                // catch again as this can throw
+                m_context.Throw(e.Message);
+            }
+            catch (UncaughtRuntimeExceptionException r)
+            {
+                throw new InterpreterException(instruction.Location, ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION, r);
+            }
         }
 
         return true;

@@ -18,8 +18,13 @@ public class InterpreterException : Exception
         SourceLocation = sourceLocation ?? new SourceLocation();
     }
 
-    public InterpreterException(SourceLocation? sourceLocation, string message, Exception inner) : base(message, inner)
+    public InterpreterException(SourceLocation sourceLocation, string message, Exception inner) : base(ConstructMessage(sourceLocation, message), inner)
     {
-        SourceLocation = sourceLocation ?? new SourceLocation();
+        SourceLocation = sourceLocation;
+    }
+
+    private static string ConstructMessage(SourceLocation location, string message)
+    {
+        return (location ?? new SourceLocation()) + Environment.NewLine + message;
     }
 }

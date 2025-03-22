@@ -41,6 +41,8 @@
     assert(addResult == 7);
     
     NestedLoops();
+    TestReferences();
+    TestWeirdLoopThingy();
 }
 
 func void test(int a){
@@ -103,4 +105,60 @@ func void NestedLoops(){
     }
     
     assert(total == 30);
+}
+
+func void TestReferences(){
+    int a = 5;
+    TestModifyReferenceInt(a);
+    assert(a == 10);
+    int b = 20;
+    int c = 30;
+    
+    int[] array = list(int, 3);
+    
+    // assert that this does not change
+    TestModifyArray(array);
+    assert(array[0] == 0);
+    assert(array[1] == 0);
+    assert(array[2] == 0);
+    
+    TestModifyReferenceArray(array);
+    assert(array[0] == 100);
+    assert(array[1] == 200);
+    assert(array[2] == 300);
+}
+
+func void TestModifyReferenceInt(int& ref){
+    ref = ref * 2;
+}
+
+func void TestModifyArray(int[] array){
+    array[0] = 10;
+    array[1] = 20;
+    array[2] = 30;
+}
+
+func void TestModifyReferenceArray(int[]& array){
+    array[0] = 100;
+    array[1] = 200;
+    array[2] = 300;
+}
+
+func void TestWeirdLoopThingy(){
+    int i;
+    try{
+        for(i = 0; i < 10; i++){
+            TestWeirdLoopThingyInner(i);
+        }
+    }
+    catch e{
+        println("Successfully caught exception: " + e);
+    }
+    assert(i == 5);
+}
+
+func void TestWeirdLoopThingyInner(int i){
+    if (i == 5){
+        break;
+    }
 }
