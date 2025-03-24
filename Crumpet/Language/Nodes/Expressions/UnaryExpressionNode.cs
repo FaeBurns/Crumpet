@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Diagnostics;
+using Crumpet.Instructions;
 using Crumpet.Instructions.Unary;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -21,6 +23,7 @@ public class UnaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIn
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
+        // this should really contain an ExpressionWithPrefixNode and handle all that in there but this one doesn't really do anything by itself?
         yield return new NonTerminalDefinition<UnaryExpressionNode>(
             new SequenceConstraint(
                 new OptionalConstraint(new OrConstraint(
@@ -37,9 +40,11 @@ public class UnaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory, IIn
         if (Variant is null)
             yield break;
 
-        if (Variant.Token.TokenId == CrumpetToken.MINUS)
-            yield return new NegativeNumberInstruction(Location);
-        else if (Variant.Token.TokenId == CrumpetToken.NOT)
-            yield return new LogicalNotInstruction(Location);
+        yield return Variant.Token.TokenId switch
+        {
+            CrumpetToken.MINUS => new NegativeNumberInstruction(Location),
+            CrumpetToken.NOT => new LogicalNotInstruction(Location),
+            _ => throw new UnreachableException(),
+        };
     }
 }

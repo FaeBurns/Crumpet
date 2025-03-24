@@ -32,9 +32,11 @@ public static class ExceptionConstants
     public const string UNKOWN_TYPE = "Could not find type named \"{0}\"";
     public const string UNKOWN_RETURN_TYPE = "Could not find type for return named \"{0}\"";
     public const string INVALID_FUNCTION_CALL_EXPRESSION_TYPE = "Invalid expression given to function call";
-    public const string VALUE_SEARCH_FAILED = "Failed to find target field in value. Reached \"{0}\" from to \"{1}\"";
+    public const string VALUE_SEARCH_FAILED = "Failed to find target field \"{0}\" in value.";
     public const string NO_EXECUTING_UNIT = "No unit to execute";
     public const string PASSING_RETURNABLE_UNIT = "Cannot pass ";
     public const string UNCAUGHT_RUNTIME_EXCEPTION = "An Uncaught Exception occured while running the program";
     public const string COULD_NOT_FIND_INSTRUCTION_TO_JUMP_TO = "Failed to find instruction of type \"{0}\" to jump to";
+    public const string MODIFIER_MISMATCH = "Variable modifier mismatch. Expected \"{0}\" received \"{1}\"";
+    public const string INVALID_RETURN_TYPE = "Could not convert returned value to the expected type. Expected \"{0}\" received \"{1}\"";
 }

@@ -29,6 +29,7 @@ public class CrumpetNodeFactoryCollection : INodeFactoryCollection
         yield return typeof(ExpressionNode);
         yield return typeof(UnaryExpressionNode);
         yield return typeof(ExpressionWithPostfixNode);
+        yield return typeof(ExpressionWithPointerPrefixNode);
         yield return typeof(PrimaryExpressionNode);
         yield return typeof(AssignmentExpressionNode);
         yield return typeof(ArgumentExpressionListNode);
@@ -49,5 +50,6 @@ public class CrumpetNodeFactoryCollection : INodeFactoryCollection
         yield return typeof(IdentifierNode);
         yield return typeof(IntLiteralNode);
         yield return typeof(StringLiteralNode);
+        yield return typeof(NullLiteralNode);
     }
 }

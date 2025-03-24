@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Crumpet.Interpreter;
 using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
@@ -20,11 +21,13 @@ public class ExecuteFunctionInstruction : Instruction
 
     public override void Execute(InterpreterExecutionContext context)
     {
+        InterpreterDebuggerHelper.BreakOnFunction(m_functionName);
+        
         // get arguments and their types
         // then get a function that matches the parameters
         // reverse the order too as they're on the stack in the reverse order to what we desire
         IEnumerable<Variable> argumentVariables = context.VariableStack.Peek(m_argumentCount);
-        IEnumerable<TypeInfo> parameterTypes = argumentVariables.Select(v => v.Type).Reverse();
+        IEnumerable<ParameterInfo> parameterTypes = argumentVariables.Select(v => new ParameterInfo(v.Type, v.Modifier)).Reverse();
         Function function = context.FunctionResolver.GetFunction(m_functionName, parameterTypes);
 
         switch (function)

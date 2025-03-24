@@ -33,10 +33,7 @@ public class ConditionalExecutionInstruction : Instruction
 
     private void ExecuteInstructionSet(InterpreterExecutionContext context, Instruction[] instructions)
     {
-        ExecutableUnit unit = new ExecutableUnit(context, instructions, Location, false)
-        {
-            AcceptsReturn = false,
-        };
+        ExecutableUnit unit = new ExecutableUnit(context, instructions, Location, false);
         context.Call(unit);
     }
 }

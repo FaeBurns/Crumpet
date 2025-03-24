@@ -16,7 +16,7 @@ internal class PlaceholderTypeInfo : TypeInfo
         throw new InvalidOperationException(ExceptionConstants.CREATE_PLACEHOLDER_TYPE);
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         throw new UnreachableException();
     }

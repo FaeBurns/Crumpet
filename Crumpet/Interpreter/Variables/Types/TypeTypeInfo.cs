@@ -16,7 +16,7 @@ public class TypeTypeInfo : TypeTypeInfoUnknownType
         return Variable.Create(this, Type);
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         // not actually creating a copy but tbh it should be fine for this?
         return Type;
@@ -31,7 +31,7 @@ public class TypeTypeInfoUnknownType : TypeInfo
         throw new InvalidOperationException();
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         throw new InvalidOperationException();
     }

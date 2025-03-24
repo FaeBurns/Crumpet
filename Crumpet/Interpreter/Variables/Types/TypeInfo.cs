@@ -45,10 +45,10 @@ public abstract class TypeInfo
         return other is BuiltinTypeInfo<string> or AnyTypeInfo;
     }
 
-    public virtual object ConvertValidObjectTo(TypeInfo type, object value)
+    public virtual object? ConvertValidObjectTo(TypeInfo type, object? value)
     {
         if (type is BuiltinTypeInfo<string>)
-            return value.ToString()!;
+            return value?.ToString()!;
 
         if (type is AnyTypeInfo)
             return value;
@@ -59,7 +59,7 @@ public abstract class TypeInfo
         throw new InvalidOperationException();
     }
 
-    public abstract object CreateCopy(object instance);
+    public abstract object CreateCopy(object? instance);
 
     public bool IsAssignableTo(TypeInfo other)
     {

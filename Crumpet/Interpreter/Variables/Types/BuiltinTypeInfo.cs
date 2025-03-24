@@ -1,4 +1,6 @@
-﻿namespace Crumpet.Interpreter.Variables.Types;
+﻿using Shared;
+
+namespace Crumpet.Interpreter.Variables.Types;
 
 // used to provide constants
 public abstract class BuiltinTypeInfo
@@ -32,23 +34,26 @@ public class BuiltinTypeInfo<T> : TypeInfo, IBuiltinTypeInfo
         return base.ConvertableTo(other);
     }
 
-    public override object ConvertValidObjectTo(TypeInfo type, object value)
+    public override object? ConvertValidObjectTo(TypeInfo type, object? value)
     {
+        if (value is null)
+            throw new NullReferenceException();
+        
         if (this is BuiltinTypeInfo<int> && type is BuiltinTypeInfo<float>)
             return (float)(int)value;
 
         return base.ConvertValidObjectTo(type, value);
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         // re-box a value type
         // if (instance.GetType().IsValueType)
         //     return Convert.ChangeType(instance, instance.GetType());
         //
         // throw new UnreachableException();
-
-        return (object)(T)instance;
+        
+        return (object)(T)(instance ?? throw new NullReferenceException());
     }
 }
 

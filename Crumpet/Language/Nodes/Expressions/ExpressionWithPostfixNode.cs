@@ -1,17 +1,11 @@
-﻿using System.Linq.Expressions;
-using Crumpet.Exceptions;
-using Crumpet.Instructions;
+﻿using Crumpet.Instructions;
 using Crumpet.Instructions.Flow;
-using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
-
-
 using Parser;
 using Parser.NodeConstraints;
 using Parser.Nodes;
-using Shared;
 
 namespace Crumpet.Language.Nodes.Expressions;
 
@@ -25,7 +19,7 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
     {
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint<PrimaryExpressionNode>(),
+                new NonTerminalConstraint<ExpressionWithPointerPrefixNode>(),
                 new SequenceConstraint(
                     new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
                     new NonTerminalConstraint<ExpressionNode>(),
@@ -41,33 +35,24 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
 
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
-                new NonTerminalConstraint<PrimaryExpressionNode>(),
-                new OneOrMoreConstraint(
-                    new SequenceConstraint(
-                        new CrumpetRawTerminalConstraint(CrumpetToken.PERIOD),
-                        new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)))),
-            GetNodeConstructor<ExpressionWithPostfixNodeIdentifierVariant>());
-
-        yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
-            new SequenceConstraint(
-                new NonTerminalConstraint<PrimaryExpressionNode>(),
+                new NonTerminalConstraint<ExpressionWithPointerPrefixNode>(),
                 new OrConstraint(
                     new CrumpetTerminalConstraint(CrumpetToken.PLUSPLUS),
                     new CrumpetTerminalConstraint(CrumpetToken.MINUSMINUS))),
             GetNodeConstructor<ExpressionWithPostfixNodeIncrementVariant>());
 
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
-            new NonTerminalConstraint<PrimaryExpressionNode>(),
+            new NonTerminalConstraint<ExpressionWithPointerPrefixNode>(),
             GetNodeConstructor<ExpressionWithPostfixNodePassthroughVariant>());
     }
 }
 
 public class ExpressionWithPostfixNodeIncrementVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
-    public PrimaryExpressionNode Expression { get; }
+    public ExpressionWithPointerPrefixNode Expression { get; }
     public TerminalNode<CrumpetToken> Sugar { get; }
 
-    public ExpressionWithPostfixNodeIncrementVariant(PrimaryExpressionNode expression, TerminalNode<CrumpetToken> sugar) : base(expression, sugar)
+    public ExpressionWithPostfixNodeIncrementVariant(ExpressionWithPointerPrefixNode expression, TerminalNode<CrumpetToken> sugar) : base(expression, sugar)
     {
         Expression = expression;
         Sugar = sugar;
@@ -102,10 +87,10 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
 
 public class ExpressionWithPostfixNodeIndexVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
-    public PrimaryExpressionNode Expression { get; }
+    public ExpressionWithPointerPrefixNode Expression { get; }
     public ExpressionNode Argument { get; }
 
-    public ExpressionWithPostfixNodeIndexVariant(PrimaryExpressionNode expression, ExpressionNode argument) : base(expression, argument)
+    public ExpressionWithPostfixNodeIndexVariant(ExpressionWithPointerPrefixNode expression, ExpressionNode argument) : base(expression, argument)
     {
         Expression = expression;
         Argument = argument;
@@ -119,32 +104,11 @@ public class ExpressionWithPostfixNodeIndexVariant : ExpressionWithPostfixNode, 
     }
 }
 
-public class ExpressionWithPostfixNodeIdentifierVariant : ExpressionWithPostfixNode, IInstructionProvider
-{
-    public PrimaryExpressionNode Expression { get; }
-    public string FullExpressionIdentifier { get; }
-    public IdentifierNode[] IdentifierSections { get; }
-
-    // ReSharper disable PossibleMultipleEnumeration
-    public ExpressionWithPostfixNodeIdentifierVariant(PrimaryExpressionNode expression, IEnumerable<IdentifierNode> identifierList) : base(identifierList.Prepend<ASTNode?>(expression))
-    {
-        Expression = expression;
-        IdentifierSections = identifierList.ToArray();
-        FullExpressionIdentifier = String.Join('.', IdentifierSections.Select(s => s.ToString()));
-    }
-
-    public IEnumerable GetInstructionsRecursive()
-    {
-        yield return Expression;
-        yield return new PopAndSearchFieldInstruction(IdentifierSections.Select(s => s.Terminal), Location);
-    }
-}
-
 public class ExpressionWithPostfixNodePassthroughVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
-    public PrimaryExpressionNode PrimaryExpression { get; }
+    public ExpressionWithPointerPrefixNode PrimaryExpression { get; }
 
-    public ExpressionWithPostfixNodePassthroughVariant(PrimaryExpressionNode primaryExpression) : base(primaryExpression)
+    public ExpressionWithPostfixNodePassthroughVariant(ExpressionWithPointerPrefixNode primaryExpression) : base(primaryExpression)
     {
         PrimaryExpression = primaryExpression;
     }

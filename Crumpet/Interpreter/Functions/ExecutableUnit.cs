@@ -21,6 +21,5 @@ public class ExecutableUnit
     public IReadOnlyList<Instruction> Instructions { get; }
     public Scope Scope { get; }
     public SourceLocation SourceLocation { get; }
-    public required bool AcceptsReturn { get; init; }
     public bool BlocksScope { get; }
 }

@@ -29,7 +29,7 @@ public class MathematicalInstruction : Instruction
         // do concat if either arg is a string
         if ((a.Type == BuiltinTypeInfo.String || b.Type == BuiltinTypeInfo.String) && m_operation == Operation.ADD)
         {
-            string stringResult = a.Value.ToString()! + b.Value.ToString()!;
+            string stringResult = a.GetValue()!.ToString()! + b.GetValue()!.ToString()!;
             context.VariableStack.Push(BuiltinTypeInfo.String, stringResult);
             return;
         }

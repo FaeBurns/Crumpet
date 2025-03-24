@@ -29,7 +29,7 @@ public abstract class InitializationStatementNode : NonTerminalNode, INonTermina
         yield return new NonTerminalDefinition<InitializationStatementNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 assignmentConstraint),
             GetNodeConstructor<InitializationStatementNodeBasicVariant>());
@@ -39,7 +39,7 @@ public abstract class InitializationStatementNode : NonTerminalNode, INonTermina
                 new NonTerminalConstraint<TypeNode>(),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 assignmentConstraint),
             GetNodeConstructor<InitializationStatementNodeArrayVariant>());
@@ -51,7 +51,7 @@ public abstract class InitializationStatementNode : NonTerminalNode, INonTermina
             return VariableModifier.COPY;
 
         // re-use multiply as multiple identical tokens cannot exist
-        if (sugar.Token.TokenId == CrumpetToken.REFERENCE)
+        if (sugar.Token.TokenId == CrumpetToken.MULTIPLY)
             return VariableModifier.POINTER;
 
         throw new UnreachableException();
@@ -97,7 +97,6 @@ public class InitializationStatementNodeBasicVariant : InitializationStatementNo
 public class InitializationStatementNodeArrayVariant : InitializationStatementNode, IInstructionProvider
 {
     public TypeNode Type { get; }
-    public TerminalNode<CrumpetToken>? ArrayModifierSugar { get; }
     public TerminalNode<CrumpetToken>? ModifierSugar { get; }
     public IdentifierNode Name { get; }
     public AssignmentExpressionNode? Assignment { get; }

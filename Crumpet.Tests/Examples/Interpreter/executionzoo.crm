@@ -43,6 +43,7 @@
     NestedLoops();
     TestReferences();
     TestWeirdLoopThingy();
+    returnNullTest();
 }
 
 func void test(int a){
@@ -109,7 +110,7 @@ func void NestedLoops(){
 
 func void TestReferences(){
     int a = 5;
-    TestModifyReferenceInt(a);
+    TestModifyReferenceInt(&a);
     assert(a == 10);
     int b = 20;
     int c = 30;
@@ -122,14 +123,14 @@ func void TestReferences(){
     assert(array[1] == 0);
     assert(array[2] == 0);
     
-    TestModifyReferenceArray(array);
+    TestModifyReferenceArray(&array);
     assert(array[0] == 100);
     assert(array[1] == 200);
     assert(array[2] == 300);
 }
 
-func void TestModifyReferenceInt(int& ref){
-    ref = ref * 2;
+func void TestModifyReferenceInt(int* ref){
+    *ref = *ref * 2;
 }
 
 func void TestModifyArray(int[] array){
@@ -138,10 +139,10 @@ func void TestModifyArray(int[] array){
     array[2] = 30;
 }
 
-func void TestModifyReferenceArray(int[]& array){
-    array[0] = 100;
-    array[1] = 200;
-    array[2] = 300;
+func void TestModifyReferenceArray(int[]* array){
+    *array[0] = 100;
+    *array[1] = 200;
+    *array[2] = 300;
 }
 
 func void TestWeirdLoopThingy(){
@@ -161,4 +162,8 @@ func void TestWeirdLoopThingyInner(int i){
     if (i == 5){
         break;
     }
+}
+
+func string* returnNullTest(){
+    return NULL;
 }

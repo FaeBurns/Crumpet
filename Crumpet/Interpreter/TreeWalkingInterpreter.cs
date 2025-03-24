@@ -33,7 +33,7 @@ public class TreeWalkingInterpreter
 
         // throws if fails to find
         Variable[] arguments = TransformArguments(args);
-        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(entryPointName, arguments.Select(a => a.Type));
+        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(entryPointName, arguments.Select(a => new ParameterInfo(a.Type, a.Modifier)));
 
         // call immediately in context
         context.Call(entryPoint.CreateInvokableUnit(context, arguments));

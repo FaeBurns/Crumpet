@@ -7,7 +7,6 @@ namespace Crumpet.Instructions;
 public class ExecuteUnitInstruction : Instruction
 {
     private readonly Instruction[] m_instructions;
-    public bool AcceptsReturn { get; } = false;
     public bool BlocksScope { get; } = false;
     
     public ExecuteUnitInstruction(IEnumerable<Instruction> instructions, SourceLocation location) : base(location)
@@ -17,10 +16,7 @@ public class ExecuteUnitInstruction : Instruction
     
     public override void Execute(InterpreterExecutionContext context)
     {
-        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Location, BlocksScope)
-        {
-            AcceptsReturn = AcceptsReturn
-        };
+        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Location, BlocksScope);
         context.Call(unit);
     }
 }

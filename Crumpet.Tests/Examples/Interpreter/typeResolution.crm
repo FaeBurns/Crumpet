@@ -6,7 +6,7 @@
 }
 
 struct TypeB{
-    TypeA& parent;
+    TypeA* parent;
     string a;
     float b;
 }

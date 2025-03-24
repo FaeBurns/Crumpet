@@ -78,6 +78,10 @@ public enum CrumpetToken : byte
     // "[^"]*" - no " escape
     [Token(@"""[^""]*""")]
     STRING,
+    
+    // allow either case
+    [Token(("NULL|null"))]
+    NULL,
 
     [Token("\\^")]
     XOR,
@@ -132,6 +136,9 @@ public enum CrumpetToken : byte
 
     [Token("\\.")]
     PERIOD,
+    
+    [Token("\\-\\>")]
+    DEREFERENCE,
 
     [Token("\\;")]
     SEMICOLON,

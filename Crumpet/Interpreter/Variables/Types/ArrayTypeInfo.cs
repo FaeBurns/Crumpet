@@ -55,8 +55,11 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
         return base.ConvertableTo(other);
     }
 
-    public override object ConvertValidObjectTo(TypeInfo type, object value)
+    public override object? ConvertValidObjectTo(TypeInfo type, object? value)
     {
+        if (value is null)
+            throw new NullReferenceException();
+        
         if (type is ArrayTypeInfoUnkownType)
             return value;
 
@@ -65,7 +68,7 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
             List<Variable> result = new List<Variable>();
             foreach (Variable source in (value as List<Variable>)!)
             {
-                Variable var = Variable.Create(arrayType.InnerType, source.Type.ConvertValidObjectTo(arrayType.InnerType, source.Value));
+                Variable var = Variable.Create(arrayType.InnerType, source.Type.ConvertValidObjectTo(arrayType.InnerType, source.DereferenceToValue()));
                 result.Add(var);
             }
 
@@ -91,7 +94,7 @@ public class ArrayTypeInfoUnkownType : TypeInfo
         throw new InvalidOperationException();
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         throw new InvalidOperationException();
     }

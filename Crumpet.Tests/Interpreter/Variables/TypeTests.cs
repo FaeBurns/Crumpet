@@ -15,37 +15,37 @@ public class TypeTests
     public void TestPrimitiveString_Default_Value()
     {
         Variable variable = BuiltinTypeInfo.String.CreateVariable();
-        Assert.That(variable.Value, Is.EqualTo(""));
+        Assert.That(variable.GetValue(), Is.EqualTo(""));
     }
 
     [Test]
     public void TestPrimitiveInt_Default_Value()
     {
         Variable variable = BuiltinTypeInfo.Int.CreateVariable();
-        Assert.That(variable.Value, Is.EqualTo(0));
+        Assert.That(variable.GetValue(), Is.EqualTo(0));
     }
 
     [Test]
     public void TestPrimitiveFloat_Default_Value()
     {
         Variable variable = BuiltinTypeInfo.Float.CreateVariable();
-        Assert.That(variable.Value, Is.EqualTo(0.0f));
+        Assert.That(variable.GetValue(), Is.EqualTo(0.0f));
     }
 
     [Test]
     public void TestPrimitiveBool_Default_Value()
     {
         Variable variable = BuiltinTypeInfo.Bool.CreateVariable();
-        Assert.That(variable.Value, Is.EqualTo(false));
+        Assert.That(variable.GetValue(), Is.EqualTo(false));
     }
 
     [Test]
     public void TestPrimitive_Sets_Value()
     {
         Variable variable = BuiltinTypeInfo.String.CreateVariable();
-        Assert.That(variable.Value, Is.EqualTo(String.Empty));
-        variable.Value = "test";
-        Assert.That(variable.Value, Is.EqualTo("test"));
+        Assert.That(variable.GetValue(), Is.EqualTo(String.Empty));
+        variable.SetValue("test");
+        Assert.That(variable.GetValue(), Is.EqualTo("test"));
     }
 
     [Test]
@@ -54,11 +54,11 @@ public class TypeTests
         UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int)]);
         Variable variable = testType.CreateVariable();
 
-        Assert.That(variable.Value, Is.TypeOf<UserObjectInstance>());
-        Assert.That((variable.Value as UserObjectInstance)!.Fields["testVar"].Value, Is.EqualTo(""));
-        Assert.That((variable.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(0));
-        (variable.Value as UserObjectInstance)!.Fields["testVar2"].Value = 1;
-        Assert.That((variable.Value as UserObjectInstance)!.Fields["testVar2"].Value, Is.EqualTo(1));
+        Assert.That(variable.GetValue(), Is.TypeOf<UserObjectInstance>());
+        Assert.That((variable.GetValue() as UserObjectInstance)!.Fields["testVar"].GetValue(), Is.EqualTo(""));
+        Assert.That((variable.GetValue() as UserObjectInstance)!.Fields["testVar2"].GetValue(), Is.EqualTo(0));
+        (variable.GetValue() as UserObjectInstance)!.Fields["testVar2"].SetValue(1);
+        Assert.That((variable.GetValue() as UserObjectInstance)!.Fields["testVar2"].GetValue(), Is.EqualTo(1));
     }
 
     [Test]
@@ -70,19 +70,19 @@ public class TypeTests
 
         Variable variable = typeA.CreateVariable();
 
-        Assert.That(variable.Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That(variable.GetValue(), Is.TypeOf<UserObjectInstance>());
 
-        UserObjectInstance variableA = (UserObjectInstance)variable.Value;
+        UserObjectInstance variableA = (UserObjectInstance)variable.GetValue();
         Assert.That(variableA.Fields["fieldA"].Type, Is.EqualTo(typeB));
-        Assert.That(variableA.Fields["fieldA"].Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That(variableA.Fields["fieldA"].GetValue(), Is.TypeOf<UserObjectInstance>());
 
-        UserObjectInstance variableB = (UserObjectInstance)variableA.Fields["fieldA"].Value!;
+        UserObjectInstance variableB = (UserObjectInstance)variableA.Fields["fieldA"].GetValue()!;
         Assert.That(variableB.Fields["fieldB"].Type, Is.EqualTo(typeC));
-        Assert.That(variableB.Fields["fieldB"].Value, Is.TypeOf<UserObjectInstance>());
+        Assert.That(variableB.Fields["fieldB"].GetValue(), Is.TypeOf<UserObjectInstance>());
 
-        UserObjectInstance variableC = (UserObjectInstance)variableB.Fields["fieldB"].Value!;
+        UserObjectInstance variableC = (UserObjectInstance)variableB.Fields["fieldB"].GetValue()!;
         Assert.That(variableC.Fields["fieldC"].Type, Is.EqualTo(BuiltinTypeInfo.String));
-        Assert.That(variableC.Fields["fieldC"].Value, Is.EqualTo(""));
+        Assert.That(variableC.Fields["fieldC"].GetValue(), Is.EqualTo(""));
     }
 
     [Test]
@@ -110,7 +110,7 @@ public class TypeTests
         ValueSearchResult testVarSearchResult = valueSearcher.Find("testObject.testVar");
         Assert.That(testVarSearchResult.DepthReached, Is.EqualTo(2));
         Assert.That(testVarSearchResult.Result, Is.Not.Null);
-        Assert.That(testVarSearchResult.Result.Value, Is.EqualTo(""));
+        Assert.That(testVarSearchResult.Result.GetValue(), Is.EqualTo(""));
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class TypeTests
         ValueSearchResult testVarSearchResult = valueSearcher.Find("testObject.testVar.testVar2");
         Assert.That(testVarSearchResult.DepthReached, Is.EqualTo(3));
         Assert.That(testVarSearchResult.Result, Is.Not.Null);
-        Assert.That(testVarSearchResult.Result.Value, Is.EqualTo(""));
+        Assert.That(testVarSearchResult.Result.GetValue(), Is.EqualTo(""));
     }
 
     [Test]
@@ -132,17 +132,17 @@ public class TypeTests
     {
         // setup initial value
         Variable initial = BuiltinTypeInfo.Int.CreateVariable();
-        Assert.That(initial.Value, Is.EqualTo(default(int)));
-        initial.Value = 10;
+        Assert.That(initial.GetValue(), Is.EqualTo(default(int)));
+        initial.SetValue(10);
 
         // create copy
         Variable copy = Variable.CreateCopy(initial);
-        Assert.That(copy.Value, Is.EqualTo(initial.Value));
+        Assert.That(copy.GetValue(), Is.EqualTo(initial.GetValue()));
 
         // change value in one
-        copy.Value = 20;
-        Assert.That(initial.Value, Is.EqualTo(10));
-        Assert.That(copy.Value, Is.EqualTo(20));
+        copy.SetValue(20);
+        Assert.That(initial.GetValue(), Is.EqualTo(10));
+        Assert.That(copy.GetValue(), Is.EqualTo(20));
     }
 
     [Test]
@@ -150,17 +150,17 @@ public class TypeTests
     {
         // setup initial value
         Variable initial = BuiltinTypeInfo.String.CreateVariable();
-        Assert.That(initial.Value, Is.EqualTo(String.Empty));
-        initial.Value = "test_1";
+        Assert.That(initial.GetValue(), Is.EqualTo(String.Empty));
+        initial.SetValue("test_1");
 
         // create copy
         Variable copy = Variable.CreateCopy(initial);
-        Assert.That(copy.Value, Is.EqualTo(initial.Value));
+        Assert.That(copy.GetValue(), Is.EqualTo(initial.GetValue()));
 
         // change value in one
-        copy.Value = "test_2";
-        Assert.That(initial.Value, Is.EqualTo("test_1"));
-        Assert.That(copy.Value, Is.EqualTo("test_2"));
+        copy.SetValue("test_2");
+        Assert.That(initial.GetValue(), Is.EqualTo("test_1"));
+        Assert.That(copy.GetValue(), Is.EqualTo("test_2"));
     }
 
     [Test]

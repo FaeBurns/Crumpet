@@ -1,9 +1,8 @@
-﻿using Crumpet.Exceptions;
-using Crumpet.Interpreter.Preparse;
+﻿using System.Diagnostics;
+using Crumpet.Exceptions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
-using Shared;
 
 namespace Crumpet.Interpreter.Functions;
 
@@ -11,25 +10,29 @@ public static class BuiltInFunctions
 {
     public static IEnumerable<BuiltInFunction> GetFunctions()
     {
-        yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any);
-        yield return new BuiltInFunction("print", Print, new AnyTypeInfo());
-        yield return new BuiltInFunction("println", PrintLine, new AnyTypeInfo());
+        yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any.Copy());
+        yield return new BuiltInFunction("print", Print, new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("println", PrintLine, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("input", Input);
-        yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String);
-        yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String);
-        yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo());
-        yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool);
-        yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool, BuiltinTypeInfo.String);
-        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int);
-        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownType(), new AnyTypeInfo());
-        yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String);
+        yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool.Copy());
+        yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool.Copy(), BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int.Copy());
+        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownType().Copy(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("BREAK", (_) => Debugger.Break());
     }
+
+    private static ParameterInfo Copy(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.COPY);
+    private static ParameterInfo Pointer(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.POINTER);
     
     public static void Count(InterpreterExecutionContext context)
     {
         Variable value = context.VariableStack.Pop();
 
-        if (value.Value is IEnumerable enumerable)
+        if (value.GetValue() is IEnumerable enumerable)
         {
             int count = 0;
             foreach (object _ in enumerable) count++;
@@ -80,14 +83,14 @@ public static class BuiltInFunctions
     public static void ToString(InterpreterExecutionContext context)
     {
         Variable variable = context.VariableStack.Pop();
-        context.VariableStack.Push(BuiltinTypeInfo.String, variable.Value.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
+        context.VariableStack.Push(BuiltinTypeInfo.String, variable.GetValue()!.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
     }
     
     public static void Assert(InterpreterExecutionContext context)
     {
         Variable value = context.VariableStack.Pop();
         if (!value.GetValue<bool>())
-            throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.LastEqualityComparedVariables[1].Value} != {context.LastEqualityComparedVariables[0].Value}");
+            throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.LastEqualityComparedVariables[1].GetValue()} != {context.LastEqualityComparedVariables[0].GetValue()}");
     }
 
     public static void AssertMessage(InterpreterExecutionContext context)

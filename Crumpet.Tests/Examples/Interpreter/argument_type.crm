@@ -1,0 +1,59 @@
+﻿func void main(){
+    TestGivesReferenceCorrectly();
+    TestGiveReferenceIncorrectly();
+    BREAK();
+    TestGiveCopyCorrectly();
+    BREAK();
+    TestGiveCopyIncorrectly();
+}
+
+func void TestGiveReferenceIncorrectly(){
+    println("Test Give Reference Incorrectly");
+    try{
+        int a = 5;
+        // this should cause an error as it should be passed as &a
+        TakesPointer(a);
+    }
+    catch e{
+        println(e);
+        return;
+    }
+    BREAK();
+    assert(false);
+}
+
+func void TestGiveCopyIncorrectly(){
+    println("Test Give Copy Incorrectly");
+    try{
+        int a = 5;
+        TakesCopy(&a);
+    }
+    catch e{
+        println(e);
+        return;
+    }
+    BREAK();
+    assert(false);
+}
+
+func void TestGivesReferenceCorrectly(){
+    println("Test Give Reference Correctly");
+    int a = 5;
+    int* b = TakesPointer(&a);
+    a = 10;
+    assert(*b == 10);
+}
+
+func void TestGiveCopyCorrectly(){
+    println("Test Give Copy Correctly");
+    int a = 5;
+    TakesCopy(a);
+}
+
+func int TakesCopy(int copy){
+    return copy;
+}
+
+func int* TakesPointer(int* ptr){
+    return ptr;
+}

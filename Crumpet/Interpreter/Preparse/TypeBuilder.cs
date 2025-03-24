@@ -24,6 +24,8 @@ public class TypeBuilder
 
         // should never return false
         bool clean = resolver.ReplacePlaceholders();
+        if (!clean)
+            clean = resolver.ReplacePlaceholders();
         Debug.Assert(clean);
 
         resolver.UpdateFieldsInUserTypes();

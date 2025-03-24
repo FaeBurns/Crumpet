@@ -24,8 +24,11 @@ public class UserObjectTypeInfo : TypeInfo
         return TypeName + " {" + String.Join(", ", Fields.Select(f => f.Type.TypeName)) + "}";
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
+        if (instance == null)
+            throw new NullReferenceException();
+        
         // cast should always succeed
         UserObjectInstance objectInstance = (UserObjectInstance)instance;
 
@@ -39,9 +42,20 @@ public class UserObjectTypeInfo : TypeInfo
         {
             // copy, pointer, or ref assign handled in setter
             // as long as the passed value is a Variable instance itself
-            newInstance.Fields[name].Value = objectInstance.Fields[name];
+            newInstance.Fields[name].SetValue(objectInstance.Fields[name]);
         }
 
         return newInstance;
+    }
+
+    public FieldInfo? GetFieldByName(string name)
+    {
+        foreach (FieldInfo field in Fields)
+        {
+            if (field.Name == name)
+                return field;
+        }
+
+        return null;
     }
 }

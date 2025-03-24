@@ -20,7 +20,7 @@ public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<ParameterNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)),
             GetNodeConstructor<ParameterNodeBasicVariant>());
 
@@ -29,7 +29,7 @@ public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
                 new NonTerminalConstraint<TypeNode>(),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LINDEX),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RINDEX),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)),
             GetNodeConstructor<ParameterNodeArrayVariant>());
     }
@@ -40,7 +40,7 @@ public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
             return VariableModifier.COPY;
 
         // re-use multiply as multiple identical tokens cannot exist
-        if (sugar.Token.TokenId == CrumpetToken.REFERENCE)
+        if (sugar.Token.TokenId == CrumpetToken.MULTIPLY)
             return VariableModifier.POINTER;
 
         throw new UnreachableException();

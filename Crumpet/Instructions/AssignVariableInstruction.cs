@@ -17,6 +17,6 @@ public class AssignVariableInstruction : Instruction
     {
         Variable source = context.VariableStack.Pop();
         Variable target = context.VariableStack.Pop();
-        target.Value = source;
+        target.SetValue(source);
     }
 }

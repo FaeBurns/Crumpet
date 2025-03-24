@@ -24,7 +24,9 @@ public class EqualityInstruction : Instruction
         // bool result = a.Value.Equals(b.Value);
         
         // compare via dynamic to allow cross-type comparisons. e.g. float(3) == int(3)
-        bool result = (dynamic)a.Value == (dynamic)b.Value;
+        dynamic? aVal = a.GetValue();
+        dynamic? bVal = b.GetValue();
+        bool result = aVal == bVal;
         if (m_invert)
             result = !result;
 

@@ -1,4 +1,5 @@
 ﻿using Crumpet.Interpreter.Variables.Types;
+using Crumpet.Language;
 using Shared;
 using Shared.Collections;
 
@@ -16,16 +17,16 @@ public class FunctionResolver
         }
     }
 
-    public Function GetFunction(string functionName, IEnumerable<TypeInfo> passingParameters)
+    public Function GetFunction(string functionName, IEnumerable<ParameterInfo> passingParameters)
     {
-        return m_functions.GetValueOrDefault(functionName, f => MatchParameters(f.ParameterTypes, passingParameters))
+        return m_functions.GetValueOrDefault(functionName, f => MatchParameters(f.Parameters, passingParameters))
                ?? throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(functionName, String.Join(", ", passingParameters.Select(p => p.ToString()))));
     }
 
-    private bool MatchParameters(IEnumerable<TypeInfo> functionParameters, IEnumerable<TypeInfo> passingParameters)
+    private bool MatchParameters(IEnumerable<ParameterInfo> functionParameters, IEnumerable<ParameterInfo> passingParameters)
     {
-        TypeInfo[] funcParams = functionParameters.ToArray();
-        TypeInfo[] passingParams = passingParameters.ToArray();
+        ParameterInfo[] funcParams = functionParameters.ToArray();
+        ParameterInfo[] passingParams = passingParameters.ToArray();
 
         // false if lengths don't match
         if (funcParams.Length != passingParams.Length)
@@ -38,25 +39,32 @@ public class FunctionResolver
         // check for equivalent types
         for (int i = 0; i < funcParams.Length; i++)
         {
+            // modifiers must match
+            if (funcParams[i].Modifier != passingParams[i].Modifier)
+                return false;
+
+            if (funcParams[i].Modifier == VariableModifier.POINTER && passingParams[i].Type is NullTypeInfo)
+                continue;
+            
             // if they're equal
-            if (funcParams[i] == passingParams[i])
+            if (funcParams[i].Type == passingParams[i].Type)
                 continue;
             
             // if the function accepts anything
-            if (funcParams[i] is AnyTypeInfo)
+            if (funcParams[i].Type is AnyTypeInfo)
                 continue;
             
             // if the function allows any array type
             // exclude specific array types for this check
-            if (funcParams[i] is ArrayTypeInfoUnkownType and not ArrayTypeInfo && passingParams[i] is ArrayTypeInfo)
+            if (funcParams[i].Type is ArrayTypeInfoUnkownType and not ArrayTypeInfo && passingParams[i].Type is ArrayTypeInfo)
                 continue;
             
-            if (funcParams[i] is TypeTypeInfoUnknownType and not TypeTypeInfo && passingParams[i] is TypeTypeInfo)
+            if (funcParams[i].Type is TypeTypeInfoUnknownType and not TypeTypeInfo && passingParams[i].Type is TypeTypeInfo)
                 continue;
 
             // type specific check
-            // tbh all of this should be in there but that involves some pretty funky coupling and I don't like that
-            if (funcParams[i].IsAssignableFrom(passingParams[i]))
+            // only do this check if it's a copy type
+            if (funcParams[i].Type.IsAssignableFrom(passingParams[i].Type) && funcParams[i].Modifier == VariableModifier.COPY)
                 continue;
 
             // if none of the conditions pass this will be hit
@@ -64,5 +72,16 @@ public class FunctionResolver
         }
 
         return true;
+    }
+}
+
+public class ParameterInfo(TypeInfo type, VariableModifier modifier)
+{
+    public TypeInfo Type { get; } = type;
+    public VariableModifier Modifier { get; } = modifier;
+
+    public override string ToString()
+    {
+        return Type.TypeName + (Modifier == VariableModifier.COPY ? "" : "*");
     }
 }

@@ -23,6 +23,6 @@ public class FloatLiteralNode : TerminalNode<CrumpetToken>, ITerminalNodeFactory
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushConstantInstruction(BuiltinTypeInfo.Float, FloatLiteral, Location);
+        yield return new PushConstantInstruction(BuiltinTypeInfo.Float, FloatLiteral, VariableModifier.COPY, Location);
     }
 }

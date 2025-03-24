@@ -24,12 +24,12 @@ public class RelationalInstruction : Instruction
         Variable b = context.VariableStack.Pop();
         Variable a = context.VariableStack.Pop();
 
-        bool result = Operate(context, a, b);
+        bool result = Operate(a, b);
         
         context.VariableStack.Push(BuiltinTypeInfo.Bool, result);
     }
 
-    private bool Operate(InterpreterExecutionContext context, Variable a, Variable b)
+    private bool Operate(Variable a, Variable b)
     {
         if (a.Type != b.Type)
         {

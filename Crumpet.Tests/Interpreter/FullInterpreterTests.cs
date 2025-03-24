@@ -14,9 +14,19 @@ namespace Crumpet.Tests.Interpreter;
 public class FullInterpreterTests
 {
     [TestCase("Interpreter/simpleadd", 2, 1, ExpectedResult = 3)]
+    [TestCase("Interpreter/argument_type", ExpectedResult = 0)]
+    [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     public object RunExampleFile(string filename, params object[] args)
     {
-        return RunProgramFile(Path.Combine("Examples//", filename) + ".crm", args);
+        InterpreterDebuggerHelper.RegisterFunction("TakesPointer");
+        
+        using MemoryStream outputStream = new MemoryStream();
+        object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", args, null, outputStream);
+        outputStream.Seek(0, SeekOrigin.Begin);
+        using StreamReader outputReader = new StreamReader(outputStream);
+        TestContext.Out.Write(outputReader.ReadToEnd());
+
+        return result;
     }
     
     public object RunProgramFile(string path, object[] args, Stream? inputStream = null, Stream? outputStream = null)
@@ -50,7 +60,7 @@ public class FullInterpreterTests
             else throw;
             return null!;
         }
-        return executor.StepUntilComplete().Value;
+        return executor.StepUntilComplete().GetValue()!;
     }
 
     [Test]

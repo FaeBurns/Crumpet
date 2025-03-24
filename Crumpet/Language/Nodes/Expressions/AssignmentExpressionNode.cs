@@ -12,7 +12,7 @@ namespace Crumpet.Language.Nodes.Expressions;
 
 public abstract class AssignmentExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    protected AssignmentExpressionNode(params IEnumerable<ASTNode> implicitChildren) : base(implicitChildren)
+    protected AssignmentExpressionNode(params IEnumerable<ASTNode?> implicitChildren) : base(implicitChildren)
     {
     }
 
@@ -23,7 +23,7 @@ public abstract class AssignmentExpressionNode : NonTerminalNode, INonTerminalNo
         yield return new NonTerminalDefinition<AssignmentExpressionNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<UnaryExpressionNode>(),
-                new CrumpetRawTerminalConstraint(CrumpetToken.EQUALS),
+                new CrumpetRawTerminalConstraint(CrumpetToken.EQUALS), 
                 new NonTerminalConstraint<AssignmentExpressionNode>()
             ), GetNodeConstructor<AssignmentExpressionNodeAssignmentVariant>());
     }
@@ -48,6 +48,7 @@ public class AssignmentExpressionNodeAssignmentVariant : AssignmentExpressionNod
 {
     public UnaryExpressionNode UnaryExpression { get; }
     public AssignmentExpressionNode AssignmentExpression { get; }
+
 
     public AssignmentExpressionNodeAssignmentVariant(UnaryExpressionNode unaryExpression, AssignmentExpressionNode assignmentExpression) : base(unaryExpression, assignmentExpression)
     {

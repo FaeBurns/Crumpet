@@ -21,12 +21,12 @@ public class IncrementInstruction : Instruction
 
         if (variable.Type is BuiltinTypeInfo<int>)
         {
-            variable.Value = variable.GetValue<int>() + (m_add ? 1 : -1);
+            variable.SetValue(variable.GetValue<int>() + (m_add ? 1 : -1));
         }
 
         if (variable.Type is BuiltinTypeInfo<float>)
         {
-            variable.Value = variable.GetValue<float>() + (m_add ? 1f : -1f);
+            variable.SetValue(variable.GetValue<float>() + (m_add ? 1 : -1f));
         }
         
         // push it again?

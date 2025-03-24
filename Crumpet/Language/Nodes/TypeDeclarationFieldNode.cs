@@ -23,7 +23,7 @@ public class TypeDeclarationFieldNode : NonTerminalNode, INonTerminalNodeFactory
                 return VariableModifier.COPY;
 
             // re-use multiply as multiple identical tokens cannot exist
-            if (ModifierSugar.Token.TokenId == CrumpetToken.REFERENCE)
+            if (ModifierSugar.Token.TokenId == CrumpetToken.MULTIPLY)
                 return VariableModifier.POINTER;
 
             throw new UnreachableException();
@@ -42,7 +42,7 @@ public class TypeDeclarationFieldNode : NonTerminalNode, INonTerminalNodeFactory
         yield return new NonTerminalDefinition<TypeDeclarationFieldNode>(
             new SequenceConstraint(
                 new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.REFERENCE)),
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
                 new CrumpetRawTerminalConstraint(CrumpetToken.SEMICOLON)),
             GetNodeConstructor<TypeDeclarationFieldNode>());

@@ -1,4 +1,5 @@
-﻿using Crumpet.Language;
+﻿using Crumpet.Interpreter;
+using Crumpet.Language;
 using Parser;
 
 namespace Crumpet.Tests;
@@ -10,5 +11,6 @@ public class TestsSetup
     public void LoadInstructions()
     {
         ParserDebuggerHelper<CrumpetToken>.Clear();
+        InterpreterDebuggerHelper.Clear();
     }
 }

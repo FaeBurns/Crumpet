@@ -77,25 +77,22 @@ public class InterpreterExecutionContext
         // this will not occur during a built in function but those should never be an entry point so it's ok?
         ExecutionResult = value;
 
-        UnitExecutionContext lastUnit = CurrentUnit;
-        while(!lastUnit.Unit.AcceptsReturn)
-        {
-            // if the last unit does not accept return, pop another one off
-            // we're trying to get to the topmost unit that accepts return statements
-            lastUnit = m_executionStack.Pop();
-        }
+        // always pop at least one
+        JumpToInstructionOfType<ReturnLabelInstruction>(false);
 
         // return type check
         if (value is not null)
         {
-            if (!value.Type.IsAssignableTo(lastUnit.ExpectedReturnType))
-                throw new TypeMismatchException(lastUnit.ExpectedReturnType, value.Type);
+            if (!value.Type.IsAssignableTo(CurrentUnit.ExpectedReturnType))
+                throw new TypeMismatchException(CurrentUnit.ExpectedReturnType, value.Type);
         }
 
         // pop another one off
         // this one was the one accepting the return
-        m_executionStack.Pop();
+        // m_executionStack.Pop();
         // we're now outside of that function
+        
+        // actually don't pop one off here as the pop in the loop will do that for us. If that was using the peek search method then yes a pop should be used here
     }
 
     public void Continue()
@@ -185,12 +182,11 @@ public class InterpreterExecutionContext
 
         while (m_executionStack.Any())
         {
-            // exit the loop if the unit blocks this
-            if (searchingUnit.Unit.AcceptsReturn && blockedByReturn)
-                break;
-            
             foreach (Instruction instruction in searchingUnit.Unit.Instructions)
             {
+                if (instruction is ReturnLabelInstruction && blockedByReturn)
+                    break;
+                
                 if (instruction is T)
                 {
                     // set instruction pointer to point to current instruction

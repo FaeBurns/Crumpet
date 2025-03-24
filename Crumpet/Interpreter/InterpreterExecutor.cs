@@ -42,6 +42,11 @@ public class InterpreterExecutor
         if (instruction == null)
             return false;
 
+        // conditional compilation here fucks with user exceptions but helps with debugging ig???
+        #if DEBUG && FALSE
+            instruction.Execute(m_context);
+        #else
+            
         try
         {
             instruction.Execute(m_context);
@@ -63,6 +68,7 @@ public class InterpreterExecutor
                 throw new InterpreterException(instruction.Location, ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION, r);
             }
         }
+        #endif
 
         return true;
     }

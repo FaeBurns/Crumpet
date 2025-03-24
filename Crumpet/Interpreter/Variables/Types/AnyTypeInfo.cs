@@ -8,7 +8,7 @@ public class AnyTypeInfo : TypeInfo
         throw new InvalidOperationException();
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         throw new InvalidOperationException();
     }

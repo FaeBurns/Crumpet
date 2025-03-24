@@ -27,8 +27,9 @@ public class FunctionBuilder
             // return function definition
             // types need to get their TypeInfo from the resolver and throw if they fail
             FunctionDefinition definition = new FunctionDefinition(
-                node.Name.Terminal, 
-                m_typeResolver.ResolveType(node.ReturnType.FullName) ?? throw new CompilationException(node, ExceptionConstants.UNKOWN_RETURN_TYPE.Format(node.ReturnType)), 
+                node.Name.Terminal,
+                m_typeResolver.ResolveType(node.ReturnType.FullName) ?? throw new CompilationException(node, ExceptionConstants.UNKOWN_RETURN_TYPE.Format(node.ReturnType)),
+                node.ReturnModifier,
                 node.Parameters.Parameters.Select(NodeToDefinition), 
                 node.Location);
             
@@ -64,7 +65,7 @@ public class FunctionBuilder
 
     private Function BuildFunction(FunctionDefinition definition, FunctionDeclarationNode node)
     {
-        IEnumerable instructions = node.StatementBody.GetInstructionsRecursive();
+        IEnumerable instructions = node.GetInstructionsRecursive();
         InstructionCollator bodyInstructions = new InstructionCollator(instructions);
 
         return new UserFunction(definition, bodyInstructions);

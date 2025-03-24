@@ -57,7 +57,7 @@ public class ValueSearcher
         if (segments.Length == 0)
             return new ValueSearchResult(target, 0);
         
-        return FindObjectFieldRecursive(target, segments.Skip(1).ToArray(), 1);
+        return FindObjectFieldRecursive(target, segments.ToArray(), 1);
     }
 
     private ValueSearchResult FindObjectFieldRecursive(Variable searchTarget, string[] segments, int currentDepth)
@@ -77,7 +77,7 @@ public class ValueSearcher
 
     private Variable? FindObjectField(Variable searchTarget, string name)
     {
-        if (searchTarget.Value is UserObjectInstance objectInstance && objectInstance.Fields.Has(name))
+        if (searchTarget.DereferenceOrGetValue() is UserObjectInstance objectInstance && objectInstance.Fields.Has(name))
         {
             return objectInstance.Fields[name];
         }

@@ -1,4 +1,6 @@
-﻿using Crumpet.Instructions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Crumpet.Instructions;
+using Crumpet.Instructions.Unary;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
 using Crumpet.Language.Nodes.Terminals;
@@ -12,21 +14,23 @@ namespace Crumpet.Language.Nodes.Expressions;
 
 public class PrimaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    public ASTNode Variant { get; }
 
-    protected PrimaryExpressionNode(ASTNode variant)
+    protected PrimaryExpressionNode(params IEnumerable<ASTNode?> children) : base(children)
     {
-        Variant = variant;
-    }
-
-    protected override IEnumerable<ASTNode> EnumerateChildrenDerived()
-    {
-        yield return Variant;
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        yield return new NonTerminalDefinition<PrimaryExpressionNode>(new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER), GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant>());
+        yield return new NonTerminalDefinition<PrimaryExpressionNode>(new SequenceConstraint(
+            new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+            new ZeroOrMoreConstraint(new NonTerminalConstraint<PrimaryExpressionNodeIdentifierVariant.ArgumentCollator>())),
+            GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant>());
+
+        yield return new NonTerminalDefinition<PrimaryExpressionNodeIdentifierVariant.ArgumentCollator>(
+            new SequenceConstraint(
+                new OrConstraint(new CrumpetTerminalConstraint(CrumpetToken.PERIOD), new CrumpetTerminalConstraint(CrumpetToken.DEREFERENCE)),
+                new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER)),
+            GetNodeConstructor<PrimaryExpressionNodeIdentifierVariant.ArgumentCollator>());
         
         yield return new NonTerminalDefinition<PrimaryExpressionNode>(new NonTerminalConstraint<LiteralConstantNode>(), GetNodeConstructor<PrimaryExpressionNodeLiteralConstantVariant>());
         
@@ -41,16 +45,43 @@ public class PrimaryExpressionNode : NonTerminalNode, INonTerminalNodeFactory
 
 public class PrimaryExpressionNodeIdentifierVariant : PrimaryExpressionNode, IInstructionProvider
 {
-    public IdentifierNode Identifier { get; }
+    public IdentifierNode FirstNode { get; }
+    public IEnumerable<ArgumentCollator> Args { get; }
 
-    public PrimaryExpressionNodeIdentifierVariant(IdentifierNode identifier) : base(identifier)
+    public PrimaryExpressionNodeIdentifierVariant(IdentifierNode identifier, IEnumerable<ArgumentCollator> args) : base(identifier)
     {
-        Identifier = identifier;
+        FirstNode = identifier;
+        Args = args.ToArray();
+        foreach (ArgumentCollator arg in Args)
+        {
+            ImplicitChildren.Add(arg.Sugar);
+            ImplicitChildren.Add(arg.Identifier);
+        }
     }
 
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new PushNamedVariableInstruction(Identifier.Terminal, Location);
+        yield return new PushNamedVariableInstruction(FirstNode.Terminal, Location);
+        
+        foreach (ArgumentCollator arg in Args)
+        {
+            if (arg.Sugar.Token.TokenId == CrumpetToken.DEREFERENCE)
+                yield return new DereferencePointerInstruction(Location);
+
+            yield return new PopAndSearchFieldInstruction(arg.Identifier.Terminal, Location);
+        }
+    }
+    
+    public class ArgumentCollator : NonTerminalNode
+    {
+        public TerminalNode<CrumpetToken> Sugar { get; }
+        public IdentifierNode Identifier { get; }
+
+        public ArgumentCollator(TerminalNode<CrumpetToken> sugar, IdentifierNode identifier)
+        {
+            Sugar = sugar;
+            Identifier = identifier;
+        }
     }
 }
 
