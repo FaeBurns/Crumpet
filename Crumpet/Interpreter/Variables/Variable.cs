@@ -187,6 +187,21 @@ public class Variable
         if (Modifier != other.Modifier)
             return false;
 
+        // if it's a pointer, check they're pointing to the same object
+        if (Modifier == VariableModifier.POINTER)
+        {
+            // null checks
+            if (m_value == null && other.m_value == null)
+                return true;
+            else if (m_value == null)
+                return false;
+            else if (other.m_value == null)
+                return false;
+            
+            // ensure the references point to the same object
+            return ReferenceEquals(m_value, other.m_value);
+        }
+
         return m_value == other.m_value;
     }
 
@@ -211,5 +226,17 @@ public class Variable
     public static bool operator !=(Variable left, Variable right)
     {
         return !(left == right);
+    }
+
+    public Variable CreateCopyConvert(TypeInfo type)
+    {
+        if (Modifier != VariableModifier.COPY)
+            throw new InvalidOperationException(ExceptionConstants.MODIFIER_MISMATCH.Format(VariableModifier.COPY, Modifier));
+        
+        if (!Type.IsAssignableTo(type))
+            throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(type, Type));
+        
+        object? value = Type.ConvertValidObjectTo(type, m_value);
+        return Variable.Create(type, value);
     }
 }

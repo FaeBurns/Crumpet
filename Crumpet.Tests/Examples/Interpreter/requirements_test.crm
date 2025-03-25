@@ -1,0 +1,129 @@
+﻿func void main(){
+    assert(!(true == false));
+    assert(true != false);
+    assert(5 < 10);
+    assert(!(5 - 4 > 3 * 2 == !false));
+    assert(true && true);
+    assert(!(false && true));
+    assert((0 < 1) || false);
+    assert(!(false || false));
+    
+    println("basic 1 passed");
+    
+    assert("hello" + " " + "world" == "hello world");
+    assert("foo" + "bar" == "foobar");
+    assert("10 corgis" == 10 + " corgis");
+    assert(pString(false) != "false"); // a boolean to string will return it with the first character in upper case
+    assert("word"[0] == "w");
+    
+    println("basic 2 passed");
+    
+    // multiple statements on the same line
+    assert(!(true == false)); assert(true != false); assert(5 < 10); assert(!(5 - 4 > 3 * 2 == !false));
+    assert(true && true); assert(!(false && true)); assert((0 < 1) || false); assert(!(false || false));
+    assert("hello" + " " + "world" == "hello world"); assert("foo" + "bar" == "foobar"); 
+    assert("10 corgis" == 10 + " corgis"); assert(pString(false) != "false"); assert("word"[0] == "w");
+    
+    println("basic 2 inlined passed");
+    
+    assert("word"[0] == "w");
+    assert("word"[1] == "o");
+    assert("word"[2] == "r");
+    assert("word"[3] == "d");
+    
+    println("string index passed");
+    
+    int[] testList = list(int, 5);
+    for(int i = 0; i < count(&testList); i++){
+        testList[i] = i + 1;
+    }
+    
+    assertListNElements(&testList, 5);
+    listAdd(&testList, 6);    
+    assertListNElements(&testList, 6);
+    listRemove(&testList, count(&testList) - 1);
+    assertListNElements(&testList, 5);
+    
+    println("list basic passed");
+    
+    int[]* ptr1 = &testList;
+    int[]* ptr2 = ptr1;
+    *ptr1 = list(int, 0);
+    assertListNElements(ptr1, 0);
+    assertListNElements(ptr2, 0);
+    
+    println("list pointer passed");
+   
+    testList = list(int, 5);
+    assert(count(*ptr1) == 5);
+    assert(count(*ptr2) == 5);
+    
+    println("list reassign passed");
+
+    // repopulate
+    for(int i = 0; i < count(&testList); i++){
+        testList[i] = i + 1;
+    }
+    
+    resizeList(&testList, 10);
+    assert(testList[0] == 1);
+    assert(testList[1] == 2);
+    assert(testList[2] == 3);
+    assert(testList[3] == 4);
+    assert(testList[4] == 5);
+    assert(testList[5] == 0);
+    assert(testList[6] == 0);
+    assert(testList[7] == 0);
+    assert(testList[8] == 0);
+    assert(testList[9] == 0);
+    
+    println("list resize passed");
+    
+    listInsert(&testList, 2, 10);
+    assert(testList[1] == 2);
+    assert(testList[2] == 10);
+    assert(testList[3] == 3); // has been moved up one
+    
+    println("list insert passed");
+    
+    int three = 3;
+    assert(0 - 3 == -3);
+    assert(-3 == -three);
+    
+    println("negation passed");
+}
+
+func void assertListNElements(int[]* list, int count){
+    assert(count(*list) == count);
+    for(int i = 0; i < count; i++){
+        assert(*list[i] == i + 1);
+    }
+}
+
+func void resizeList(int[]* list, int newSize){
+    if(count(*list) == newSize)
+        return;
+    
+    int[] newList = list(int, newSize);
+    // populate with entries that the newlist can fit
+    for(int i = 0; i < min(count(list), newSize); i++){
+        newList[i] = *list[i];
+    }
+    *list = newList;
+}
+
+func int min(int a, int b){
+    if (a < b)
+        return a;
+    return b;  
+}
+
+func void massert(bool condition, string message){
+    if (condition){
+        println("assertation passed: " + message);
+    }
+    else{
+        println("assertation failed " + message);
+        assert(false);
+    }
+}

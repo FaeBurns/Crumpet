@@ -3,6 +3,7 @@ using Crumpet.Exceptions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
+using Shared;
 
 namespace Crumpet.Interpreter.Functions;
 
@@ -11,6 +12,7 @@ public static class BuiltInFunctions
     public static IEnumerable<BuiltInFunction> GetFunctions()
     {
         yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any.Copy());
+        yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any.Pointer());
         yield return new BuiltInFunction("print", Print, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("println", PrintLine, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("input", Input);
@@ -20,9 +22,14 @@ public static class BuiltInFunctions
         yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool.Copy());
         yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool.Copy(), BuiltinTypeInfo.String.Copy());
         yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int.Copy());
-        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownType().Copy(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownTypeInfo().Copy(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("listAdd", ListAdd, new ArrayTypeInfoUnkownTypeInfo().Pointer(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("listInsert", ListInsert, new ArrayTypeInfoUnkownTypeInfo().Pointer(), new AnyTypeInfo().Copy(), BuiltinTypeInfo.Int.Copy());
+        yield return new BuiltInFunction("listRemove", ListRemove, new ArrayTypeInfoUnkownTypeInfo().Pointer(), BuiltinTypeInfo.Int.Copy());
         yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String.Copy());
         yield return new BuiltInFunction("BREAK", (_) => Debugger.Break());
+        yield return new BuiltInFunction("toLower", StringToLower, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("toUpper", StringToUpper, BuiltinTypeInfo.String.Copy());
     }
 
     private static ParameterInfo Copy(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.COPY);
@@ -30,7 +37,8 @@ public static class BuiltInFunctions
     
     public static void Count(InterpreterExecutionContext context)
     {
-        Variable value = context.VariableStack.Pop();
+        // dereference or self
+        Variable value = context.VariableStack.Pop().DereferenceToLowestVariable();
 
         if (value.GetValue() is IEnumerable enumerable)
         {
@@ -126,12 +134,70 @@ public static class BuiltInFunctions
 
     public static void ListAdd(InterpreterExecutionContext context)
     {
-        
+        Variable value = context.VariableStack.Pop();
+        Variable list = context.VariableStack.Pop().Dereference();
+
+        if (list.Type is ArrayTypeInfo type)
+        {          
+            // add a copy of value to the end
+            List<Variable> target = list.GetValue<List<Variable>>();
+            target.Add(value.CreateCopyConvert(type.InnerType));
+            return;
+        }
+
+        throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
+    }
+
+    public static void ListInsert(InterpreterExecutionContext context)
+    {
+        Variable value = context.VariableStack.Pop();
+        Variable index = context.VariableStack.Pop();
+        Variable list = context.VariableStack.Pop().Dereference();
+
+        if (list.Type is ArrayTypeInfo type)
+        {
+            // add a copy of value to the end
+            List<Variable> target = list.GetValue<List<Variable>>();
+            target.Insert(index.GetValue<int>(), value.CreateCopyConvert(type.InnerType));
+            return;
+        }
+
+        throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
+    }
+
+    public static void ListRemove(InterpreterExecutionContext context)
+    {
+        Variable index = context.VariableStack.Pop();
+        Variable list = context.VariableStack.Pop().Dereference();
+
+        if (list.Type is ArrayTypeInfo)
+        {
+            // add a copy of value to the end
+            List<Variable> target = list.GetValue<List<Variable>>();
+            target.RemoveAt(index.GetValue<int>());
+            return;
+        }
+
+        throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
     }
 
     public static void Throw(InterpreterExecutionContext context)
     {
         Variable message = context.VariableStack.Pop();
         context.Throw(message.GetValue<string>());
+    }
+
+    public static void StringToLower(InterpreterExecutionContext context)
+    {
+        Variable str = context.VariableStack.Pop();
+        string lower = str.GetValue<string>().ToLower();
+        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, lower));
+    }
+
+    public static void StringToUpper(InterpreterExecutionContext context)
+    {
+        Variable str = context.VariableStack.Pop();
+        string lower = str.GetValue<string>().ToUpper();
+        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, lower));   
     }
 }

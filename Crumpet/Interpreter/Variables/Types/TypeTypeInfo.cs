@@ -1,6 +1,6 @@
 ﻿namespace Crumpet.Interpreter.Variables.Types;
 
-public class TypeTypeInfo : TypeTypeInfoUnknownType
+public class TypeTypeInfo : TypeTypeInfoUnknownTypeInfo
 {
     public TypeInfo Type { get; }
 
@@ -23,7 +23,7 @@ public class TypeTypeInfo : TypeTypeInfoUnknownType
     }
 }
 
-public class TypeTypeInfoUnknownType : TypeInfo
+public class TypeTypeInfoUnknownTypeInfo : TypeInfo
 {
     public override string TypeName => "Type: ?";
     public override Variable CreateVariable()

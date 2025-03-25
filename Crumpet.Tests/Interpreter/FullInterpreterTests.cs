@@ -16,6 +16,7 @@ public class FullInterpreterTests
     [TestCase("Interpreter/simpleadd", 2, 1, ExpectedResult = 3)]
     [TestCase("Interpreter/argument_type", ExpectedResult = 0)]
     [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
+    [TestCase("Interpreter/requirements_test", ExpectedResult = 0)]
     public object RunExampleFile(string filename, params object[] args)
     {
         InterpreterDebuggerHelper.RegisterFunction("TakesPointer");

@@ -56,10 +56,10 @@ public class FunctionResolver
             
             // if the function allows any array type
             // exclude specific array types for this check
-            if (funcParams[i].Type is ArrayTypeInfoUnkownType and not ArrayTypeInfo && passingParams[i].Type is ArrayTypeInfo)
+            if (funcParams[i].Type is ArrayTypeInfoUnkownTypeInfo and not ArrayTypeInfo && passingParams[i].Type is ArrayTypeInfo)
                 continue;
             
-            if (funcParams[i].Type is TypeTypeInfoUnknownType and not TypeTypeInfo && passingParams[i].Type is TypeTypeInfo)
+            if (funcParams[i].Type is TypeTypeInfoUnknownTypeInfo and not TypeTypeInfo && passingParams[i].Type is TypeTypeInfo)
                 continue;
 
             // type specific check

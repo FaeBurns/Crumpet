@@ -22,10 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Parser\Nodes\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Crumpet\Crumpet.csproj" />
       <ProjectReference Include="..\Parser\Parser.csproj" />
     </ItemGroup>

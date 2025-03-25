@@ -3,11 +3,11 @@ using Shared;
 
 namespace Crumpet.Interpreter.Variables.Types;
 
-public class ArrayTypeInfo : ArrayTypeInfoUnkownType
+public class ArrayTypeInfo : ArrayTypeInfoUnkownTypeInfo
 {
-    public static readonly TypeInfo Any = new ArrayTypeInfoUnkownType();
+    public static readonly TypeInfo Any = new ArrayTypeInfoUnkownTypeInfo();
     
-    public ArrayTypeInfo(TypeInfo innerType) : base()
+    public ArrayTypeInfo(TypeInfo innerType)
     {
         InnerType = innerType;
     }
@@ -30,7 +30,7 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
         return Variable.Create(this, new List<Variable>());
     }
 
-    public override object CreateCopy(object instance)
+    public override object CreateCopy(object? instance)
     {
         if (instance is IList<Variable> source)
         {
@@ -38,12 +38,12 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
             return source.Select(Variable.CreateCopy).ToList();
         }
 
-        throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(IList<Variable>), instance.GetType()));
+        throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(IList<Variable>), instance!.GetType()));
     }
 
     public override bool ConvertableTo(TypeInfo other)
     {
-        if (other is ArrayTypeInfoUnkownType)
+        if (other is ArrayTypeInfoUnkownTypeInfo)
             return true;
 
         if (other is not ArrayTypeInfo arrayType)
@@ -60,7 +60,7 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
         if (value is null)
             throw new NullReferenceException();
         
-        if (type is ArrayTypeInfoUnkownType)
+        if (type is ArrayTypeInfoUnkownTypeInfo)
             return value;
 
         if (type is ArrayTypeInfo arrayType)
@@ -86,7 +86,7 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownType
     }
 }
 
-public class ArrayTypeInfoUnkownType : TypeInfo
+public class ArrayTypeInfoUnkownTypeInfo : TypeInfo
 {
     public override string TypeName => "[]";
     public override Variable CreateVariable()

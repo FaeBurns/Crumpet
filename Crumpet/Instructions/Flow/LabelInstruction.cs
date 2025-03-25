@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Functions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Shared;
 
@@ -7,6 +8,8 @@ namespace Crumpet.Instructions.Flow;
 public class LabelInstruction : Instruction
 {
     public Guid ID { get; }
+    
+    [ExcludeFromCodeCoverage]
     public required string FriendlyName { get; init; }
 
     public LabelInstruction(Guid id, SourceLocation location) : base(location)
@@ -14,6 +17,7 @@ public class LabelInstruction : Instruction
         ID = id;
     }
 
+    [ExcludeFromCodeCoverage]
     public override string ToString()
     {
         if (String.IsNullOrEmpty(FriendlyName))
