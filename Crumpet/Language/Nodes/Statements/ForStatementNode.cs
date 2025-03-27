@@ -1,4 +1,5 @@
 ﻿using Crumpet.Instructions;
+using Crumpet.Instructions.Details;
 using Crumpet.Instructions.Flow;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -79,8 +80,14 @@ public class ForStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstr
 
         // jump target for continue statements
         yield return new LoopContinueLabel(Location);
+        
+        // the i++ will push its result to the stack. Ensure this does not cause an issue
+        StackItemCounter counter = new StackItemCounter();
+        yield return new SaveStackItemCountInstruction(counter, Location);
         // loop finalizer (i++)
         yield return Finalizer;
+        yield return new RestoreStackItemCountInstruction(counter, Location);
+        
         // jump back to the condition
         yield return new JumpInstruction(conditionLabel, Location);
         

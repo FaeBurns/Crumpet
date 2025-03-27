@@ -1,11 +1,12 @@
 ﻿using Crumpet.Exceptions;
 using Crumpet.Instructions.Flow;
+using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Shared;
 
-namespace Crumpet.Interpreter.Functions;
+namespace Crumpet.Interpreter;
 
 public class InterpreterExecutionContext
 {
@@ -13,7 +14,7 @@ public class InterpreterExecutionContext
     private readonly Stream m_outputStream;
     private readonly string m_source;
     private readonly Scope m_rootScope = new Scope(null);
-    private readonly Stack<UnitExecutionContext> m_executionStack = new Stack<UnitExecutionContext>();
+    private readonly ExecutionStack m_executionStack;
 
     public UnitExecutionContext? CurrentUnit => m_executionStack.Any() ? m_executionStack.Peek() : null;
     public Scope CurrentScope => CurrentUnit?.Unit.Scope ?? m_rootScope;
@@ -28,6 +29,7 @@ public class InterpreterExecutionContext
         m_inputStream = inputStream;
         m_outputStream = outputStream;
         m_source = source;
+        m_executionStack = new ExecutionStack(this);
         TypeResolver = typeResolver;
         FunctionResolver = functionResolver;
     }
@@ -70,23 +72,29 @@ public class InterpreterExecutionContext
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
         
-        // push the return value if its not a void function
-        if (value is not null)
-            VariableStack.Push(value);
-        
-        // record to execution result
-        // this will not occur during a built in function but those should never be an entry point so it's ok?
-        ExecutionResult = value;
-
-        // always pop at least one
-        JumpToInstructionOfType<ReturnLabelInstruction>(false);
-
         // return type check
         if (value is not null)
         {
             if (!value.Type.IsAssignableTo(CurrentUnit.ExpectedReturnType))
                 throw new TypeMismatchException(CurrentUnit.ExpectedReturnType, value.Type);
         }
+
+        // jump to the target return label
+        JumpToInstructionOfType<ReturnLabelInstruction>(false);
+        
+        // push the return value if its not a void function
+        // do this after
+        // as JumpToInstructionOfType will pop off the variable stack
+        if (value is not null)
+            VariableStack.Push(value);
+        // push it for the AssertReturnTypeInstruction
+        // but also set it as the return value on the current unit so it will still get pushed *after* the stack unwind
+        CurrentUnit.ValueToPushOnPop = value;
+        
+        
+        // record to execution result
+        // this will not occur during a built in function but those should never be an entry point so it's ok?
+        ExecutionResult = value;
 
         // pop another one off
         // this one was the one accepting the return

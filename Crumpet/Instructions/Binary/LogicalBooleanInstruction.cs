@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Crumpet.Interpreter;
 using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;

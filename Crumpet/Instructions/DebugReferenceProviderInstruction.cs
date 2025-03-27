@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Functions;
+﻿using Crumpet.Interpreter;
+using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Parser.Nodes;
 using Shared;

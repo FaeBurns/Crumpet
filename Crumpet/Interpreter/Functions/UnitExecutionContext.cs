@@ -1,4 +1,5 @@
 ﻿using Crumpet.Interpreter.Instructions;
+using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Shared;
 
@@ -11,6 +12,8 @@ public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnTy
     public int InstructionPointer { get; set; }
     public Instruction NextInstruction => Unit.Instructions[InstructionPointer];
     public bool IsComplete => InstructionPointer >= Unit.Instructions.Count;
+    public int StackRestoreTarget { get; set; }
+    public Variable? ValueToPushOnPop { get; set; }
 
     /// <summary>
     /// Gets the next instruction and advances the <see cref="InstructionPointer"/>

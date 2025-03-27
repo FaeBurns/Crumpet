@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using Crumpet.Instructions;
+﻿using System.Diagnostics;
 using Parser;
 
 namespace Crumpet.Interpreter.Instructions;
@@ -9,7 +7,7 @@ public class InstructionCollator : IEnumerable<Instruction>
 {
     private readonly IEnumerable m_instructionsEnumerable;
 
-    public InstructionCollator(IInstructionProvider? instructionProvider) : this(instructionProvider?.GetInstructionsRecursive() ?? Array.Empty<object>())
+    public InstructionCollator(IInstructionProvider? instructionProvider) : this(instructionProvider?.GetInstructionsRecursive() ?? Enumerable.Empty<Instruction>())
     {
     }
 

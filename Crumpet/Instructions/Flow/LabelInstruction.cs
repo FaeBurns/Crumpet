@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Crumpet.Interpreter;
 using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Shared;

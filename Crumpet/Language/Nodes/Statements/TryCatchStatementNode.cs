@@ -1,4 +1,5 @@
 ﻿using Crumpet.Instructions;
+using Crumpet.Instructions.Details;
 using Crumpet.Instructions.Flow;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Language.Nodes.Constraints;
@@ -43,6 +44,10 @@ public class TryCatchStatementNode : NonTerminalNode, INonTerminalNodeFactory, I
     private IEnumerable OuterBlockInstructions()
     {
         Guid skipCatchGuid = Guid.NewGuid();
+        StackItemCounter counter = new StackItemCounter();
+
+        // save stack counter
+        yield return new SaveStackItemCountInstruction(counter, Location);
         
         // body of the try portion
         // if an exception is thrown during this then execution will skip to the CatchLabelInstruction
@@ -54,6 +59,9 @@ public class TryCatchStatementNode : NonTerminalNode, INonTerminalNodeFactory, I
         // catch label
         // set the name if one was provided
         yield return new CatchInstruction(CatchMessageVariableName?.Terminal, Location);
+        
+        // unwind stack to count
+        yield return new RestoreStackItemCountInstruction(counter, Location);
 
         // body of the catch portion
         yield return CatchBody;

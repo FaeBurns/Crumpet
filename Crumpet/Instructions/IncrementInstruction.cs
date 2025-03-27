@@ -1,4 +1,5 @@
-﻿using Crumpet.Interpreter.Functions;
+﻿using Crumpet.Interpreter;
+using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
@@ -30,7 +31,8 @@ public class IncrementInstruction : Instruction
         }
         
         // push it again?
-        // could lead to a leak if it occurs too much
+        // will lead to a leak if it occurs too much
+        // if it's in a for finalizer it'll save the stack count then unwind to restore it at the end of the finalizer
         // but just in case the value is wanted still
         // this needs to occur
         context.VariableStack.Push(variable);

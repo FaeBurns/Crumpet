@@ -28,9 +28,12 @@ public static class BuiltInFunctions
         yield return new BuiltInFunction("listInsert", ListInsert, new ArrayTypeInfoUnkownTypeInfo().Pointer(), new AnyTypeInfo().Copy(), BuiltinTypeInfo.Int.Copy());
         yield return new BuiltInFunction("listRemove", ListRemove, new ArrayTypeInfoUnkownTypeInfo().Pointer(), BuiltinTypeInfo.Int.Copy());
         yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String.Copy());
-        yield return new BuiltInFunction("BREAK", (_) => Debugger.Break());
         yield return new BuiltInFunction("toLower", StringToLower, BuiltinTypeInfo.String.Copy());
         yield return new BuiltInFunction("toUpper", StringToUpper, BuiltinTypeInfo.String.Copy());
+        
+        // # just debug things
+        yield return new BuiltInFunction("BREAK", (_) => Debugger.Break());
+        yield return new BuiltInFunction("ASSERT_STACK_COUNT", AssertStackCount, BuiltinTypeInfo.Int.Copy());
     }
 
     private static ParameterInfo Copy(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.COPY);
@@ -211,5 +214,16 @@ public static class BuiltInFunctions
         Variable str = context.VariableStack.Pop();
         string lower = str.GetValue<string>().ToUpper();
         context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, lower));   
+    }
+    
+    private static void AssertStackCount(InterpreterExecutionContext context)
+    {
+        int count = context.VariableStack.Pop().GetValue<int>();
+        
+        if (context.VariableStack.Count == count)
+            return;
+
+        Debugger.Break();
+        throw new Exception();
     }
 }

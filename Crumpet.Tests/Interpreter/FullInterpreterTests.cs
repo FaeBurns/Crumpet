@@ -74,6 +74,9 @@ public class FullInterpreterTests
         inputStream.Seek(0, SeekOrigin.Begin);
 
         using MemoryStream outputStream = new MemoryStream();
+        
+        InterpreterDebuggerHelper.RegisterFunction("returnTest1");
+        InterpreterDebuggerHelper.RegisterLocation(40, 23);
 
         string path = Path.Combine("Examples//", "Interpreter/executionzoo") + ".crm";
         object[] args = { new[] { "output1", "output2" } };

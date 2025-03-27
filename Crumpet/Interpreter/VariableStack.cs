@@ -59,4 +59,12 @@ public class VariableStack
 
         return result;
     }
+
+    public void UnwindTo(int targetCount)
+    {
+        while (m_variables.Count > targetCount)
+        {
+            m_variables.Pop();
+        }
+    }
 }

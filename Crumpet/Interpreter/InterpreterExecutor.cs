@@ -42,6 +42,8 @@ public class InterpreterExecutor
         if (instruction == null)
             return false;
 
+        InterpreterDebuggerHelper.BreakAtLocation(instruction.Location);
+        
         // conditional compilation here fucks with user exceptions but helps with debugging ig???
         #if DEBUG && FALSE
             instruction.Execute(m_context);

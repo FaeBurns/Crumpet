@@ -24,6 +24,8 @@
         println("step " + pString(j));
     }
     
+    BREAK();
+    
     assert(count(arrayTest) == 5);
     assert(arrayTest[0] == 0);
     assert(arrayTest[1] == 2);
