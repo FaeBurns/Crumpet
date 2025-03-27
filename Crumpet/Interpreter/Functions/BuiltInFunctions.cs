@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Crumpet.Exceptions;
+using Crumpet.Instructions.Flow;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
@@ -98,7 +99,18 @@ public static class BuiltInFunctions
     {
         Variable value = context.VariableStack.Pop();
         if (!value.GetValue<bool>())
-            throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.LastEqualityComparedVariables[1].GetValue()} != {context.LastEqualityComparedVariables[0].GetValue()}");
+            // throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.LastEqualityComparedVariables[1].GetValue()} != {context.LastEqualityComparedVariables[0].GetValue()}");
+        {
+            // kinda hate this
+            if (context.CurrentUnit!.Unit.Instructions[context.CurrentUnit!.InstructionPointer - 1] is ExecuteFunctionInstruction executeInstruction)
+            {
+                throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.GetSourceFromLocation(executeInstruction.Location)}");
+            }
+            
+            // should technically be unreachable but I don't like it potentially going without throwing
+            Debug.Assert(false);
+            throw new UnreachableException();
+        }
     }
 
     public static void AssertMessage(InterpreterExecutionContext context)

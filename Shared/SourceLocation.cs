@@ -32,4 +32,6 @@ public class SourceLocation
     {
         return $"Location {StartLine + 1}:{StartColumn + 1} - {EndLine + 1}:{EndColumn + 1} ({StartOffset} - {EndOffset})";
     }
+
+    public int LengthOffset => EndOffset - StartOffset;
 }

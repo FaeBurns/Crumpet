@@ -11,6 +11,7 @@ public class InterpreterExecutionContext
 {
     private readonly Stream m_inputStream;
     private readonly Stream m_outputStream;
+    private readonly string m_source;
     private readonly Scope m_rootScope = new Scope(null);
     private readonly Stack<UnitExecutionContext> m_executionStack = new Stack<UnitExecutionContext>();
 
@@ -20,15 +21,13 @@ public class InterpreterExecutionContext
     public VariableStack VariableStack { get; } = new VariableStack();
     public TypeResolver TypeResolver { get; }
     public FunctionResolver FunctionResolver { get; }
-
-    // kinda hacky way of getting assertions to know the values compared
-    public Variable[] LastEqualityComparedVariables { get; } = new Variable[2];
     public Variable? ExecutionResult { get; set; }
 
-    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream)
+    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream, string source)
     {
         m_inputStream = inputStream;
         m_outputStream = outputStream;
+        m_source = source;
         TypeResolver = typeResolver;
         FunctionResolver = functionResolver;
     }
@@ -48,6 +47,7 @@ public class InterpreterExecutionContext
                 if (instruction is LabelInstruction label && label.ID == target)
                 {
                     // set instruction pointer to point to current instruction
+                    // point to the one before - it will be incremented before access
                     searchingUnit.InstructionPointer = searchingUnit.Unit.Instructions.IndexOf(instruction);
                     return;
                 }
@@ -55,6 +55,7 @@ public class InterpreterExecutionContext
             
             // pop from execution to search in the unit above 
             m_executionStack.Pop();
+            searchingUnit = m_executionStack.Peek();
         }
     }
 
@@ -120,10 +121,14 @@ public class InterpreterExecutionContext
     {
         try
         {
-            JumpToInstructionOfType<CatchLabelInstruction>(false);
+            // first pop something off
+            // then try and search for the catch
+            // this stops exceptions thrown inside a catch statement from being caught by the same statement again
+            m_executionStack.Pop();
+            JumpToInstructionOfType<CatchInstruction>(false);
             VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, message));
         }
-        catch (KeyNotFoundException)
+        catch
         {
             throw new UncaughtRuntimeExceptionException(message);
         }
@@ -190,6 +195,7 @@ public class InterpreterExecutionContext
                 if (instruction is T)
                 {
                     // set instruction pointer to point to current instruction
+                    // actually point to the one beforehand
                     searchingUnit.InstructionPointer = searchingUnit.Unit.Instructions.IndexOf(instruction);
                     return;
                 }
@@ -203,24 +209,9 @@ public class InterpreterExecutionContext
 
         throw new KeyNotFoundException(ExceptionConstants.COULD_NOT_FIND_INSTRUCTION_TO_JUMP_TO.Format(typeof(T)));
     }
-}
 
-public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnType)
-{
-    public ExecutableUnit Unit { get; } = unit;
-    public TypeInfo ExpectedReturnType { get; } = expectedReturnType;
-    public int InstructionPointer { get; set; }
-    public Instruction CurrentInstruction => Unit.Instructions[InstructionPointer];
-    public bool IsComplete => InstructionPointer >= Unit.Instructions.Count;
-
-    /// <summary>
-    /// Gets the next instruction and advances the <see cref="InstructionPointer"/>
-    /// </summary>
-    /// <returns></returns>
-    public Instruction StepNextInstruction()
+    public ReadOnlySpan<char> GetSourceFromLocation(SourceLocation location)
     {
-        return Unit.Instructions[InstructionPointer++];
+        return m_source.AsSpan().Slice(location.StartOffset, location.LengthOffset);
     }
-
-    public SourceLocation UnitLocation => Unit.SourceLocation;
 }

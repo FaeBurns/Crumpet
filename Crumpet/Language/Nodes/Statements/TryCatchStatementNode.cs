@@ -46,14 +46,14 @@ public class TryCatchStatementNode : NonTerminalNode, INonTerminalNodeFactory, I
         
         // body of the try portion
         // if an exception is thrown during this then execution will skip to the CatchLabelInstruction
-        yield return TryBody;
+        yield return new ExecuteUnitInstruction(new InstructionCollator(TryBody), Location);
 
         // if this is hit then no exception was thrown so jump past the catch portion directly to the end
         yield return new JumpInstruction(skipCatchGuid, Location);
         
         // catch label
         // set the name if one was provided
-        yield return new CatchLabelInstruction(CatchMessageVariableName?.Terminal, Location);
+        yield return new CatchInstruction(CatchMessageVariableName?.Terminal, Location);
 
         // body of the catch portion
         yield return CatchBody;

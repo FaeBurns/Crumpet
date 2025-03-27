@@ -5,11 +5,11 @@ using Shared;
 
 namespace Crumpet.Instructions.Flow;
 
-public class CatchLabelInstruction : Instruction
+public class CatchInstruction : Instruction
 {
     private readonly string? m_messageVariableName;
 
-    public CatchLabelInstruction(string? messageVariableName, SourceLocation location) : base(location)
+    public CatchInstruction(string? messageVariableName, SourceLocation location) : base(location)
     {
         m_messageVariableName = messageVariableName;
     }

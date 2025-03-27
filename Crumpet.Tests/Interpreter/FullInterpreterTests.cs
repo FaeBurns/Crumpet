@@ -17,10 +17,9 @@ public class FullInterpreterTests
     [TestCase("Interpreter/argument_type", ExpectedResult = 0)]
     [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     [TestCase("Interpreter/requirements_test", ExpectedResult = 0)]
+    [TestCase("Interpreter/throw_in_catch", ExpectedResult = 0)]
     public object RunExampleFile(string filename, params object[] args)
     {
-        InterpreterDebuggerHelper.RegisterFunction("TakesPointer");
-        
         using MemoryStream outputStream = new MemoryStream();
         object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", args, null, outputStream);
         outputStream.Seek(0, SeekOrigin.Begin);
@@ -48,7 +47,7 @@ public class FullInterpreterTests
         ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
         Assert.That(result.Success);
         
-        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(result.Root!, inputStream, outputStream);
+        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(result.Root!, source, inputStream, outputStream);
         InterpreterExecutor executor;
         try
         {
@@ -92,5 +91,11 @@ public class FullInterpreterTests
     {
         string path = Path.Combine("Examples//", "Interpreter/blocks_scope") + ".crm";
         Assert.Throws<InterpreterException>(() => RunProgramFile(path, []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
+    }
+
+    [Test]
+    public void TestAssertShowsArgument()
+    {
+        Assert.Throws<InterpreterException>(() => RunExampleFile("Interpreter/assert_shows_argument"));
     }
 }

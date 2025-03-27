@@ -1,0 +1,5 @@
+﻿func void main(){
+    int val1 = 3;
+    int val2 = 7;
+    assert(val1 == val2);
+}

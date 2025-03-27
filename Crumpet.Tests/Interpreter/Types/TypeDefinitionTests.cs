@@ -25,7 +25,7 @@ public class TypeDefinitionTests
     {
         NonTerminalNode programRoot = BuildProgram(programText);
 
-        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programRoot);
+        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programRoot, programText);
 
         foreach (TypeInfo expected in expectedTypes)
         {

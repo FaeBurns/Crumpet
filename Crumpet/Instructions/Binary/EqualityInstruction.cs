@@ -31,7 +31,5 @@ public class EqualityInstruction : Instruction
             result = !result;
 
         context.VariableStack.Push(BuiltinTypeInfo.Bool, result);
-        context.LastEqualityComparedVariables[0] = a;
-        context.LastEqualityComparedVariables[1] = b;
     }
 }

@@ -1,0 +1,48 @@
+﻿func void main(){
+    println("throws again");
+    throwsAgain();
+    
+    println("throw outer caught");
+    throwOuterCaught();
+}
+
+func void throwsAgain(){
+    try{
+        try{
+            println("1. throws");
+            throw("throws");
+        }
+        catch {
+            println("2. throws again");
+            throw("throws again");
+        }
+    }
+    catch e{
+        assert(e == "throws again");
+        println("3. caught");
+    }
+    println("4. exit");
+}
+
+func void throwInnerUncaught(){
+    try{
+        println("1. in try");
+    }
+    catch{
+        println("in wrong catch. uh oh");
+        assert(false);
+    }
+    
+    println("2. throwing");
+    throw("test");
+}
+
+func void throwOuterCaught(){
+    try{
+        throwInnerUncaught();
+    }
+    catch e{
+        println("3. outer caught");
+    }
+    println("4. exit");
+}
