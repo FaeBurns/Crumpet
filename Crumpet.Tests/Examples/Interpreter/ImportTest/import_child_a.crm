@@ -1,0 +1,6 @@
+﻿#include "import_child_b"
+#include "import_child_c"
+
+func void ChildAExec(){
+    println("A");
+}

@@ -1,0 +1,5 @@
+﻿#include "import_child_c"
+
+func void ChildBExec(){
+    println("B");
+}

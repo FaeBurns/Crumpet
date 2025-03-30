@@ -9,7 +9,7 @@ public class LexerTests
 {
     private void TestTokenOutput(string input, params CrumpetToken[] tokens)
     {
-        Lexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(input);
+        Lexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(input, String.Empty);
 
         int i = 0;
         foreach (Token<CrumpetToken> token in lexer.Tokenize(true))
@@ -61,7 +61,7 @@ public class LexerTests
     public void Test_IgnoresToken()
     {
         CrumpetToken[] tokens = new[] { CrumpetToken.IDENTIFIER, CrumpetToken.IDENTIFIER, CrumpetToken.IDENTIFIER, CrumpetToken.IDENTIFIER };
-        Lexer<CrumpetToken> lexer = new Lexer<CrumpetToken>("test test test\n   test", CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE);
+        Lexer<CrumpetToken> lexer = new Lexer<CrumpetToken>("test test test\n   test", String.Empty, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE);
 
         int i = 0;
         foreach (Token<CrumpetToken> token in lexer.Tokenize())

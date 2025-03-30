@@ -1,0 +1,3 @@
+﻿func void SubdirChildExec(){
+    println("Sub");
+}

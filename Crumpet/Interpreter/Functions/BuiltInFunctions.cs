@@ -97,7 +97,7 @@ public static class BuiltInFunctions
         Variable variable = context.VariableStack.Pop();
         context.VariableStack.Push(BuiltinTypeInfo.String, variable.GetValue()!.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
     }
-    
+
     public static void Assert(InterpreterExecutionContext context)
     {
         Variable value = context.VariableStack.Pop();
@@ -107,9 +107,13 @@ public static class BuiltInFunctions
             // kinda hate this
             if (context.CurrentUnit!.Unit.Instructions[context.CurrentUnit!.InstructionPointer - 1] is ExecuteFunctionInstruction executeInstruction)
             {
-                throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{context.GetSourceFromLocation(executeInstruction.Location)}");
+                using StreamReader sr = File.OpenText(executeInstruction.Location.SourceFileName);
+                TextSliceReader textSliceReader = new TextSliceReader(sr.BaseStream);
+                ReadOnlySpan<char> sourceSpan = textSliceReader.Read(executeInstruction.Location.StartOffset, executeInstruction.Location.EndOffset);
+
+                throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{sourceSpan}");
             }
-            
+
             // should technically be unreachable but I don't like it potentially going without throwing
             Debug.Assert(false);
             throw new UnreachableException();

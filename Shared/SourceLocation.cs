@@ -1,17 +1,21 @@
-﻿namespace Shared;
+﻿using System.Diagnostics;
+
+namespace Shared;
 
 public class SourceLocation
 {
     public static SourceLocation FromRange(SourceLocation start, SourceLocation end)
     {
-        return new SourceLocation(start.StartOffset, end.EndOffset, start.StartLine, end.EndLine, start.StartColumn, end.EndColumn);
+        Debug.Assert(start.SourceFileName == end.SourceFileName);
+        
+        return new SourceLocation(start.StartOffset, end.EndOffset, start.StartLine, end.EndLine, start.StartColumn, end.EndColumn, start.SourceFileName);
     }
 
     public SourceLocation()
     {
     }
 
-    public SourceLocation(int startOffset, int endOffset, int startLine, int endLine, int startColumn, int endColumn)
+    public SourceLocation(int startOffset, int endOffset, int startLine, int endLine, int startColumn, int endColumn, string sourceFileName)
     {
         StartOffset = startOffset;
         EndOffset = endOffset;
@@ -19,8 +23,10 @@ public class SourceLocation
         EndLine = endLine;
         StartColumn = startColumn;
         EndColumn = endColumn;
+        SourceFileName = sourceFileName;
     }
 
+    public string SourceFileName;
     public int StartOffset;
     public int EndOffset;
     public int StartLine;
@@ -30,7 +36,7 @@ public class SourceLocation
 
     public override string ToString()
     {
-        return $"Location {StartLine + 1}:{StartColumn + 1} - {EndLine + 1}:{EndColumn + 1} ({StartOffset} - {EndOffset})";
+        return $"Location {StartLine + 1}:{StartColumn + 1} - {EndLine + 1}:{EndColumn + 1} in file {SourceFileName}";
     }
 
     public int LengthOffset => EndOffset - StartOffset;

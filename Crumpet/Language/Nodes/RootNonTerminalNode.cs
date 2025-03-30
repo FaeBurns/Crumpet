@@ -8,11 +8,10 @@ public class RootNonTerminalNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public DeclarationNode[] Declarations { get; }
     
-    // ReSharper disable PossibleMultipleEnumeration
-    // just gonna have to deal - it's likely it's an array anyway so it's fine
-    private RootNonTerminalNode(IEnumerable<DeclarationNode> declarationNodes) : base(declarationNodes)
+    public RootNonTerminalNode(IEnumerable<DeclarationNode> declarationNodes)
     {
         Declarations = declarationNodes.ToArray();
+        ImplicitChildren.AddRange(Declarations);
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()

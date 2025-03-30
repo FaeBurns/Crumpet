@@ -45,28 +45,29 @@ public class NodeWalkingParser<T, TRoot> where T : Enum where TRoot : ASTNode
                 // if stream is at the end
                 if (terminalStream.Position == terminalStream.Length)
                     // return the last element
-                    return new ParseResult<T, TRoot>(node, terminalStream[^1]);
+                    return new ParseResult<T, TRoot>(node, terminalStream[^1], true);
                 else
                     // otherwise return the next item
-                    return new ParseResult<T, TRoot>(node, terminalStream[terminalStream.HighestPosition]);
+                    return new ParseResult<T, TRoot>(node, terminalStream[terminalStream.HighestPosition], false);
             }
         }
 
-        return new ParseResult<T, TRoot>(null, terminalStream[terminalStream.HighestPosition]);
+        return new ParseResult<T, TRoot>(null, terminalStream[terminalStream.HighestPosition], false);
     }
 }
 
 public class ParseResult<T, TRoot> where T : Enum where TRoot : ASTNode
 {
-    public ParseResult(TRoot? root, TerminalNode<T> lastTerminalHit)
+    public ParseResult(TRoot? root, TerminalNode<T> lastTerminalHit, bool success)
     {
         Root = root;
         LastTerminalHit = lastTerminalHit;
+        Success = success;
     }
 
     public TRoot? Root { get; }
     
     public TerminalNode<T> LastTerminalHit { get; }
 
-    public bool Success => Root is not null;
+    public bool Success { get; }
 }

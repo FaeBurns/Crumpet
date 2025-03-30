@@ -12,7 +12,6 @@ public class InterpreterExecutionContext
 {
     private readonly Stream m_inputStream;
     private readonly Stream m_outputStream;
-    private readonly string m_source;
     private readonly Scope m_rootScope = new Scope(null);
     private readonly ExecutionStack m_executionStack;
 
@@ -24,11 +23,10 @@ public class InterpreterExecutionContext
     public FunctionResolver FunctionResolver { get; }
     public Variable? ExecutionResult { get; set; }
 
-    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream, string source)
+    public InterpreterExecutionContext(TypeResolver typeResolver, FunctionResolver functionResolver, Stream inputStream, Stream outputStream)
     {
         m_inputStream = inputStream;
         m_outputStream = outputStream;
-        m_source = source;
         m_executionStack = new ExecutionStack(this);
         TypeResolver = typeResolver;
         FunctionResolver = functionResolver;
@@ -216,10 +214,5 @@ public class InterpreterExecutionContext
         }
 
         throw new KeyNotFoundException(ExceptionConstants.COULD_NOT_FIND_INSTRUCTION_TO_JUMP_TO.Format(typeof(T)));
-    }
-
-    public ReadOnlySpan<char> GetSourceFromLocation(SourceLocation location)
-    {
-        return m_source.AsSpan().Slice(location.StartOffset, location.LengthOffset);
     }
 }

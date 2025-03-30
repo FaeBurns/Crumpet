@@ -13,6 +13,7 @@ public class CrumpetNodeFactoryCollection : INodeFactoryCollection
         yield return typeof(RootNonTerminalNode);
         yield return typeof(DeclarationNode);
         yield return typeof(FunctionDeclarationNode);
+        yield return typeof(IncludeDeclarationNode);
         yield return typeof(ParameterListNode);
         yield return typeof(ParameterNode);
         yield return typeof(TypeDeclarationNode);

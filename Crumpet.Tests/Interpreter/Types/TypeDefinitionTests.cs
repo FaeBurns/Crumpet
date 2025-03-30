@@ -25,7 +25,7 @@ public class TypeDefinitionTests
     {
         NonTerminalNode programRoot = BuildProgram(programText);
 
-        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programRoot, programText);
+        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programRoot);
 
         foreach (TypeInfo expected in expectedTypes)
         {
@@ -51,7 +51,7 @@ public class TypeDefinitionTests
 
     private NonTerminalNode BuildProgram(string text)
     {
-        ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(text, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE, CrumpetToken.COMMENT);
+        ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(text, String.Empty, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE, CrumpetToken.COMMENT);
         IEnumerable<Token<CrumpetToken>> tokens = lexer.Tokenize();
 
         ASTNodeRegistry<CrumpetToken> registry = new ASTNodeRegistry<CrumpetToken>();

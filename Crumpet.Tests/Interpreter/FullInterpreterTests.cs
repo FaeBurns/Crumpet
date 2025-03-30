@@ -1,16 +1,14 @@
-﻿using System.Diagnostics;
-using Crumpet.Exceptions;
+﻿using Crumpet.Exceptions;
 using Crumpet.Interpreter;
 using Crumpet.Language;
 using Crumpet.Language.Nodes;
 using Lexer;
 using Parser;
 using Shared;
-using MemoryStream = System.IO.MemoryStream;
 
 namespace Crumpet.Tests.Interpreter;
 
-// [TestFixture]
+[TestFixture]
 public class FullInterpreterTests
 {
     [TestCase("Interpreter/simpleadd", 2, 1, ExpectedResult = 3)]
@@ -18,6 +16,7 @@ public class FullInterpreterTests
     [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     [TestCase("Interpreter/requirements_test", ExpectedResult = 0)]
     [TestCase("Interpreter/throw_in_catch", ExpectedResult = 0)]
+    [TestCase("Interpreter/ImportTest/import_root", ExpectedResult = 0)]
     public object RunExampleFile(string filename, params object[] args)
     {
         using MemoryStream outputStream = new MemoryStream();
@@ -31,36 +30,8 @@ public class FullInterpreterTests
     
     public object RunProgramFile(string path, object[] args, Stream? inputStream = null, Stream? outputStream = null)
     {
-        return RunProgram(File.ReadAllText(path), args, inputStream, outputStream);
-    }
-    
-    public object RunProgram(string source, object[] args, Stream? inputStream = null, Stream? outputStream = null)
-    {
-        ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(source, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE, CrumpetToken.COMMENT);
-        IEnumerable<Token<CrumpetToken>> tokens = lexer.Tokenize();
-
-        ASTNodeRegistry<CrumpetToken> registry = new ASTNodeRegistry<CrumpetToken>();
-        registry.RegisterFactoryCollection<CrumpetNodeFactoryCollection>();
-
-        NodeTypeTree<CrumpetToken> nodeTree = new NodeTypeTree<CrumpetToken>(registry, typeof(RootNonTerminalNode));
-        NodeWalkingParser<CrumpetToken, RootNonTerminalNode> parser = new NodeWalkingParser<CrumpetToken, RootNonTerminalNode>(registry, nodeTree);
-        ParseResult<CrumpetToken, RootNonTerminalNode> result = parser.ParseToRoot(tokens);
-        Assert.That(result.Success);
-        
-        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(result.Root!, source, inputStream, outputStream);
-        InterpreterExecutor executor;
-        try
-        {
-             executor = interpreter.Run("main", args);
-        }
-        catch (KeyNotFoundException e)
-        {
-            if (e.Message.Contains("Function \"main\" not found"))
-                Assert.Fail($"Failed to find main function. Last terminal was {result.LastTerminalHit.Terminal} at {result.LastTerminalHit.Token.Location}");
-            else throw;
-            return null!;
-        }
-        return executor.StepUntilComplete().GetValue()!;
+        ProgramRuntimeHandler runtimeHandler  = new ProgramRuntimeHandler();
+        return runtimeHandler.RunFile(new FileInfo(path), "main", args, inputStream, outputStream);
     }
 
     [Test]

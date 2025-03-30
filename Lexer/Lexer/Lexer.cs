@@ -8,15 +8,17 @@ public class Lexer<T> : ILexer<T> where T : Enum
 {
     private readonly List<TokenRule<T>> m_rules = new List<TokenRule<T>>();
     private readonly string m_source;
+    private readonly string m_sourceFileName;
     private readonly HashSet<T> m_ignoreList;
 
     private int m_head = 0;
     private int m_lineNumber = 0;
     private int m_columnNumber = 0;
 
-    public Lexer(string source, params IEnumerable<T> ignoreList)
+    public Lexer(string source, string sourceFileName, params IEnumerable<T> ignoreList)
     {
         m_source = source;
+        m_sourceFileName = sourceFileName;
         m_ignoreList = new HashSet<T>(ignoreList);
 
         foreach (TokenRule<T> rule in GetTokenRules())
@@ -41,6 +43,7 @@ public class Lexer<T> : ILexer<T> where T : Enum
                 throw new InvalidTokenException(m_lineNumber, m_columnNumber);
             }
 
+            result.Token.Location.SourceFileName = m_sourceFileName;
             result.Token.Location.StartLine = m_lineNumber;
             result.Token.Location.StartColumn = m_columnNumber;
             result.Token.Location.StartOffset = m_head;

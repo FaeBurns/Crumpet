@@ -28,7 +28,7 @@ public static class ExceptionConstants
     public const string VARIABLE_STACK_PEEK_WHILE_EMPTY = "Tried to peek a variable from the stack while it was empty";
     public const string VARIABLE_STACK_PEEK_INSUFFICIENT_COUNT = "Tried to peek {0} variables from the stack while there were {1} variables";
     public const string INVALID_TYPE = "Invalid type detected during operation. Expected \"{0}\" received \"{1}\"";
-    public const string FUNCTION_NOT_FOUND = "Function \"{0}\" not found with parameters {1}";
+    public const string FUNCTION_NOT_FOUND = "Function \"{0}\" not found with parameters ({1})";
     public const string UNKOWN_TYPE = "Could not find type named \"{0}\"";
     public const string UNKOWN_RETURN_TYPE = "Could not find type for return named \"{0}\"";
     public const string INVALID_FUNCTION_CALL_EXPRESSION_TYPE = "Invalid expression given to function call";
@@ -39,4 +39,8 @@ public static class ExceptionConstants
     public const string COULD_NOT_FIND_INSTRUCTION_TO_JUMP_TO = "Failed to find instruction of type \"{0}\" to jump to";
     public const string MODIFIER_MISMATCH = "Variable modifier mismatch. Expected \"{0}\" received \"{1}\"";
     public const string INVALID_RETURN_TYPE = "Could not convert returned value to the expected type. Expected \"{0}\" received \"{1}\"";
+    public const string PARSE_FILE_NOT_FOUND = "Failed to parse file \"{0}\". File was not found.";
+    public const string FAILED_TO_WALK_TREE = "Failed to walk full node tree. Ended on token \"{0}\" at location \"{1}\"";
+    public const string PARSE_INNER_EXCEPTION = "Failed to parse file \"{0}\". File contained errors on parse";
+    public const string FILE_ENCODING_INVALID = "Incorrect file format. Expected \"{0}\" Recevied \"{1}\"";
 }

@@ -18,7 +18,7 @@ public class FullParserTests
     public ParseResult<CrumpetToken, RootNonTerminalNode> ParseExampleFile(string examplePath)
     {
         string source = File.ReadAllText(Path.Combine("Examples//", examplePath) + ".crm");
-        ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(source, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE, CrumpetToken.COMMENT);
+        ILexer<CrumpetToken> lexer = new Lexer<CrumpetToken>(source, String.Empty, CrumpetToken.WHITESPACE, CrumpetToken.NEWLINE, CrumpetToken.COMMENT);
         IEnumerable<Token<CrumpetToken>> tokens = lexer.Tokenize();
 
         ASTNodeRegistry<CrumpetToken> registry = new ASTNodeRegistry<CrumpetToken>();

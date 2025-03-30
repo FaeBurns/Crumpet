@@ -1,0 +1,9 @@
+﻿#include "import_child_a"
+
+func void main(){
+    ChildAExec();
+    ChildBExec();
+    ChildCExec();
+    SubdirChildExec();
+    return;
+}

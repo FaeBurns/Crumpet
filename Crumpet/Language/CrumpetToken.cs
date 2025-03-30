@@ -64,6 +64,9 @@ public enum CrumpetToken : byte
     
     [Token("catch")]
     KW_CATCH,
+    
+    [Token("include")]
+    KW_INCLUDE,
 
     [Token("-?[0-9]+\\.[0-9]+")]
     FLOAT,
@@ -151,6 +154,9 @@ public enum CrumpetToken : byte
 
     [Token("\\&")]
     REFERENCE,
+    
+    [Token("\\#")]
+    PREPROCESSOR,
 
     // cannot use \s as newline will not be detected then
     [Token("[\\t ]+")]

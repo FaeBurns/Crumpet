@@ -13,15 +13,13 @@ namespace Crumpet.Interpreter;
 
 public class TreeWalkingInterpreter
 {
-    public string Source { get; }
     private readonly Stream m_inputStream;
     private readonly Stream m_outputStream;
     public FunctionResolver FunctionResolver { get; }
     public TypeResolver TypeResolver { get; }
 
-    public TreeWalkingInterpreter(NonTerminalNode root, string source, Stream? inputStream = null, Stream? outputStream = null)
+    public TreeWalkingInterpreter(NonTerminalNode root, Stream? inputStream = null, Stream? outputStream = null)
     {
-        Source = source;
         m_inputStream = inputStream ?? new EmptyInputStream();
         m_outputStream = outputStream ?? Stream.Null;
         ASTNode[] nodeSequence = NodeSequenceEnumerator.CreateSequential(root).ToArray();
@@ -31,7 +29,7 @@ public class TreeWalkingInterpreter
 
     public InterpreterExecutor Run(string entryPointName, params object[] args)
     {
-        InterpreterExecutionContext context = new InterpreterExecutionContext(TypeResolver, FunctionResolver, m_inputStream, m_outputStream, Source);
+        InterpreterExecutionContext context = new InterpreterExecutionContext(TypeResolver, FunctionResolver, m_inputStream, m_outputStream);
 
         // throws if fails to find
         Variable[] arguments = TransformArguments(args);

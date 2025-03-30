@@ -1,0 +1,6 @@
+#include "import_child_a"
+#include "subdir/import_child_subdir"
+
+func void ChildCExec(){
+    println("C");
+}
