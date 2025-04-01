@@ -31,6 +31,7 @@ public class PlaceholderTypeResolver
         m_types.Add("float", BuiltinTypeInfo.Float);
         m_types.Add("bool", BuiltinTypeInfo.Bool);
         m_types.Add("void", new VoidTypeInfo());
+        m_types.Add("map", new DictionaryTypeInfoUnknownType());
     }
     
     public void RegisterType(TypeDeclarationNode node)
@@ -49,7 +50,7 @@ public class PlaceholderTypeResolver
     public bool ReplacePlaceholders()
     {
         bool clean = true;
-        foreach (KeyValuePair<string,TypeInfo> type in m_types)
+        foreach (KeyValuePair<string, TypeInfo> type in m_types)
         {
             // replace if placeholder
             if (type.Value is PlaceholderTypeInfo)

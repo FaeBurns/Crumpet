@@ -13,4 +13,9 @@ public class VoidTypeInfo : TypeInfo
     {
         throw new InvalidOperationException();
     }
+
+    public override int GetObjectHashCode(Variable variable)
+    {
+        throw new InvalidOperationException();
+    }
 }

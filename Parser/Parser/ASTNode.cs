@@ -14,7 +14,8 @@ public abstract class ASTNode : ParserElement
         // get first constructor
         ConstructorInfo[] constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
-        return constructors.FirstOrDefault()
+        // but filter to only apply to constructors with at least one argument
+        return constructors.FirstOrDefault(c => c.GetParameters().Length > 0)
                ?? throw new ParserSetupException(
                    ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));
     }
@@ -24,7 +25,7 @@ public abstract class ASTNode : ParserElement
         // get first constructor with count
         ConstructorInfo[] constructors = typeof(T).GetConstructors(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
-        return constructors.FirstOrDefault(c => c.GetParameters().Count() == paramCount)
+        return constructors.FirstOrDefault(c => c.GetParameters().Length == paramCount)
                ?? throw new ParserSetupException(
                    ExceptionConstants.PARSER_UNKNOWN_NODE_CONSTRUCTOR.Format(typeof(T)));
     }

@@ -48,14 +48,9 @@ public class UserObjectTypeInfo : TypeInfo
         return newInstance;
     }
 
-    public FieldInfo? GetFieldByName(string name)
+    public override int GetObjectHashCode(Variable variable)
     {
-        foreach (FieldInfo field in Fields)
-        {
-            if (field.Name == name)
-                return field;
-        }
-
-        return null;
+        UserObjectInstance instance = variable.DereferenceToLowestVariable().GetValue<UserObjectInstance>();
+        return instance.GetHashCode();
     }
 }

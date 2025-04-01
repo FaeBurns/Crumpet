@@ -84,7 +84,7 @@ public class InterpreterExecutionContext
         // do this after
         // as JumpToInstructionOfType will pop off the variable stack
         if (value is not null)
-            VariableStack.Push(value);
+            VariableStack.Push(Variable.CreateCopy(value));
         // push it for the AssertReturnTypeInstruction
         // but also set it as the return value on the current unit so it will still get pushed *after* the stack unwind
         CurrentUnit.ValueToPushOnPop = value;
@@ -132,7 +132,7 @@ public class InterpreterExecutionContext
             // this stops exceptions thrown inside a catch statement from being caught by the same statement again
             m_executionStack.Pop();
             JumpToInstructionOfType<CatchInstruction>(false);
-            VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, message));
+            VariableStack.Push(BuiltinTypeInfo.String, message);
         }
         catch
         {

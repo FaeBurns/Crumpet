@@ -1,0 +1,48 @@
+﻿#include "linked_list"
+
+func int test_map_create(){
+    map s_i = _map<string, int>();
+    map i_s = _map<int, string>();
+    map i_f = _map<int, float>();
+    map s_s = _map<string, string>();
+    map s_l = _map<string, LinkedList>();
+    return 1;
+}
+
+func int test_map_add(){
+    map mapping = _map<string, int>();
+    map_add(&mapping, "first", 1);
+    map_add(&mapping, "third", 3);
+    map_add(&mapping, "second", 2);
+    
+    assert(map_get(&mapping, "first") == 1);
+    assert(map_get(&mapping, "second") == 2);
+    assert(map_get(&mapping, "third") == 3);
+    return 1;
+}
+
+func int test_map_remove(){
+    map mapping = _map<string, int>();
+    map_add(&mapping, "first", 1);
+    map_add(&mapping, "third", 3);
+    map_add(&mapping, "second", 2);
+    
+    map_remove(&mapping, "first");
+    assert(count(&mapping) == 2);
+    
+    assert(map_get(&mapping, "second") == 2);
+    assert(map_get(&mapping, "third") == 3);
+    return 1;
+}
+
+func int test_map_has(){
+    map mapping = _map<string, int>();
+    map_add(&mapping, "first", 1);
+    map_add(&mapping, "third", 3);
+    
+    assert(map_has(&mapping, "first"));
+    assert(!map_has(&mapping, "second"));
+    assert(map_has(&mapping, "third"));
+    
+    return 1;
+}

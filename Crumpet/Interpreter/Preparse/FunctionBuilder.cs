@@ -4,6 +4,7 @@ using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language.Nodes;
+using Crumpet.Language.Nodes.Terminals;
 using Shared;
 
 namespace Crumpet.Interpreter.Preparse;
@@ -30,7 +31,7 @@ public class FunctionBuilder
                 node.Name.Terminal,
                 m_typeResolver.ResolveType(node.ReturnType.FullName) ?? throw new CompilationException(node, ExceptionConstants.UNKOWN_RETURN_TYPE.Format(node.ReturnType)),
                 node.ReturnModifier,
-                node.Parameters.Parameters.Select(NodeToDefinition), 
+                node.Parameters.Parameters.Select(ParameterNodeToDefinition),
                 node.Location);
             
             functions.Add(BuildFunction(definition, node));
@@ -42,7 +43,7 @@ public class FunctionBuilder
         return new FunctionResolver(functions);
     }
 
-    private ParameterDefinition NodeToDefinition(ParameterNode parameterNode)
+    private ParameterDefinition ParameterNodeToDefinition(ParameterNode parameterNode)
     {
         switch (parameterNode)
         {

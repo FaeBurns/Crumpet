@@ -27,6 +27,9 @@ public class AssertReturnTypeInstruction : Instruction
         if (type is null)
             throw new TypeMismatchException(ExceptionConstants.UNKOWN_TYPE.Format(m_typeName));
 
+        if (context.VariableStack.Count == 0)
+            throw new RuntimeException(RuntimeExceptionNames.RETURN, ExceptionConstants.MISSING_RETURN_STATEMENT.Format(m_typeName));;
+            
         Variable returnValue = context.VariableStack.Peek();
 
         // allow null through

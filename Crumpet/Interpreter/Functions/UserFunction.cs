@@ -1,7 +1,6 @@
 ﻿using Crumpet.Exceptions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
-using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 using Shared;
 
@@ -14,7 +13,8 @@ public class UserFunction : Function
     
     public override string Name => Definition.Name;
 
-    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions) : base(definition.Parameters.Select(p => new ParameterInfo(p.Type, p.VariableModifier)).ToArray())
+    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions)
+        : base(definition.Parameters.Select(p => new ParameterInfo(p.Type, p.VariableModifier)).ToArray(), 0)
     {
         // get instructions from child nodes
         m_instructions = instructions.ToArray();

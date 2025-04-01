@@ -26,15 +26,14 @@ public class ArgumentExpressionListNode : NonTerminalNode, INonTerminalNodeFacto
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
-        NodeConstraint elementConstraint = new OrConstraint(new NonTerminalConstraint<ExpressionNode>(), new NonTerminalConstraint<TypeNode>());
         
         yield return new NonTerminalDefinition<ArgumentExpressionListNode>(
             new SequenceConstraint(
-                elementConstraint,
+                new NonTerminalConstraint<ExpressionNode>(),
                 new ZeroOrMoreConstraint(
                     new SequenceConstraint(
                         new CrumpetRawTerminalConstraint(CrumpetToken.COMMA),
-                        elementConstraint))),
+                        new NonTerminalConstraint<ExpressionNode>()))),
             GetNodeConstructor<ArgumentExpressionListNode>());
     }
 

@@ -10,8 +10,8 @@ public class VariableStack
 
     public int Count => m_variables.Count();
 
-    public void Push(TypeInfo type, object value) => Push(Variable.Create(type, value));
-    
+    public void Push(TypeInfo type, object? value) => Push(Variable.Create(type, value));
+
     public void Push(Variable value)
     {
         m_variables.Push(value);
@@ -44,7 +44,7 @@ public class VariableStack
         if (m_variables.Count < count)
             throw new ArgumentException(ExceptionConstants.VARIABLE_STACK_PEEK_INSUFFICIENT_COUNT.Format(count, m_variables.Count));
         
-        List<Variable> result = new List<Variable>();
+        List<Variable> result = new List<Variable>(count);
         for (int i = 0; i < count; i++)
         {
             result.Add(m_variables.Pop());

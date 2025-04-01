@@ -25,7 +25,7 @@ public abstract class TypeNode : NonTerminalNode, INonTerminalNodeFactory, IInst
             GetNodeConstructor<TypeNodeIdentifierVariant>());
 
         yield return new NonTerminalDefinition<TypeNode>(
-            new CrumpetTerminalConstraint(CrumpetToken.KW_KNOWN_TYPE), 
+            new CrumpetTerminalConstraint(CrumpetToken.KW_KNOWN_TYPE),
             GetNodeConstructor<TypeNodeKeywordVariant>());
     }
 

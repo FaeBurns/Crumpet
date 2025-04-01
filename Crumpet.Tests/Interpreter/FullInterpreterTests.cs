@@ -20,18 +20,33 @@ public class FullInterpreterTests
     public object RunExampleFile(string filename, params object[] args)
     {
         using MemoryStream outputStream = new MemoryStream();
-        object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", args, null, outputStream);
+        object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", "main", args, null, outputStream);
         outputStream.Seek(0, SeekOrigin.Begin);
         using StreamReader outputReader = new StreamReader(outputStream);
         TestContext.Out.Write(outputReader.ReadToEnd());
 
         return result;
     }
+
+    [TestCase("Interpreter/map_tests","test_map_create")]
+    [TestCase("Interpreter/map_tests","test_map_add")]
+    [TestCase("Interpreter/map_tests","test_map_remove")]
+    [TestCase("Interpreter/map_tests","test_map_has")]
+    public void RunTestInFile(string filename, string testName)
+    {
+        using MemoryStream outputStream = new MemoryStream();
+        object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", testName, [], null, outputStream);
+        outputStream.Seek(0, SeekOrigin.Begin);
+        using StreamReader outputReader = new StreamReader(outputStream);
+        TestContext.Out.Write(outputReader.ReadToEnd());
+
+        Assert.That(result, Is.EqualTo(1));
+    }
     
-    public object RunProgramFile(string path, object[] args, Stream? inputStream = null, Stream? outputStream = null)
+    public object RunProgramFile(string path, string entryPointName, object[] args, Stream? inputStream = null, Stream? outputStream = null)
     {
         ProgramRuntimeHandler runtimeHandler  = new ProgramRuntimeHandler();
-        return runtimeHandler.RunFile(new FileInfo(path), "main", args, inputStream, outputStream);
+        return runtimeHandler.RunFile(new FileInfo(path), entryPointName, args, inputStream, outputStream);
     }
 
     [Test]
@@ -51,7 +66,7 @@ public class FullInterpreterTests
 
         string path = Path.Combine("Examples//", "Interpreter/executionzoo") + ".crm";
         object[] args = { new[] { "output1", "output2" } };
-        RunProgramFile(path, args, inputStream, outputStream);
+        RunProgramFile(path, "main", args, inputStream, outputStream);
         
         outputStream.Seek(0, SeekOrigin.Begin);
         using StreamReader outputReader = new StreamReader(outputStream);
@@ -64,7 +79,7 @@ public class FullInterpreterTests
     public void TestBlocksScope()
     {
         string path = Path.Combine("Examples//", "Interpreter/blocks_scope") + ".crm";
-        Assert.Throws<InterpreterException>(() => RunProgramFile(path, []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
+        Assert.Throws<InterpreterException>(() => RunProgramFile(path, "main", []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
     }
 
     [Test]

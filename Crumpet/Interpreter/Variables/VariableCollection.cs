@@ -74,6 +74,12 @@ public class VariableCollection : IVariableCollection
 
     public override int GetHashCode()
     {
-        return m_variables.GetHashCode();
+        int hashcode = 1430287;
+        foreach (Variable var in m_variables.Values)
+        {
+            hashcode = HashCode.Combine(hashcode, var.GetObjectHashCode());
+        }
+
+        return hashcode;
     }
 }

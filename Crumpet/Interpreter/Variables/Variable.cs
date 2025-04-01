@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Crumpet.Exceptions;
 using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
@@ -58,7 +59,10 @@ public class Variable
         }
     }
     
+    [Pure]
     public object? GetValue() => m_value;
+    
+    [Pure]
     public T GetValue<T>()
     {
         if (m_value is not T)
@@ -157,10 +161,7 @@ public class Variable
 
     public object? DereferenceOrGetValue()
     {
-        if (m_value is Variable variable)
-            return variable.DereferenceOrGetValue();
-
-        return m_value;
+        return DereferenceToLowestVariable().GetValue();
     }
 
     public Variable DereferenceToLowestVariable()
@@ -239,4 +240,6 @@ public class Variable
         object? value = Type.ConvertValidObjectTo(type, m_value);
         return Variable.Create(type, value);
     }
+
+    public int GetObjectHashCode() => Type.GetObjectHashCode(this);
 }

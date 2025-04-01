@@ -18,7 +18,7 @@
     test(index);
     test(inVal);
     
-    int[] arrayTest = list(int, 5);
+    int[] arrayTest = _list<int>(5);
     for (int j = 0; j < count(arrayTest); j++){
         arrayTest[j] = j * 2;
         println("step " + pString(j));
@@ -117,7 +117,7 @@ func void TestReferences(){
     int b = 20;
     int c = 30;
     
-    int[] array = list(int, 3);
+    int[] array = _list<int>(3);
     
     // assert that this does not change
     TestModifyArray(array);

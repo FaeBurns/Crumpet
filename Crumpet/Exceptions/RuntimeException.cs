@@ -21,4 +21,6 @@ public static class RuntimeExceptionNames
     public const string TYPE = "type";
     public const string ASSERT = "assert";
     public const string UNCAUGHT = "uncaught";
+    public const string GENERIC_COUNT = "generic_count";
+    public const string RETURN = "return";
 }

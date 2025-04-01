@@ -27,7 +27,7 @@ public class PushConstantInstruction : Instruction
         switch (m_modifier)
         {
             case VariableModifier.COPY:
-                context.VariableStack.Push(Variable.Create(m_type, m_value));
+                context.VariableStack.Push(m_type, m_value);
                 break;
             case VariableModifier.POINTER:
                 context.VariableStack.Push(Variable.CreatePointer(m_type, Variable.Create(m_type, m_value)));

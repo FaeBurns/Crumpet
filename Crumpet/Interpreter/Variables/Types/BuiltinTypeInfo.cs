@@ -55,6 +55,11 @@ public class BuiltinTypeInfo<T> : TypeInfo, IBuiltinTypeInfo
         
         return (object)(T)(instance ?? throw new NullReferenceException());
     }
+
+    public override int GetObjectHashCode(Variable variable)
+    {
+        return variable.DereferenceOrGetValue()?.GetHashCode() ?? 0;
+    }
 }
 
 public interface IBuiltinTypeInfo

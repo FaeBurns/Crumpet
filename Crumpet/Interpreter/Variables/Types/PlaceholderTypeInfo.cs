@@ -20,4 +20,9 @@ internal class PlaceholderTypeInfo : TypeInfo
     {
         throw new UnreachableException();
     }
+
+    public override int GetObjectHashCode(Variable variable)
+    {
+        throw new UnreachableException();
+    }
 }

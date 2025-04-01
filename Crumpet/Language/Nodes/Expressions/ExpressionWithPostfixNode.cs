@@ -29,6 +29,7 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new OptionalConstraint(new NonTerminalConstraint<TypeArgumentListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
                 new OptionalConstraint(new NonTerminalConstraint<ArgumentExpressionListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN)), GetNodeConstructor<ExpressionWithPostfixNodeExecutionVariant>());
@@ -68,11 +69,13 @@ public class ExpressionWithPostfixNodeIncrementVariant : ExpressionWithPostfixNo
 public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
     public IdentifierNode Identifier { get; }
+    public TypeArgumentListNode TypeArgs { get; }
     public ArgumentExpressionListNode? Arguments { get; }
 
-    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, ArgumentExpressionListNode? arguments) : base(identifier, arguments)
+    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, TypeArgumentListNode typeArgs, ArgumentExpressionListNode? arguments) : base(identifier, typeArgs, arguments)
     {
         Identifier = identifier;
+        TypeArgs = typeArgs;
         Arguments = arguments;
     }
     
@@ -80,8 +83,12 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
     {
         // evaluate all args
         yield return Arguments;
+
+        // evaluate all type args
+        yield return TypeArgs;
+        
         // execute
-        yield return new ExecuteFunctionInstruction(Identifier.Terminal, Arguments?.Expressions.Length ?? 0, Location);
+        yield return new ExecuteFunctionInstruction(Identifier.Terminal, TypeArgs?.Types.Length ?? 0, Arguments?.Expressions.Length ?? 0, Location);
     }
 }
 

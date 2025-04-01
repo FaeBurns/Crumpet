@@ -17,19 +17,23 @@ public class FunctionResolver
         }
     }
 
-    public Function GetFunction(string functionName, IEnumerable<ParameterInfo> passingParameters)
+    public Function GetFunction(string functionName, IEnumerable<ParameterInfo> passingParameters, int typeArgCount)
     {
-        return m_functions.GetValueOrDefault(functionName, f => MatchParameters(f.Parameters, passingParameters))
+        return m_functions.GetValueOrDefault(functionName, f => MatchParameters(f, passingParameters, typeArgCount))
                ?? throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(functionName, String.Join(", ", passingParameters.Select(p => p.ToString()))));
     }
 
-    private bool MatchParameters(IEnumerable<ParameterInfo> functionParameters, IEnumerable<ParameterInfo> passingParameters)
+    private bool MatchParameters(Function function, IEnumerable<ParameterInfo> passingParameters, int typeArgCount)
     {
-        ParameterInfo[] funcParams = functionParameters.ToArray();
+        ParameterInfo[] funcParams = function.Parameters.ToArray();
         ParameterInfo[] passingParams = passingParameters.ToArray();
 
         // false if lengths don't match
         if (funcParams.Length != passingParams.Length)
+            return false;
+
+        // false if type arg count doesn't match
+        if (function.TypeArgCount != typeArgCount)
             return false;
         
         // basic equality check
@@ -39,32 +43,37 @@ public class FunctionResolver
         // check for equivalent types
         for (int i = 0; i < funcParams.Length; i++)
         {
+            TypeInfo funcParamType = funcParams[i].Type;
+            TypeInfo passingParamType = passingParams[i].Type;
+            VariableModifier funcParamModifier = funcParams[i].Modifier;
+            VariableModifier passingParamModifier = passingParams[i].Modifier;
+            
             // modifiers must match
-            if (funcParams[i].Modifier != passingParams[i].Modifier)
+            if (funcParams[i].Modifier != passingParamModifier)
                 return false;
 
-            if (funcParams[i].Modifier == VariableModifier.POINTER && passingParams[i].Type is NullTypeInfo)
+            if (funcParams[i].Modifier == VariableModifier.POINTER && passingParamType is NullTypeInfo)
                 continue;
             
             // if they're equal
-            if (funcParams[i].Type == passingParams[i].Type)
+            if (funcParamType == passingParamType)
                 continue;
             
             // if the function accepts anything
-            if (funcParams[i].Type is AnyTypeInfo)
+            if (funcParamType is AnyTypeInfo)
                 continue;
             
             // if the function allows any array type
             // exclude specific array types for this check
-            if (funcParams[i].Type is ArrayTypeInfoUnkownTypeInfo and not ArrayTypeInfo && passingParams[i].Type is ArrayTypeInfo)
+            if (funcParamType is ArrayTypeInfoUnkownTypeInfo and not ArrayTypeInfo && passingParamType is ArrayTypeInfo)
                 continue;
             
-            if (funcParams[i].Type is TypeTypeInfoUnknownTypeInfo and not TypeTypeInfo && passingParams[i].Type is TypeTypeInfo)
+            if (funcParamType is TypeTypeInfoUnknownTypeInfo and not TypeTypeInfo && passingParamType is TypeTypeInfo)
                 continue;
 
             // type specific check
             // only do this check if it's a copy type
-            if (funcParams[i].Type.IsAssignableFrom(passingParams[i].Type) && funcParams[i].Modifier == VariableModifier.COPY)
+            if (funcParamType.IsAssignableFrom(passingParamType) && funcParamModifier == VariableModifier.COPY)
                 continue;
 
             // if none of the conditions pass this will be hit
@@ -72,16 +81,5 @@ public class FunctionResolver
         }
 
         return true;
-    }
-}
-
-public class ParameterInfo(TypeInfo type, VariableModifier modifier)
-{
-    public TypeInfo Type { get; } = type;
-    public VariableModifier Modifier { get; } = modifier;
-
-    public override string ToString()
-    {
-        return Type.TypeName + (Modifier == VariableModifier.COPY ? "" : "*");
     }
 }

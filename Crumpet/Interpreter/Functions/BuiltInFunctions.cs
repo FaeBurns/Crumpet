@@ -14,20 +14,40 @@ public static class BuiltInFunctions
     {
         yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any.Copy());
         yield return new BuiltInFunction("count", Count, ArrayTypeInfo.Any.Pointer());
+        yield return new BuiltInFunction("count", Count, DictionaryTypeInfo.Any.Copy());
+        yield return new BuiltInFunction("count", Count, DictionaryTypeInfo.Any.Pointer());
+        
+        // io
         yield return new BuiltInFunction("print", Print, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("println", PrintLine, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("input", Input);
-        yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String.Copy());
-        yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String.Copy());
-        yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo().Copy());
-        yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool.Copy());
-        yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool.Copy(), BuiltinTypeInfo.String.Copy());
-        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int.Copy());
-        yield return new BuiltInFunction("list", ListConstructor, new TypeTypeInfoUnknownTypeInfo().Copy(), new AnyTypeInfo().Copy());
+        
+        // lists
+        yield return new BuiltInFunction("_list", ListConstructor, 1, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("listAdd", ListAdd, new ArrayTypeInfoUnkownTypeInfo().Pointer(), new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("listInsert", ListInsert, new ArrayTypeInfoUnkownTypeInfo().Pointer(), new AnyTypeInfo().Copy(), BuiltinTypeInfo.Int.Copy());
         yield return new BuiltInFunction("listRemove", ListRemove, new ArrayTypeInfoUnkownTypeInfo().Pointer(), BuiltinTypeInfo.Int.Copy());
+        
+        // maps
+        yield return new BuiltInFunction("_map", DictionaryConstructor, 2);
+        yield return new BuiltInFunction("map_add", DictionaryAdd, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("map_add", DictionaryAdd, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy(), new AnyTypeInfo().Pointer());
+        yield return new BuiltInFunction("map_remove", DictionaryRemove, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("map_has", DictionaryHas, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("map_get", DictionaryGet, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("map_set", DictionarySet, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy(), new AnyTypeInfo().Copy());
+        yield return new BuiltInFunction("map_set", DictionarySet, new DictionaryTypeInfoUnknownType().Pointer(), new AnyTypeInfo().Copy(), new AnyTypeInfo().Pointer());
+        
+        // control
+        yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool.Copy(), BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool.Copy());
+        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int.Copy());
         yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String.Copy());
+        
+        // strings
+        yield return new BuiltInFunction("pInt", ParseInt, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("pFloat", ParseFloat, BuiltinTypeInfo.String.Copy());
+        yield return new BuiltInFunction("pString", ToString, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("toLower", StringToLower, BuiltinTypeInfo.String.Copy());
         yield return new BuiltInFunction("toUpper", StringToUpper, BuiltinTypeInfo.String.Copy());
         
@@ -46,10 +66,11 @@ public static class BuiltInFunctions
 
         if (value.GetValue() is IEnumerable enumerable)
         {
+            // IEnumerable does not have a count method
             int count = 0;
             foreach (object _ in enumerable) count++;
             
-            context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.Int, count));
+            context.VariableStack.Push(BuiltinTypeInfo.Int, count);
             return;
         }
 
@@ -71,7 +92,7 @@ public static class BuiltInFunctions
     public static void Input(InterpreterExecutionContext context)
     {
         string input = context.ReadInputStreamLine(true);
-        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, input));
+        context.VariableStack.Push(BuiltinTypeInfo.String, input);
     }
 
     public static void ParseInt(InterpreterExecutionContext context)
@@ -136,8 +157,8 @@ public static class BuiltInFunctions
 
     public static void ListConstructor(InterpreterExecutionContext context)
     {
-        Variable count = context.VariableStack.Pop();
         Variable type = context.VariableStack.Pop();
+        Variable count = context.VariableStack.Pop();
 
         TypeInfo typeArg = type.GetValue<TypeInfo>();
         ArrayTypeInfo arrayType = new ArrayTypeInfo(typeArg);
@@ -145,7 +166,7 @@ public static class BuiltInFunctions
 
         for (int i = 0; i < count.GetValue<int>(); i++)
         {
-            arrayType.AddElement(result);
+            arrayType.AddSlot(result);
         }
         
         context.VariableStack.Push(result);
@@ -210,14 +231,14 @@ public static class BuiltInFunctions
     {
         Variable str = context.VariableStack.Pop();
         string lower = str.GetValue<string>().ToLower();
-        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, lower));
+        context.VariableStack.Push(BuiltinTypeInfo.String, lower);
     }
 
     public static void StringToUpper(InterpreterExecutionContext context)
     {
         Variable str = context.VariableStack.Pop();
         string lower = str.GetValue<string>().ToUpper();
-        context.VariableStack.Push(Variable.Create(BuiltinTypeInfo.String, lower));   
+        context.VariableStack.Push(BuiltinTypeInfo.String, lower);   
     }
     
     private static void AssertStackCount(InterpreterExecutionContext context)
@@ -229,5 +250,75 @@ public static class BuiltInFunctions
 
         Debugger.Break();
         throw new Exception();
+    }
+
+    private static void DictionaryConstructor(InterpreterExecutionContext context)
+    {
+        Variable valueType = context.VariableStack.Pop();
+        Variable keyType = context.VariableStack.Pop();
+        
+        TypeInfo keyTypeArg = keyType.GetValue<TypeInfo>();
+        TypeInfo valueTypeArg = valueType.GetValue<TypeInfo>();
+        
+        DictionaryTypeInfo dict = new DictionaryTypeInfo(keyTypeArg, valueTypeArg);
+        Variable result = dict.CreateVariable();
+        context.VariableStack.Push(result);
+    }
+
+    private static void DictionaryAdd(InterpreterExecutionContext context)
+    {
+        Variable varToAdd = context.VariableStack.Pop();
+        Variable key = context.VariableStack.Pop();
+        Variable targetDict = context.VariableStack.Pop().Dereference();
+
+        IDictionary<int,Variable> target = targetDict.GetValue<IDictionary<int, Variable>>();
+        int keyHash = key.GetObjectHashCode();
+        target.Add(keyHash, Variable.CreateCopy(varToAdd));
+    }
+
+    private static void DictionaryRemove(InterpreterExecutionContext context)
+    {
+        Variable key = context.VariableStack.Pop();
+        Variable targetDict = context.VariableStack.Pop().Dereference();
+        
+        IDictionary<int,Variable> target = targetDict.GetValue<IDictionary<int, Variable>>();
+        int keyHash = key.GetObjectHashCode();
+        bool removeResult = target.Remove(keyHash);
+        
+        context.VariableStack.Push(BuiltinTypeInfo.Bool, removeResult);
+    }
+
+    private static void DictionaryHas(InterpreterExecutionContext context)
+    {
+        Variable key = context.VariableStack.Pop();
+        Variable targetDict = context.VariableStack.Pop().Dereference();
+        
+        IDictionary<int,Variable> target = targetDict.GetValue<IDictionary<int, Variable>>();
+        int keyHash = key.GetObjectHashCode();
+        bool hasResult = target.ContainsKey(keyHash);
+        
+        context.VariableStack.Push(BuiltinTypeInfo.Bool, hasResult);
+    }
+
+    private static void DictionaryGet(InterpreterExecutionContext context)
+    {
+        Variable key = context.VariableStack.Pop();
+        Variable targetDict = context.VariableStack.Pop().Dereference();
+        
+        IDictionary<int,Variable> target = targetDict.GetValue<IDictionary<int, Variable>>();
+        int keyHash = key.GetObjectHashCode();
+        Variable result = target[keyHash];
+        context.VariableStack.Push(result);
+    }
+
+    private static void DictionarySet(InterpreterExecutionContext context)
+    {
+        Variable varToAdd = context.VariableStack.Pop();
+        Variable key = context.VariableStack.Pop();
+        Variable targetDict = context.VariableStack.Pop().Dereference();
+
+        IDictionary<int,Variable> target = targetDict.GetValue<IDictionary<int, Variable>>();
+        int keyHash = key.GetObjectHashCode();
+        target[keyHash] = Variable.CreateCopy(varToAdd);
     }
 }

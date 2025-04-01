@@ -18,4 +18,9 @@ public class NullTypeInfo : TypeInfo
         // the object doesn't have a value so it's fine?
         return instance!;
     }
+
+    public override int GetObjectHashCode(Variable variable)
+    {
+        return 0;
+    }
 }

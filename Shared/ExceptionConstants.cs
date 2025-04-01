@@ -43,4 +43,5 @@ public static class ExceptionConstants
     public const string FAILED_TO_WALK_TREE = "Failed to walk full node tree. Ended on token \"{0}\" at location \"{1}\"";
     public const string PARSE_INNER_EXCEPTION = "Failed to parse file \"{0}\". File contained errors on parse";
     public const string FILE_ENCODING_INVALID = "Incorrect file format. Expected \"{0}\" Recevied \"{1}\"";
+    public const string MISSING_RETURN_STATEMENT = "Function returning value of type \"{0}\" Expects a return statement but none was present";
 }

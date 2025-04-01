@@ -70,4 +70,6 @@ public abstract class TypeInfo
     {
         return other.IsAssignableTo(this);
     }
+
+    public abstract int GetObjectHashCode(Variable variable);
 }

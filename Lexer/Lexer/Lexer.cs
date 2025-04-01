@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Shared;
 using Shared.Exceptions;
 
@@ -40,6 +41,11 @@ public class Lexer<T> : ILexer<T> where T : Enum
             // if no
             if (result == null)
             {
+                #if DEBUG
+                Debugger.Break();
+                // run it again with debugger
+                result = FindNextToken(source.Slice(m_head));
+                #endif
                 throw new InvalidTokenException(m_lineNumber, m_columnNumber);
             }
 

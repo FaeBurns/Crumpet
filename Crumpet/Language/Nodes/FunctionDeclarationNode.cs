@@ -37,13 +37,13 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory,
         yield return new NonTerminalDefinition<FunctionDeclarationNode>(
             new SequenceConstraint(
                 new CrumpetRawTerminalConstraint(CrumpetToken.KW_FUNC),
-                new NonTerminalConstraint<TypeNode>(),
-                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)),
+                new NonTerminalConstraint<TypeNode>(), // return type
+                new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)), // return type variable modifier
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
-                new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
+                new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN), // parameters
                 new OptionalConstraint(new NonTerminalConstraint<ParameterListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
-                new NonTerminalConstraint<StatementBodyNode>()),
+                new NonTerminalConstraint<StatementBodyNode>()), // body
             GetNodeConstructor<FunctionDeclarationNode>());
     }
 

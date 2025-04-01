@@ -78,11 +78,20 @@ public class ArrayTypeInfo : ArrayTypeInfoUnkownTypeInfo
         return base.ConvertValidObjectTo(type, value);
     }
 
-    public void AddElement(Variable array)
+    public void AddSlot(Variable array)
     {
         List<Variable> list = array.GetValue<List<Variable>>();
         Variable element = Variable.Create(InnerType);
         list.Add(element);
+    }
+    
+    public override int GetObjectHashCode(Variable variable)
+    {
+        variable = variable.DereferenceToLowestVariable();
+        List<Variable> array = variable.GetValue<List<Variable>>();
+        
+        // use default hash code
+        return array.GetHashCode();
     }
 }
 
@@ -95,6 +104,11 @@ public class ArrayTypeInfoUnkownTypeInfo : TypeInfo
     }
 
     public override object CreateCopy(object? instance)
+    {
+        throw new InvalidOperationException();
+    }
+
+    public override int GetObjectHashCode(Variable variable)
     {
         throw new InvalidOperationException();
     }

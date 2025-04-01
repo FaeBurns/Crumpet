@@ -33,7 +33,7 @@
     
     println("string index passed");
     
-    int[] testList = list(int, 5);
+    int[] testList = _list<int>(5);
     for(int i = 0; i < count(&testList); i++){
         testList[i] = i + 1;
     }
@@ -48,13 +48,13 @@
     
     int[]* ptr1 = &testList;
     int[]* ptr2 = ptr1;
-    *ptr1 = list(int, 0);
+    *ptr1 = _list<int>(0);
     assertListNElements(ptr1, 0);
     assertListNElements(ptr2, 0);
     
     println("list pointer passed");
    
-    testList = list(int, 5);
+    testList = _list<int>(5);
     assert(count(*ptr1) == 5);
     assert(count(*ptr2) == 5);
     
@@ -104,7 +104,7 @@ func void resizeList(int[]* list, int newSize){
     if(count(*list) == newSize)
         return;
     
-    int[] newList = list(int, newSize);
+    int[] newList = _list<int>(newSize);
     // populate with entries that the newlist can fit
     for(int i = 0; i < min(count(list), newSize); i++){
         newList[i] = *list[i];

@@ -167,6 +167,6 @@ public enum CrumpetToken : byte
     NEWLINE,
 
     // alphanumeric but does not start with a number
-    [Token("[a-zA-Z]+[a-zA-Z0-9]*")]
+    [Token("[a-zA-Z_]+[a-zA-Z0-9_]*")]
     IDENTIFIER = Byte.MaxValue - 1,
 }
