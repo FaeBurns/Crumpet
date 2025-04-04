@@ -11,11 +11,13 @@ namespace Crumpet.Language.Nodes;
 public class TypeDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
 {
     public IdentifierNode Name { get; }
+    public GenericTypeDeclarationListNode GenericTypesDeclaration { get; }
     public TypeDeclarationFieldNode[] Fields { get; }
 
-    public TypeDeclarationNode(IdentifierNode name, IEnumerable<TypeDeclarationFieldNode> fields)
+    public TypeDeclarationNode(IdentifierNode name, GenericTypeDeclarationListNode genericTypesDeclaration, IEnumerable<TypeDeclarationFieldNode> fields)
     {
         Name = name;
+        GenericTypesDeclaration = genericTypesDeclaration;
         Fields = fields.ToArray();
     }
 
@@ -25,6 +27,7 @@ public class TypeDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
             new SequenceConstraint(
                 new CrumpetRawTerminalConstraint(CrumpetToken.KW_STRUCT),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new NonTerminalConstraint<GenericTypeDeclarationListNode>(),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LBRACK),
                 new ZeroOrMoreConstraint(new NonTerminalConstraint<TypeDeclarationFieldNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RBRACK)),
@@ -38,5 +41,7 @@ public class TypeDeclarationNode : NonTerminalNode, INonTerminalNodeFactory
         {
             yield return node;
         }
+
+        yield return GenericTypesDeclaration;
     }
 }

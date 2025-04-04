@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Shared;
 
@@ -6,6 +7,7 @@ namespace Shared;
 public readonly struct ID<T>
 {
     private static readonly Dictionary<string, int> s_idMap = new Dictionary<string, int>();
+    private static readonly Dictionary<int, string> s_nameMap = new Dictionary<int, string>();
     private static int s_nextId;
     private readonly int m_id;
 
@@ -19,6 +21,7 @@ public readonly struct ID<T>
         {
             m_id = s_nextId++;
             s_idMap.Add(id, m_id);
+            s_nameMap.Add(m_id, id);
         }
     }
 
@@ -45,5 +48,10 @@ public readonly struct ID<T>
     public static bool operator != (ID<T>? left, ID<T>? right)
     {
         return !Equals(left, right);
+    }
+    
+    public override string ToString()
+    {
+        return s_nameMap[m_id];
     }
 }

@@ -12,4 +12,9 @@ public class ParameterInfo(TypeInfo type, VariableModifier modifier)
     {
         return Type.TypeName + (Modifier == VariableModifier.COPY ? "" : "*");
     }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Type, Modifier);
+    }
 }

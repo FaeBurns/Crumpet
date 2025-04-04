@@ -27,15 +27,16 @@ public class ExecuteFunctionInstruction : Instruction
         
         // get arguments and their types
         // then get a function that matches the parameters
-        // reverse the order too as they're on the stack in the reverse order to what we desire
+        // reverse the order too as they're on the stack in the reverse order to what we need
+        IReadOnlyList<TypeInfo> typeArgs = context.VariableStack.Pop(m_typeArgumentCount).Select(v => v.GetValue<TypeInfo>()).Reverse().ToArray();
         IEnumerable<Variable> argumentVariables = context.VariableStack.Peek(m_argumentCount);
         IEnumerable<ParameterInfo> parameterTypes = argumentVariables.Select(v => new ParameterInfo(v.Type, v.Modifier)).Reverse();
-        Function function = context.FunctionResolver.GetFunction(m_functionName, parameterTypes, m_typeArgumentCount);
+        Function function = context.FunctionResolver.GetFunction(m_functionName, parameterTypes, typeArgs);
 
         switch (function)
         {
             case BuiltInFunction builtInFunction:
-                ExecuteBuiltInFunction(context, builtInFunction);
+                ExecuteBuiltInFunction(context, builtInFunction, typeArgs);
                 break;
             case UserFunction userFunction:
                 ExecuteUserFunction(context, userFunction);
@@ -48,23 +49,23 @@ public class ExecuteFunctionInstruction : Instruction
     private void ExecuteUserFunction(InterpreterExecutionContext context, UserFunction function)
     {
         // assert that there's enough variables to pop for function
-        Debug.Assert(context.VariableStack.Count >= function.Definition.Parameters.Count);
+        Debug.Assert(context.VariableStack.Count >= function.Parameters.Count);
         
         // reverse for to pop in reverse order
         // they're placed on the stack in evaluation order but that's not the order they'll get popped off so a reverse is required
-        Variable[] args = new Variable[function.Definition.Parameters.Count];
+        Variable[] args = new Variable[function.Parameters.Count];
         for (int i = args.Length - 1; i >= 0; i--)
         {
             args[i] = context.VariableStack.Pop();
         }
         
         // create the unit and call it
-        context.Call(function.CreateInvokableUnit(context, args), function.Definition.ReturnType);
+        context.Call(function.CreateInvokableUnit(context, args), function.ReturnType);
     }
 
-    private void ExecuteBuiltInFunction(InterpreterExecutionContext context, BuiltInFunction function)
+    private void ExecuteBuiltInFunction(InterpreterExecutionContext context, BuiltInFunction function, IReadOnlyList<TypeInfo> typeArgs)
     {
         // just call it directly - it's up to the function to handle the rest
-        function.Invoke(context);
+        function.Invoke(context, typeArgs);
     }
 }

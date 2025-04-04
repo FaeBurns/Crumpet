@@ -1,9 +1,5 @@
 ﻿using Crumpet.Exceptions;
 using Crumpet.Interpreter;
-using Crumpet.Language;
-using Crumpet.Language.Nodes;
-using Lexer;
-using Parser;
 using Shared;
 
 namespace Crumpet.Tests.Interpreter;
@@ -13,9 +9,9 @@ public class FullInterpreterTests
 {
     [TestCase("Interpreter/simpleadd", 2, 1, ExpectedResult = 3)]
     [TestCase("Interpreter/argument_type", ExpectedResult = 0)]
-    [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     [TestCase("Interpreter/requirements_test", ExpectedResult = 0)]
     [TestCase("Interpreter/throw_in_catch", ExpectedResult = 0)]
+    [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     [TestCase("Interpreter/ImportTest/import_root", ExpectedResult = 0)]
     public object RunExampleFile(string filename, params object[] args)
     {

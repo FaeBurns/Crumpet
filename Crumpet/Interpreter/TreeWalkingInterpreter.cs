@@ -35,7 +35,7 @@ public class TreeWalkingInterpreter
         Variable[] arguments = TransformArguments(args);
         UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(
                 entryPointName,
-                arguments.Select(a => new ParameterInfo(a.Type, a.Modifier)), 0);
+                arguments.Select(a => new ParameterInfo(a.Type, a.Modifier)), []);
 
         // call immediately in context
         context.Call(entryPoint.CreateInvokableUnit(context, arguments));

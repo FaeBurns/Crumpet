@@ -16,6 +16,7 @@ public class ExecutionStack
     {
         unit.StackRestoreTarget = m_context.VariableStack.Count;
         m_units.Push(unit);
+        unit.OnPush(m_context);
     }
 
     public UnitExecutionContext Pop()
@@ -24,8 +25,10 @@ public class ExecutionStack
         m_context.VariableStack.UnwindTo(unit.StackRestoreTarget);
         if (unit.ValueToPushOnPop is not null)
             m_context.VariableStack.Push(unit.ValueToPushOnPop);
-            
-        return m_units.Pop();
+
+        unit.OnPop(m_context);
+        m_units.Pop();
+        return unit; // is the same unit as the pop
     }
     
     public UnitExecutionContext Peek() => m_units.Peek();

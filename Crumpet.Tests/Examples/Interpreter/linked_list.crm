@@ -1,37 +1,42 @@
-﻿struct LinkedList{
-    LinkedListNode* root;
+﻿struct LinkedList<T>{
+    LinkedListNode<T>* root;
     int count;
 }
 
-struct LinkedListNode{
-    string value;
-    LinkedList* list;
-    LinkedListNode* next;
+struct LinkedListNode<T>{
+    T value;
+    LinkedList<T>* list;
+    LinkedListNode<T>* next;
 }
 
 func void main(){
-    LinkedList list;
-    LLAdd(&list, "one");
-    LLAdd(&list, "two");
-    LLAdd(&list, "three");
+    LinkedList<string> list;
+    LLAdd<string>(&list, "one");
+    LLAdd<string>(&list, "two");
+    LLAdd<string>(&list, "three");
     
-    LLPrint(&list);
+    LLPrint<string>(&list);
     
     assert(list.count == 3);
     
-    assert(LLGet(&list, 0) == "one");
-    assert(LLGet(&list, 1) == "two");
-    assert(LLGet(&list, 2) == "three");
+    assert(LLGet<string>(&list, 0) == "one");
+    assert(LLGet<string>(&list, 1) == "two");
+    assert(LLGet<string>(&list, 2) == "three");
+    
+    LLPrint<string>(&list);
+    
+    println("done");
 }
 
 func void TestNullEquality(){
-    LinkedList* ptr;
+    LinkedList<string>* ptr;
     assert(ptr == NULL);
-    LinkedList list;
-    ptr = &list; 
+    LinkedList<string> list;
+    ptr = &list;
+    assert(ptr != NULL);
 }
 
-func void LLAdd(LinkedList* list, string value){
+func void LLAdd<T>(LinkedList<T>* list, T value){
     // check that incrementation works on inset values
     int count = list->count;
     list->count++;
@@ -40,33 +45,33 @@ func void LLAdd(LinkedList* list, string value){
     // if the list is empty
     if (list->root == NULL){
         // create a node, set it as the root, then return
-        LinkedListNode node;
+        LinkedListNode<T> node;
         node.value = value;
         node.list = &list;
         list->root = node;
         return;
     }    
     
-    LinkedListNode* last = null;
-    LinkedListNode* current = list->root;
+    LinkedListNode<T>* last = null;
+    LinkedListNode<T>* current = list->root;
     while(current != NULL){
         last = current;
         current = current->next;
     }
     
-    LinkedListNode newNode;
+    LinkedListNode<T> newNode;
     newNode.value = value;
     newNode.list = list;
     last->next = &newNode; // set next on the last element
 }
 
-func string LLGet(LinkedList* list, int index){
+func T LLGet<T>(LinkedList<T>* list, int index){
     if (index >= list->count || index < 0){
         throw("Out of Bounds");
     }
     
     int i = 0;
-    LinkedListNode* current = list->root;
+    LinkedListNode<T>* current = list->root;
     while(current != NULL){
         if (i == index)
         {
@@ -79,9 +84,9 @@ func string LLGet(LinkedList* list, int index){
     assert(false);
 }
 
-func void LLPrint(LinkedList* list){
+func void LLPrint<T>(LinkedList<T>* list){
     int i = 0;
-    LinkedListNode* current = list->root;
+    LinkedListNode<T>* current = list->root;
     while(current != NULL){
         println("Entry[" + i + "]: " + current->value);
         current = current->next;
@@ -89,14 +94,14 @@ func void LLPrint(LinkedList* list){
     }
 }
 
-func void LLRemove(LinkedList* list, int index){
+func void LLRemove<T>(LinkedList<T>* list, int index){
     if (index >= list.count || index < 0){
         throw("Out of Bounds");
     }
     
     int i = 0;
-    LinkedListNode* current = list->root;
-    LinkedListNode* last = NULL;
+    LinkedListNode<T>* current = list->root;
+    LinkedListNode<T>* last = NULL;
     while(current != NULL){
         if (i == index){
             if (last == NULL){

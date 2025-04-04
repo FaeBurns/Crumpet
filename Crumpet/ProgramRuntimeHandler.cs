@@ -13,12 +13,28 @@ public class ProgramRuntimeHandler
 {
     public object RunFile(FileInfo file, string entryPointName, object[] args, Stream? inputStream, Stream? outputStream)
     {
-        RootNonTerminalNode programNode = ConstructEncompassingRoot(file);
+        try
+        {
+            RootNonTerminalNode programNode = ConstructEncompassingRoot(file);
 
-        TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programNode, inputStream, outputStream);
-        InterpreterExecutor executor = interpreter.Run(entryPointName, args);
-        object result = executor.StepUntilComplete().GetValue()!;
-        return result;
+            TreeWalkingInterpreter interpreter = new TreeWalkingInterpreter(programNode, inputStream, outputStream);
+            InterpreterExecutor executor = interpreter.Run(entryPointName, args);
+            object result = executor.StepUntilComplete().GetValue()!;
+            return result;
+        }
+        catch (InterpreterException r)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            outputStream ??= Console.OpenStandardError();
+            StreamWriter sw = new StreamWriter(outputStream);
+            sw.WriteLine("Fatal uncaught exception occured during precompilation/execution");
+            sw.WriteLine(e);
+        }
+
+        return -1;
     }
 
     private RootNonTerminalNode ConstructEncompassingRoot(FileInfo file)

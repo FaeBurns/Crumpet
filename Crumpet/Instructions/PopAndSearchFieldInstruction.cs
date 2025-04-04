@@ -26,7 +26,7 @@ public class PopAndSearchFieldInstruction : Instruction
             throw new NullReferenceException();
 
         if (target.Type is not UserObjectTypeInfo)
-            throw new TypeMismatchException(new UserObjectTypeInfo("ANY"), target.Type);
+            throw new TypeMismatchException(new AnyTypeInfo(), target.Type);
 
         // requires copy here - all values must be dereferenced beforehand
         if (target.Modifier is VariableModifier.POINTER)

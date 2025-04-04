@@ -29,7 +29,7 @@ public abstract class ExpressionWithPostfixNode : NonTerminalNode, INonTerminalN
         yield return new NonTerminalDefinition<ExpressionWithPostfixNode>(
             new SequenceConstraint(
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
-                new OptionalConstraint(new NonTerminalConstraint<TypeArgumentListNode>()),
+                new NonTerminalConstraint<GenericTypeArgumentListNode>(),
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN),
                 new OptionalConstraint(new NonTerminalConstraint<ArgumentExpressionListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN)), GetNodeConstructor<ExpressionWithPostfixNodeExecutionVariant>());
@@ -69,10 +69,10 @@ public class ExpressionWithPostfixNodeIncrementVariant : ExpressionWithPostfixNo
 public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNode, IInstructionProvider
 {
     public IdentifierNode Identifier { get; }
-    public TypeArgumentListNode TypeArgs { get; }
+    public GenericTypeArgumentListNode TypeArgs { get; }
     public ArgumentExpressionListNode? Arguments { get; }
 
-    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, TypeArgumentListNode typeArgs, ArgumentExpressionListNode? arguments) : base(identifier, typeArgs, arguments)
+    public ExpressionWithPostfixNodeExecutionVariant(IdentifierNode identifier, GenericTypeArgumentListNode typeArgs, ArgumentExpressionListNode? arguments) : base(identifier, typeArgs, arguments)
     {
         Identifier = identifier;
         TypeArgs = typeArgs;
@@ -88,7 +88,7 @@ public class ExpressionWithPostfixNodeExecutionVariant : ExpressionWithPostfixNo
         yield return TypeArgs;
         
         // execute
-        yield return new ExecuteFunctionInstruction(Identifier.Terminal, TypeArgs?.Types.Length ?? 0, Arguments?.Expressions.Length ?? 0, Location);
+        yield return new ExecuteFunctionInstruction(Identifier.Terminal, TypeArgs?.TypeArguments.Length ?? 0, Arguments?.Expressions.Length ?? 0, Location);
     }
 }
 

@@ -6,10 +6,10 @@ public abstract class Function
 {
     public abstract string Name { get; }
 
-    public IReadOnlyList<ParameterInfo> Parameters { get; }
+    public IReadOnlyList<ParameterDefinition> Parameters { get; }
     public int TypeArgCount { get; }
 
-    protected Function(IEnumerable<ParameterInfo> parameters, int typeArgCount)
+    protected Function(IEnumerable<ParameterDefinition> parameters, int typeArgCount)
     {
         TypeArgCount = typeArgCount;
         Parameters = parameters.ToArray();

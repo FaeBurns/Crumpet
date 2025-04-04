@@ -29,7 +29,7 @@ public class TypeDefinitionTests
 
         foreach (TypeInfo expected in expectedTypes)
         {
-            TypeInfo? resolved = interpreter.TypeResolver.ResolveType(expected.TypeName);
+            TypeInfo? resolved = interpreter.TypeResolver.ResolveType(expected.TypeName, []);
 
             Assert.That(resolved, Is.Not.Null);
             Assert.That(resolved.TypeName, Is.EqualTo(expected.TypeName));
@@ -71,16 +71,16 @@ public class TypeDefinitionTests
     [Test]
     public void TestTypeResolution()
     {
-        UserObjectTypeInfo typeA = new UserObjectTypeInfo("TypeA",
-            new FieldInfo("a", BuiltinTypeInfo.Int),
+        UserObjectTypeInfo typeA = new UserObjectTypeInfo("TypeA", [],
+            [new FieldInfo("a", BuiltinTypeInfo.Int),
             new FieldInfo("b", BuiltinTypeInfo.Int),
             new FieldInfo("c", BuiltinTypeInfo.Int),
-            new FieldInfo("child", null!));
+            new FieldInfo("child", null!)]);
 
-        UserObjectTypeInfo typeB = new UserObjectTypeInfo("TypeB",
-            new FieldInfo("parent", typeA, VariableModifier.POINTER),
+        UserObjectTypeInfo typeB = new UserObjectTypeInfo("TypeB", [],
+            [new FieldInfo("parent", typeA, VariableModifier.POINTER),
             new FieldInfo("a", BuiltinTypeInfo.String),
-            new FieldInfo("b", BuiltinTypeInfo.Float));
+            new FieldInfo("b", BuiltinTypeInfo.Float)]);
 
         typeA.Fields[3].Type = typeB;
 

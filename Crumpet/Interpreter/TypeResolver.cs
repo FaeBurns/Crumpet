@@ -1,4 +1,6 @@
-﻿using Crumpet.Interpreter.Variables.Types;
+﻿using Crumpet.Exceptions;
+using Crumpet.Interpreter.Variables.Types;
+using Crumpet.Interpreter.Variables.Types.Templates;
 using Crumpet.Language.Nodes;
 using Shared;
 
@@ -6,109 +8,150 @@ namespace Crumpet.Interpreter;
 
 public class TypeResolver
 {
-    private readonly Dictionary<string, TypeInfo> m_types;
+    private readonly Dictionary<string, TypeTemplate> m_templates;
+    private readonly Dictionary<int, TypeInfo> m_builtTypeCache = new Dictionary<int, TypeInfo>();
+    private readonly Stack<GenericTypeContext> m_genericTypeContextStack = new Stack<GenericTypeContext>();
 
-    internal TypeResolver(IEnumerable<KeyValuePair<string, TypeInfo>> types)
+    internal TypeResolver(IEnumerable<KeyValuePair<string, TypeTemplate>> types)
     {
-        m_types = new Dictionary<string, TypeInfo>(types);
+        m_templates = new Dictionary<string, TypeTemplate>(types);
     }
 
-    public TypeInfo? ResolveType(string typeName)
+    public TypeTemplate? ResolveTemplate(string typename)
     {
-        return m_types.GetValueOrDefault(typeName);
+        return m_templates.GetValueOrDefault(typename);
+    }
+
+    public TypeInfo ResolveType(string typeName, IReadOnlyList<TypeInfo> genericPositionalTypeArgs)
+    {
+        int hash = GetTypeHashCode(typeName, genericPositionalTypeArgs);
+        if (m_builtTypeCache.TryGetValue(hash, out TypeInfo? cachedType))
+            return cachedType;
+        
+        if (m_templates.TryGetValue(typeName, out TypeTemplate? typeTemplate))
+        {
+            // if it's a user type this will end up caching the type itself, so don't force it to be added
+            TypeInfo type = typeTemplate.Construct(this, genericPositionalTypeArgs);
+            m_builtTypeCache.TryAdd(hash, type);
+            return type;
+        }
+
+        if (TryResolveGenericNameToType(typeName) is TypeInfo genericType)
+        {
+            // generic type is resolved here
+            return genericType;
+        }
+
+        throw new TypeNotFoundException(typeName, ExceptionConstants.UNKOWN_TYPE.Format(typeName));
+    }
+
+    public TypeInfo ResolveGenericNameToType(string name)
+    {
+        return TryResolveGenericNameToType(name) ?? throw new GenericsException(ExceptionConstants.GENERIC_NOT_FOUND.Format(name));
+    }
+
+    private TypeInfo? TryResolveGenericNameToType(string name)
+    {
+        if (!m_genericTypeContextStack.Any())
+            return null;
+            
+        GenericTypeContext currentContext = m_genericTypeContextStack.Peek();
+        return currentContext.GetValueOrDefault(name);
+    }
+
+    public DisposeAction PushGenericArgumentsAutoPop(GenericTypeContext context)
+    {
+        m_genericTypeContextStack.Push(context);
+        return new DisposeAction(PopGenericArguments);
+    }
+    
+    public void PushGenericArguments(GenericTypeContext context) => m_genericTypeContextStack.Push(context);
+    public void PopGenericArguments() => m_genericTypeContextStack.Pop();
+    
+    public TypeInfo? TryResolveCachedType(TypeTemplate template, IReadOnlyList<TypeInfo> positionalTypeArgs)
+    {
+        int hash = GetTypeHashCode(template.TypeName, positionalTypeArgs);
+        return m_builtTypeCache.GetValueOrDefault(hash);
+    }
+
+    public TypeInfo TemplateConstructOrCache(TypeTemplate template, IReadOnlyList<TypeInfo> positionalTypeArgs)
+    {
+        if (TryResolveCachedType(template, positionalTypeArgs) is TypeInfo typeInfo)
+            return typeInfo;
+
+        return template.Construct(this, positionalTypeArgs);
+    }
+    
+    public TypeTemplate TypeNodeToTemplate(TypeNode node)
+    {
+        if (node.TypeArgs.TypeArguments.Length == 0)
+        {
+            // if no template was found it must be a generic template
+            // e.g. T will not be found by TryGetTemplate so it must be a replaceable generic
+            TypeTemplate? template = TryGetTemplate(node.FullName);
+            if (template is null)
+                return new GenericReplaceableTypeTemplate(node.FullName);
+        }
+
+        if (node.TypeArgs.TypeArguments.Length == 0)
+            return GetTemplate(node.FullName);
+        
+        TypeTemplate[] args = new TypeTemplate[node.TypeArgs.TypeArguments.Length];
+        for (int i = 0; i < args.Length; i++)
+        {
+            args[i] = TypeNodeToTemplate(node.TypeArgs.TypeArguments[i]);
+        }
+        
+        return new TypeWithTypeArgsTemplate(GetTemplate(node.FullName), args);
+    }
+    
+    public void CacheIncompleteUserType(UserObjectTypeInfo userType, IReadOnlyList<TypeInfo> typeArgs)
+    {
+        m_builtTypeCache.Add(GetTypeHashCode(userType.TypeName, typeArgs), userType);
+    }
+    
+    private TypeTemplate GetTemplate(string name)
+    {
+        return m_templates.GetValueOrDefault(name) ?? throw new TypeNotFoundException(name, ExceptionConstants.UNKOWN_TYPE.Format(name));
+    }
+
+    private TypeTemplate? TryGetTemplate(string name)
+    {
+        return m_templates.GetValueOrDefault(name);
+    }
+    
+    private int GetTypeHashCode(string typeName, IReadOnlyList<TypeInfo> args)
+    {
+        HashCombo hash = new HashCombo()
+            .Add(typeName);
+        
+        foreach (TypeInfo type in args)
+        {
+            hash.Add(type.GetHashCode());
+        }
+
+        return hash.GetHashCode();
     }
 }
 
-public class PlaceholderTypeResolver
+public class GenericTypeContext : Dictionary<string, TypeInfo>
 {
-    private readonly Dictionary<string, TypeInfo> m_types = new Dictionary<string, TypeInfo>();
-
-    public PlaceholderTypeResolver()
+    public GenericTypeContext()
     {
-        // initialize with default types
-        m_types.Add("string", BuiltinTypeInfo.String);
-        m_types.Add("int", BuiltinTypeInfo.Int);
-        m_types.Add("float", BuiltinTypeInfo.Float);
-        m_types.Add("bool", BuiltinTypeInfo.Bool);
-        m_types.Add("void", new VoidTypeInfo());
-        m_types.Add("map", new DictionaryTypeInfoUnknownType());
     }
     
-    public void RegisterType(TypeDeclarationNode node)
+    public GenericTypeContext(IEnumerable<KeyValuePair<string, TypeInfo>> typeArgs) : base(typeArgs)
     {
-        IEnumerable<FieldInfo> fieldTypes = node.Fields.Select(f => new FieldInfo(f.Name.Terminal, ResolveType(f.Type.FullName), f.VariableModifier));
-
-        // use direct assign when setting in dictionary to replace placeholders when encountered
-        UserObjectTypeInfo typeInfo = new UserObjectTypeInfo(node.Name.Terminal, fieldTypes.ToArray());
-        m_types[node.Name.Terminal] = typeInfo;
-    }
-
-    /// <summary>
-    /// Tries to replace all placeholders.
-    /// </summary>
-    /// <returns>True if all were replaced, false if not.</returns>
-    public bool ReplacePlaceholders()
-    {
-        bool clean = true;
-        foreach (KeyValuePair<string, TypeInfo> type in m_types)
-        {
-            // replace if placeholder
-            if (type.Value is PlaceholderTypeInfo)
-                ReplacePlaceholder(type.Key, type.Value);
-            
-            // invalidate if type is still a placeholder
-            if (type.Value is PlaceholderTypeInfo) clean = false;
-        }
-
-        return clean;
-    }
-
-    public void UpdateFieldsInUserTypes()
-    {
-        // loop through all fields in all user types
-        foreach (FieldInfo field in m_types.Values.OfType<UserObjectTypeInfo>().SelectMany(t => t.Fields))
-        {
-            // try and replace if it's a placeholder
-            if (field.Type is PlaceholderTypeInfo)
-                // resolve type will return the same placeholder if nothing has been updated yet
-                field.Type = ResolveType(field.Type.TypeName);
-        }
-    }
-
-    /// <summary>
-    /// Gets the resolver from the built type references
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public TypeResolver Build()
-    {
-        foreach (FieldInfo field in m_types.Values.OfType<UserObjectTypeInfo>().SelectMany(t => t.Fields))
-        {
-            // try and replace if it's a placeholder
-            if (field.Type is PlaceholderTypeInfo)
-                throw new InvalidOperationException(ExceptionConstants.PLACEHOLDER_STILL_PRESENT.Format(field.Type));
-        }
-
-        return new TypeResolver(m_types);
     }
     
-    private void ReplacePlaceholder(string typeName, TypeInfo typeInfo)
+    public GenericTypeContext(IReadOnlyList<string> names, IReadOnlyList<TypeInfo> types)
     {
-        // if type not found by name, throw
-        if (!m_types.TryGetValue(typeName, out TypeInfo? oldValue))
-            throw new ArgumentException(ExceptionConstants.KEY_NOT_FOUND.Format(typeName));
-        
-        if (oldValue is not PlaceholderTypeInfo)
-            throw new InvalidOperationException(ExceptionConstants.REPLACING_NON_PLACEHOLDER_TYPE);
-        
-        // replace in map
-        m_types[typeName] = typeInfo;
-    }
+        if (types.Count != names.Count)
+            throw new GenericsException(ExceptionConstants.TYPE_RESOLVE_GENERIC_ARG_COUNT_MISMATCH.Format(names.Count, types.Count));
 
-    public TypeInfo ResolveType(string typeName)
-    {
-        // add if missing then return contained value
-        m_types.TryAdd(typeName, new PlaceholderTypeInfo(typeName));
-        return m_types[typeName];
+        for (int i = 0; i < names.Count; i++)
+        {
+            Add(names[i], types[i]);
+        }
     }
 }

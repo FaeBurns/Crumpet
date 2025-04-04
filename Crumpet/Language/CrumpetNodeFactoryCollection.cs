@@ -18,7 +18,8 @@ public class CrumpetNodeFactoryCollection : INodeFactoryCollection
         yield return typeof(ParameterNode);
         yield return typeof(TypeDeclarationNode);
         yield return typeof(TypeDeclarationFieldNode);
-        yield return typeof(TypeArgumentListNode);
+        yield return typeof(GenericTypeArgumentListNode);
+        yield return typeof(GenericTypeDeclarationListNode);
         yield return typeof(StatementBodyNode);
         yield return typeof(StatementNode);
         yield return typeof(FlowStatementNode);

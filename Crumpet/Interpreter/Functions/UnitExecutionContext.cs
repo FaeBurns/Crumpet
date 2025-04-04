@@ -25,4 +25,26 @@ public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnTy
     }
 
     public SourceLocation UnitLocation => Unit.SourceLocation;
+
+    public void OnPush(InterpreterExecutionContext context)
+    {
+        if (unit.TypeArgs.Any())
+        {
+            context.TypeResolver.PushGenericArguments(new GenericTypeContext(unit.TypeArgs));
+        }
+        else if (unit.BlocksScope)
+        {
+            // push an empty context if it only blocks the scope
+            // don't want type arguments being read from somewhere above
+            context.TypeResolver.PushGenericArguments(new GenericTypeContext());
+        }
+    }
+
+    public void OnPop(InterpreterExecutionContext context)
+    {
+        if (unit.TypeArgs.Any())
+        {
+            context.TypeResolver.PopGenericArguments();
+        }
+    }
 }

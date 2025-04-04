@@ -80,7 +80,8 @@ public class InitializationStatementNodeBasicVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), false, Location);
+        yield return Type;
+        yield return new CreateVariableInstruction(Name.Terminal, GetModifier(ModifierSugar), false, Location);
 
         if (Assignment != null)
         {
@@ -116,7 +117,9 @@ public class InitializationStatementNodeArrayVariant : InitializationStatementNo
     
     public IEnumerable GetInstructionsRecursive()
     {
-        yield return new CreateVariableInstruction(Name.Terminal, Type.FullName, GetModifier(ModifierSugar), true, Location);
+        yield return Type;
+        yield return new CreateVariableInstruction(Name.Terminal
+            , GetModifier(ModifierSugar), true, Location);
         
         if (Assignment != null)
         {

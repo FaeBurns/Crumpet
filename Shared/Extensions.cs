@@ -27,4 +27,13 @@ public static class Extensions
         }
         return -1;
     }
+
+    public static IEnumerable<TValue> GetValuesInKeyCollection<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, IEnumerable<TKey> keys)
+    {
+        foreach (TKey key in keys)
+        {
+            if (dictionary.TryGetValue(key, out TValue? value))
+                yield return value;
+        }
+    }
 }

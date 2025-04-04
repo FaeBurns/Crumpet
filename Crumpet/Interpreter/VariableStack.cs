@@ -33,6 +33,14 @@ public class VariableStack
         return m_variables.Peek();
     }
 
+    public IEnumerable<Variable> Pop(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            yield return Pop();
+        }
+    }
+
     /// <summary>
     /// Peeks the first <paramref name="count"/> elements on the stack. Returns them in the order they would be popped in.
     /// </summary>

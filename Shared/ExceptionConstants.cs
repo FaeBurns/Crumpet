@@ -42,6 +42,11 @@ public static class ExceptionConstants
     public const string PARSE_FILE_NOT_FOUND = "Failed to parse file \"{0}\". File was not found.";
     public const string FAILED_TO_WALK_TREE = "Failed to walk full node tree. Ended on token \"{0}\" at location \"{1}\"";
     public const string PARSE_INNER_EXCEPTION = "Failed to parse file \"{0}\". File contained errors on parse";
-    public const string FILE_ENCODING_INVALID = "Incorrect file format. Expected \"{0}\" Recevied \"{1}\"";
+    public const string FILE_ENCODING_INVALID = "Incorrect file format. Expected \"{0}\" received \"{1}\"";
     public const string MISSING_RETURN_STATEMENT = "Function returning value of type \"{0}\" Expects a return statement but none was present";
+    public const string TYPE_RESOLVE_GENERIC_ARG_COUNT_MISMATCH = "Failed to resolve type. Expected {0} generic arguments, Received {1}";
+    public const string UNRESOLVED_GENERIC_TYPE = "Generic used while unresolved";
+    public const string GENERIC_ARGUMENT_COUNT_MISMATCH = "Expected {0} generic arguments, Received {1}";
+    public const string GENERIC_NOT_FOUND = "No generic parameter matching \"{0}\" found.";
+    public const string GENERIC_ARGUMENT_OUT_OF_RANGE = "Generic argument out of range. Range 0-{0}, received index {1}";
 }

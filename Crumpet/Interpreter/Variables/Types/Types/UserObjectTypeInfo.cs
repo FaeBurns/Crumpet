@@ -1,18 +1,23 @@
-﻿using Crumpet.Language;
+﻿using Crumpet.Exceptions;
+using Shared;
 
 namespace Crumpet.Interpreter.Variables.Types;
 
 public class UserObjectTypeInfo : TypeInfo
 {
-    public UserObjectTypeInfo(string typeName, params FieldInfo[] fields)
+    
+    public UserObjectTypeInfo(string typeName, TypeInfo[] typeArguments, params FieldInfo[] fields)
     {
         TypeName = typeName;
+        this.TypeArguments = typeArguments;
         Fields = fields;
     }
 
     public override string TypeName { get; }
+    public TypeInfo[] TypeArguments { get; }
 
-    public FieldInfo[] Fields { get; }
+    // needs to be settable for creation of recursive types
+    public FieldInfo[] Fields { get; set; }
 
     public override Variable CreateVariable()
     {

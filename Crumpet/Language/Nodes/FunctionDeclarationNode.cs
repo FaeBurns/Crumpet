@@ -17,14 +17,16 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory,
 {
     public TypeNode ReturnType { get; }
     public IdentifierNode Name { get; }
+    public GenericTypeDeclarationListNode TypeParams { get; }
     public ParameterListNode Parameters { get; }
     public StatementBodyNode StatementBody { get; }
     public VariableModifier ReturnModifier { get; }
 
-    public FunctionDeclarationNode(TypeNode returnType, TerminalNode<CrumpetToken>? pointerSugar, IdentifierNode name, ParameterListNode? parameters, StatementBodyNode statementBody) : base(returnType, pointerSugar!, name, parameters!, statementBody)
+    public FunctionDeclarationNode(TypeNode returnType, TerminalNode<CrumpetToken>? pointerSugar, IdentifierNode name, GenericTypeDeclarationListNode typeParams, ParameterListNode? parameters, StatementBodyNode statementBody) : base(returnType, pointerSugar!, name, typeParams, parameters!, statementBody)
     {
         ReturnType = returnType;
         Name = name;
+        TypeParams = typeParams;
         StatementBody = statementBody;
 
         // don't know why this thinks it'll never be null when it's cleary annotated to be
@@ -40,6 +42,7 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory,
                 new NonTerminalConstraint<TypeNode>(), // return type
                 new OptionalConstraint(new CrumpetTerminalConstraint(CrumpetToken.MULTIPLY)), // return type variable modifier
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
+                new NonTerminalConstraint<GenericTypeDeclarationListNode>(), // generic type args
                 new CrumpetRawTerminalConstraint(CrumpetToken.LPARAN), // parameters
                 new OptionalConstraint(new NonTerminalConstraint<ParameterListNode>()),
                 new CrumpetRawTerminalConstraint(CrumpetToken.RPARAN),
@@ -56,8 +59,11 @@ public class FunctionDeclarationNode : NonTerminalNode, INonTerminalNodeFactory,
         
         // target for returns to hit
         yield return new ReturnLabelInstruction(Location);
-        
+
         if (ReturnType.FullName != "void")
-            yield return new AssertReturnTypeInstruction(ReturnType.FullName, ReturnModifier, Location);
+        {
+            yield return ReturnType;
+            yield return new AssertReturnTypeInstruction(ReturnModifier, Location);
+        }
     }
 }

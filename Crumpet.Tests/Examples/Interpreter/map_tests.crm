@@ -1,16 +1,16 @@
 ﻿#include "linked_list"
 
 func int test_map_create(){
-    map s_i = _map<string, int>();
-    map i_s = _map<int, string>();
-    map i_f = _map<int, float>();
-    map s_s = _map<string, string>();
-    map s_l = _map<string, LinkedList>();
+    map<string, int> s_i = _map<string, int>();
+    map<int, string> i_s = _map<int, string>();
+    map<int, float> i_f = _map<int, float>();
+    map<string, string> s_s = _map<string, string>();
+    map<string, LinkedList<int>> s_l = _map<string, LinkedList<int>>();
     return 1;
 }
 
 func int test_map_add(){
-    map mapping = _map<string, int>();
+    map<string, int> mapping = _map<string, int>();
     map_add(&mapping, "first", 1);
     map_add(&mapping, "third", 3);
     map_add(&mapping, "second", 2);
@@ -22,7 +22,7 @@ func int test_map_add(){
 }
 
 func int test_map_remove(){
-    map mapping = _map<string, int>();
+    map<string, int> mapping = _map<string, int>();
     map_add(&mapping, "first", 1);
     map_add(&mapping, "third", 3);
     map_add(&mapping, "second", 2);
@@ -36,7 +36,7 @@ func int test_map_remove(){
 }
 
 func int test_map_has(){
-    map mapping = _map<string, int>();
+    map<string, int> mapping = _map<string, int>();
     map_add(&mapping, "first", 1);
     map_add(&mapping, "third", 3);
     

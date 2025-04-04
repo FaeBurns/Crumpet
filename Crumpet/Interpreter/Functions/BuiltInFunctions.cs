@@ -52,14 +52,14 @@ public static class BuiltInFunctions
         yield return new BuiltInFunction("toUpper", StringToUpper, BuiltinTypeInfo.String.Copy());
         
         // # just debug things
-        yield return new BuiltInFunction("BREAK", (_) => Debugger.Break());
+        yield return new BuiltInFunction("BREAK", (_, _) => Debugger.Break());
         yield return new BuiltInFunction("ASSERT_STACK_COUNT", AssertStackCount, BuiltinTypeInfo.Int.Copy());
     }
 
-    private static ParameterInfo Copy(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.COPY);
-    private static ParameterInfo Pointer(this TypeInfo typeInfo) => new ParameterInfo(typeInfo, VariableModifier.POINTER);
+    private static ParameterDefinition Copy(this TypeInfo typeInfo) => new ParameterDefinition(String.Empty, typeInfo, VariableModifier.COPY);
+    private static ParameterDefinition Pointer(this TypeInfo typeInfo) => new ParameterDefinition(String.Empty, typeInfo, VariableModifier.POINTER);
     
-    public static void Count(InterpreterExecutionContext context)
+    public static void Count(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         // dereference or self
         Variable value = context.VariableStack.Pop().DereferenceToLowestVariable();
@@ -77,25 +77,25 @@ public static class BuiltInFunctions
         throw new RuntimeException(RuntimeExceptionNames.ARGUMENT);
     }
 
-    public static void Print(InterpreterExecutionContext context)
+    public static void Print(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         context.WriteToOutputStream(value.GetValue<string>());
     }
 
-    public static void PrintLine(InterpreterExecutionContext context)
+    public static void PrintLine(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         context.WriteToOutputStream(value.GetValue<string>() + "\n");
     }
 
-    public static void Input(InterpreterExecutionContext context)
+    public static void Input(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         string input = context.ReadInputStreamLine(true);
         context.VariableStack.Push(BuiltinTypeInfo.String, input);
     }
 
-    public static void ParseInt(InterpreterExecutionContext context)
+    public static void ParseInt(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         string input = context.VariableStack.Pop().GetValue<string>();
         if (Int32.TryParse(input, out int result))
@@ -104,7 +104,7 @@ public static class BuiltInFunctions
             throw new RuntimeException(RuntimeExceptionNames.TYPE);
     }
     
-    public static void ParseFloat(InterpreterExecutionContext context)
+    public static void ParseFloat(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         string input = context.VariableStack.Pop().GetValue<string>();
         if (Single.TryParse(input, out float result))
@@ -113,13 +113,13 @@ public static class BuiltInFunctions
         throw new RuntimeException(RuntimeExceptionNames.TYPE);
     }
 
-    public static void ToString(InterpreterExecutionContext context)
+    public static void ToString(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable variable = context.VariableStack.Pop();
         context.VariableStack.Push(BuiltinTypeInfo.String, variable.GetValue()!.ToString() ?? throw new RuntimeException(RuntimeExceptionNames.ARGUMENT));
     }
 
-    public static void Assert(InterpreterExecutionContext context)
+    public static void Assert(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         if (!value.GetValue<bool>())
@@ -141,7 +141,7 @@ public static class BuiltInFunctions
         }
     }
 
-    public static void AssertMessage(InterpreterExecutionContext context)
+    public static void AssertMessage(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         string message = context.VariableStack.Pop().GetValue<string>();
         Variable value = context.VariableStack.Pop();
@@ -149,18 +149,17 @@ public static class BuiltInFunctions
             throw new RuntimeException(RuntimeExceptionNames.ASSERT, message);
     }
 
-    public static void Exit(InterpreterExecutionContext context)
+    public static void Exit(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         context.Exit(value.GetValue<int>());
     }
 
-    public static void ListConstructor(InterpreterExecutionContext context)
+    public static void ListConstructor(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
-        Variable type = context.VariableStack.Pop();
         Variable count = context.VariableStack.Pop();
 
-        TypeInfo typeArg = type.GetValue<TypeInfo>();
+        TypeInfo typeArg = typeArgs[0];
         ArrayTypeInfo arrayType = new ArrayTypeInfo(typeArg);
         Variable result = Variable.Create(arrayType);
 
@@ -172,7 +171,7 @@ public static class BuiltInFunctions
         context.VariableStack.Push(result);
     }
 
-    public static void ListAdd(InterpreterExecutionContext context)
+    public static void ListAdd(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         Variable list = context.VariableStack.Pop().Dereference();
@@ -188,7 +187,7 @@ public static class BuiltInFunctions
         throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
     }
 
-    public static void ListInsert(InterpreterExecutionContext context)
+    public static void ListInsert(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
         Variable index = context.VariableStack.Pop();
@@ -205,7 +204,7 @@ public static class BuiltInFunctions
         throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
     }
 
-    public static void ListRemove(InterpreterExecutionContext context)
+    public static void ListRemove(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable index = context.VariableStack.Pop();
         Variable list = context.VariableStack.Pop().Dereference();
@@ -221,27 +220,27 @@ public static class BuiltInFunctions
         throw new ArgumentException(ExceptionConstants.INVALID_TYPE.Format(typeof(ArrayTypeInfo), list.Type));
     }
 
-    public static void Throw(InterpreterExecutionContext context)
+    public static void Throw(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable message = context.VariableStack.Pop();
         context.Throw(message.GetValue<string>());
     }
 
-    public static void StringToLower(InterpreterExecutionContext context)
+    public static void StringToLower(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable str = context.VariableStack.Pop();
         string lower = str.GetValue<string>().ToLower();
         context.VariableStack.Push(BuiltinTypeInfo.String, lower);
     }
 
-    public static void StringToUpper(InterpreterExecutionContext context)
+    public static void StringToUpper(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable str = context.VariableStack.Pop();
         string lower = str.GetValue<string>().ToUpper();
         context.VariableStack.Push(BuiltinTypeInfo.String, lower);   
     }
     
-    private static void AssertStackCount(InterpreterExecutionContext context)
+    private static void AssertStackCount(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         int count = context.VariableStack.Pop().GetValue<int>();
         
@@ -252,20 +251,17 @@ public static class BuiltInFunctions
         throw new Exception();
     }
 
-    private static void DictionaryConstructor(InterpreterExecutionContext context)
+    private static void DictionaryConstructor(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
-        Variable valueType = context.VariableStack.Pop();
-        Variable keyType = context.VariableStack.Pop();
-        
-        TypeInfo keyTypeArg = keyType.GetValue<TypeInfo>();
-        TypeInfo valueTypeArg = valueType.GetValue<TypeInfo>();
+        TypeInfo keyTypeArg = typeArgs[0];
+        TypeInfo valueTypeArg = typeArgs[1];
         
         DictionaryTypeInfo dict = new DictionaryTypeInfo(keyTypeArg, valueTypeArg);
         Variable result = dict.CreateVariable();
         context.VariableStack.Push(result);
     }
 
-    private static void DictionaryAdd(InterpreterExecutionContext context)
+    private static void DictionaryAdd(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable varToAdd = context.VariableStack.Pop();
         Variable key = context.VariableStack.Pop();
@@ -276,7 +272,7 @@ public static class BuiltInFunctions
         target.Add(keyHash, Variable.CreateCopy(varToAdd));
     }
 
-    private static void DictionaryRemove(InterpreterExecutionContext context)
+    private static void DictionaryRemove(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable key = context.VariableStack.Pop();
         Variable targetDict = context.VariableStack.Pop().Dereference();
@@ -288,7 +284,7 @@ public static class BuiltInFunctions
         context.VariableStack.Push(BuiltinTypeInfo.Bool, removeResult);
     }
 
-    private static void DictionaryHas(InterpreterExecutionContext context)
+    private static void DictionaryHas(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable key = context.VariableStack.Pop();
         Variable targetDict = context.VariableStack.Pop().Dereference();
@@ -300,7 +296,7 @@ public static class BuiltInFunctions
         context.VariableStack.Push(BuiltinTypeInfo.Bool, hasResult);
     }
 
-    private static void DictionaryGet(InterpreterExecutionContext context)
+    private static void DictionaryGet(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable key = context.VariableStack.Pop();
         Variable targetDict = context.VariableStack.Pop().Dereference();
@@ -311,7 +307,7 @@ public static class BuiltInFunctions
         context.VariableStack.Push(result);
     }
 
-    private static void DictionarySet(InterpreterExecutionContext context)
+    private static void DictionarySet(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable varToAdd = context.VariableStack.Pop();
         Variable key = context.VariableStack.Pop();

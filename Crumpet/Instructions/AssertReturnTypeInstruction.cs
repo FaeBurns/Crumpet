@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Crumpet.Exceptions;
 using Crumpet.Interpreter;
-using Crumpet.Interpreter.Functions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
 using Crumpet.Interpreter.Variables.Types;
@@ -12,23 +11,19 @@ namespace Crumpet.Instructions;
 
 public class AssertReturnTypeInstruction : Instruction
 {
-    private readonly string m_typeName;
     private readonly VariableModifier m_modifier;
 
-    public AssertReturnTypeInstruction(string typeName, VariableModifier modifier, SourceLocation location) : base(location)
+    public AssertReturnTypeInstruction(VariableModifier modifier, SourceLocation location) : base(location)
     {
-        m_typeName = typeName;
         m_modifier = modifier;
     }
 
     public override void Execute(InterpreterExecutionContext context)
     {
-        TypeInfo? type = context.TypeResolver.ResolveType(m_typeName);
-        if (type is null)
-            throw new TypeMismatchException(ExceptionConstants.UNKOWN_TYPE.Format(m_typeName));
+        TypeInfo type = context.VariableStack.Pop().GetValue<TypeInfo>();
 
         if (context.VariableStack.Count == 0)
-            throw new RuntimeException(RuntimeExceptionNames.RETURN, ExceptionConstants.MISSING_RETURN_STATEMENT.Format(m_typeName));;
+            throw new RuntimeException(RuntimeExceptionNames.RETURN, ExceptionConstants.MISSING_RETURN_STATEMENT.Format(type.TypeName));
             
         Variable returnValue = context.VariableStack.Peek();
 

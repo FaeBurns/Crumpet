@@ -1,6 +1,7 @@
 ﻿using Crumpet.Exceptions;
 using Crumpet.Interpreter.Instructions;
 using Crumpet.Interpreter.Variables;
+using Crumpet.Interpreter.Variables.Types;
 using Crumpet.Language;
 using Shared;
 
@@ -8,17 +9,22 @@ namespace Crumpet.Interpreter.Functions;
 
 public class UserFunction : Function
 {
+    public SourceLocation SourceLocation { get; }
+    private readonly string m_name;
     private readonly Instruction[] m_instructions;
-    public FunctionDefinition Definition { get; }
-    
-    public override string Name => Definition.Name;
 
-    public UserFunction(FunctionDefinition definition, IEnumerable<Instruction> instructions)
-        : base(definition.Parameters.Select(p => new ParameterInfo(p.Type, p.VariableModifier)).ToArray(), 0)
+    public override string Name => m_name;
+    
+    public TypeInfo ReturnType { get; }
+    public Dictionary<string, TypeInfo> TypeParameters { get; }
+
+    public UserFunction(string name, IEnumerable<Instruction> instructions, TypeInfo returnType, IReadOnlyList<ParameterDefinition> parameters, ICollection<KeyValuePair<string, TypeInfo>> typeParams, SourceLocation sourceLocation) : base(parameters, typeParams.Count())
     {
-        // get instructions from child nodes
+        ReturnType = returnType;
+        SourceLocation = sourceLocation;
+        m_name = name;
         m_instructions = instructions.ToArray();
-        Definition = definition;
+        TypeParameters = typeParams.ToDictionary();
     }
     
     /// <summary>
@@ -30,20 +36,20 @@ public class UserFunction : Function
     /// <exception cref="InterpreterException">Argument count mismatch.</exception>
     public ExecutableUnit CreateInvokableUnit(InterpreterExecutionContext context, Variable[] arguments)
     {
-        if (arguments.Length != Definition.Parameters.Count)
+        if (arguments.Length != Parameters.Count)
             // default on source location will occur if it's the first invocable called
-            throw new ArgumentException(ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Definition.Parameters.Count, arguments.Length));
+            throw new ArgumentException(ExceptionConstants.INVALID_ARGUMENT_COUNT.Format(Parameters.Count, arguments.Length));
 
-        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, Definition.SourceLocation, true);
+        ExecutableUnit unit = new ExecutableUnit(context, m_instructions, TypeParameters, SourceLocation, true);
 
-        for (int i = 0; i < Definition.Parameters.Count; i++)
+        for (int i = 0; i < Parameters.Count; i++)
         {
             // target reference
             Variable convertedArg = Variable.CreateCopy(arguments[i]);
 
             // create the new instance in the function's scope
             // then assign the value
-            unit.Scope.Add(Definition.Parameters[i].Name, convertedArg);
+            unit.Scope.Add(Parameters[i].Name, convertedArg);
         }
 
         return unit;

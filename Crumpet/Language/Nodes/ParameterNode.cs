@@ -11,8 +11,15 @@ namespace Crumpet.Language.Nodes;
 
 public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
 {
-    protected ParameterNode(params IEnumerable<ASTNode?> implicitChildren) : base(implicitChildren)
+    public TypeNode Type { get; }
+    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
+    public IdentifierNode Name { get; }
+    
+    protected ParameterNode(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
     {
+        Type = type;
+        ModifierSugar = modifierSugar;
+        Name = name;
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
@@ -49,26 +56,14 @@ public abstract class ParameterNode : NonTerminalNode, INonTerminalNodeFactory
 
 public class ParameterNodeBasicVariant : ParameterNode
 {
-    public TypeNode Type { get; }
-    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
-    public IdentifierNode Name { get; }
     public ParameterNodeBasicVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
     {
-        Type = type;
-        ModifierSugar = modifierSugar;
-        Name = name;
     }
 }
 
 public class ParameterNodeArrayVariant : ParameterNode
 {
-    public TypeNode Type { get; }
-    public TerminalNode<CrumpetToken>? ModifierSugar { get; }
-    public IdentifierNode Name { get; }
     public ParameterNodeArrayVariant(TypeNode type, TerminalNode<CrumpetToken>? modifierSugar, IdentifierNode name) : base(type, modifierSugar, name)
     {
-        Type = type;
-        ModifierSugar = modifierSugar;
-        Name = name;
     }
 }

@@ -17,7 +17,7 @@ public class VariableInfo
     {
         Name = parameterDefinition.Name;
         Type = parameterDefinition.Type;
-        VariableModifier = parameterDefinition.VariableModifier;
+        VariableModifier = parameterDefinition.Modifier;
     }
 
     public string Name { get; }

@@ -51,7 +51,7 @@ public class TypeTests
     [Test]
     public void TestObject_Constructs_Simple()
     {
-        UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int)]);
+        UserObjectTypeInfo testType = new UserObjectTypeInfo("testType", [], [new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int)]);
         Variable variable = testType.CreateVariable();
 
         Assert.That(variable.GetValue(), Is.TypeOf<UserObjectInstance>());
@@ -64,9 +64,9 @@ public class TypeTests
     [Test]
     public void TestObject_Constructs_Layered()
     {
-        UserObjectTypeInfo typeC = new UserObjectTypeInfo("typeC", new FieldInfo("fieldC", BuiltinTypeInfo.String));
-        UserObjectTypeInfo typeB = new UserObjectTypeInfo("typeB", new FieldInfo("fieldB", typeC));
-        UserObjectTypeInfo typeA = new UserObjectTypeInfo("typeA", new FieldInfo("fieldA", typeB));
+        UserObjectTypeInfo typeC = new UserObjectTypeInfo("typeC", [], new FieldInfo("fieldC", BuiltinTypeInfo.String));
+        UserObjectTypeInfo typeB = new UserObjectTypeInfo("typeB", [], new FieldInfo("fieldB", typeC));
+        UserObjectTypeInfo typeA = new UserObjectTypeInfo("typeA", [], new FieldInfo("fieldA", typeB));
 
         Variable variable = typeA.CreateVariable();
 
@@ -89,7 +89,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindSingle()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", [], new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
         ValueSearchResult testObjectSearchResult = valueSearcher.Find("testObject");
@@ -103,7 +103,7 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindDouble()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
+        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", [], new FieldInfo("testVar", BuiltinTypeInfo.String), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
 
@@ -117,7 +117,12 @@ public class TypeTests
     public void TestObject_ValueSearcher_FindTripple()
     {
         Scope scope = new Scope(null);
-        scope.Create(new VariableInfo("testObject", new UserObjectTypeInfo("testType", new FieldInfo("testVar", new UserObjectTypeInfo("testType2", new FieldInfo("testVar2", BuiltinTypeInfo.String))), new FieldInfo("testVar2", BuiltinTypeInfo.Int))));
+        scope.Create(new VariableInfo("testObject",
+            new UserObjectTypeInfo("testType", [],
+                [ new FieldInfo("testVar",
+                    new UserObjectTypeInfo("testType2", [],
+                        [new FieldInfo("testVar2", BuiltinTypeInfo.String)])),
+                new FieldInfo("testVar2", BuiltinTypeInfo.Int)])));
 
         ValueSearcher valueSearcher = new ValueSearcher(scope);
 
