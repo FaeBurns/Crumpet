@@ -26,7 +26,7 @@ public class SourceLocation
         SourceFileName = sourceFileName;
     }
 
-    public string SourceFileName;
+    public string SourceFileName = String.Empty;
     public int StartOffset;
     public int EndOffset;
     public int StartLine;

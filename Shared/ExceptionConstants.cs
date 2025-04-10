@@ -49,4 +49,5 @@ public static class ExceptionConstants
     public const string GENERIC_ARGUMENT_COUNT_MISMATCH = "Expected {0} generic arguments, Received {1}";
     public const string GENERIC_NOT_FOUND = "No generic parameter matching \"{0}\" found.";
     public const string GENERIC_ARGUMENT_OUT_OF_RANGE = "Generic argument out of range. Range 0-{0}, received index {1}";
+    public const string INVALID_ENTRY_POINT_ARGUMENT_TYPE = "Invalid argument type \"{0}\" for an entry point function";
 }

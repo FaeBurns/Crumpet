@@ -27,15 +27,23 @@ public class TreeWalkingInterpreter
         FunctionResolver = new FunctionBuilder(nodeSequence.OfType<FunctionDeclarationNode>(), TypeResolver).BuildFunctions();
     }
 
-    public InterpreterExecutor Run(string entryPointName, params object[] args)
+    public InterpreterExecutor Run(string entryPointName, params string[] args)
     {
         InterpreterExecutionContext context = new InterpreterExecutionContext(TypeResolver, FunctionResolver, m_inputStream, m_outputStream);
 
         // throws if fails to find
-        Variable[] arguments = TransformArguments(args);
-        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetFunction(
-                entryPointName,
-                arguments.Select(a => new ParameterInfo(a.Type, a.Modifier)), []);
+        UserFunction entryPoint = (UserFunction)context.FunctionResolver.GetEntryPoint(entryPointName, args);
+        Variable[] arguments;
+        if (entryPoint.Parameters.Count == 1 && entryPoint.Parameters[0].Type is ArrayTypeInfo arrayType)
+        {
+            // ReSharper disable once CoVariantArrayConversion
+            arguments = TransformArguments(args, Enumerable.Repeat(arrayType.InnerType, args.Length).ToArray());
+            Variable arrayVar = arrayType.CreateVariable();
+            arrayVar.GetValue<List<Variable>>().AddRange(arguments);
+            arguments = [arrayVar];
+        }
+        else
+            arguments = TransformArguments(args, entryPoint.Parameters.Select(p => p.Type).ToArray());
 
         // call immediately in context
         context.Call(entryPoint.CreateInvokableUnit(context, arguments));
@@ -43,48 +51,32 @@ public class TreeWalkingInterpreter
         return new InterpreterExecutor(context);
     }
 
-    private Variable[] TransformArguments(object[] args)
+    private Variable[] TransformArguments(string[] args, TypeInfo[] types)
     {
         Variable[] arguments = new Variable[args.Length];
         for (int i = 0; i < args.Length; i++)
         {
-            object arg = args[i];
-            if (arg is IEnumerable<object> enumerable)
-            {
-                TypeInfo type = new ArrayTypeInfo(GetTypeInfo(arg.GetType().GetElementType()!));
-                List<Variable> arrayElements = TransformArguments(enumerable.ToArray()).ToList();
-                arguments[i] = Variable.Create(type, arrayElements);
-            }
-            else
-            {
-                TypeInfo type = GetTypeInfo(arg.GetType());
-                arguments[i] = Variable.Create(type, arg);
-            }
+            arguments[i] = Variable.Create(types[i], ConvertArg(args[i], types[i]));
         }
 
         return arguments;
     }
 
-    private TypeInfo GetTypeInfo(Type type)
+    private object ConvertArg(string arg, TypeInfo type)
     {
-        return Type.GetTypeCode(type) switch
+        switch (type)
         {
-            TypeCode.String => BuiltinTypeInfo.String,
-            TypeCode.Single => BuiltinTypeInfo.Float,
-            
-            // convert all to int
-            TypeCode.Int64 => BuiltinTypeInfo.Int,
-            TypeCode.Int32 => BuiltinTypeInfo.Int,
-            TypeCode.Int16 => BuiltinTypeInfo.Int,
-            TypeCode.UInt64 => BuiltinTypeInfo.Int,
-            TypeCode.UInt32 => BuiltinTypeInfo.Int,
-            TypeCode.UInt16 => BuiltinTypeInfo.Int,
-            TypeCode.Byte => BuiltinTypeInfo.Int,
-            TypeCode.SByte => BuiltinTypeInfo.Int,
-            
-            TypeCode.Boolean => BuiltinTypeInfo.Bool,
-            _ => throw new UnreachableException()
-        };
+            case BuiltinTypeInfo<string>:
+                return arg;
+            case BuiltinTypeInfo<int>:
+                return Int32.Parse(arg);
+            case BuiltinTypeInfo<float>:
+                return Single.Parse(arg);
+            case BuiltinTypeInfo<bool>:
+                return Boolean.Parse(arg);
+            default:
+                throw new Exception(ExceptionConstants.INVALID_ENTRY_POINT_ARGUMENT_TYPE.Format(type));
+        }
     }
 
     private sealed class EmptyInputStream : Stream

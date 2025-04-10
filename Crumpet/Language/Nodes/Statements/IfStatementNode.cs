@@ -20,7 +20,7 @@ public class IfStatementNode : NonTerminalNode, INonTerminalNodeFactory, IInstru
     {
         Expression = expression;
         TrueBody = (IInstructionProvider)trueBody;
-        FalseBody = (IInstructionProvider)falseBody;
+        FalseBody = falseBody as IInstructionProvider;
     }
 
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()

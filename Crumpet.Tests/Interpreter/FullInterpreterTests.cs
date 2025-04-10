@@ -7,13 +7,13 @@ namespace Crumpet.Tests.Interpreter;
 [TestFixture]
 public class FullInterpreterTests
 {
-    [TestCase("Interpreter/simpleadd", 2, 1, ExpectedResult = 3)]
+    [TestCase("Interpreter/simpleadd", "2", "1", ExpectedResult = 3)]
     [TestCase("Interpreter/argument_type", ExpectedResult = 0)]
-    [TestCase("Interpreter/requirements_test", ExpectedResult = 0)]
+    [TestCase("Interpreter/requirements_test", ExpectedResult = 1)]
     [TestCase("Interpreter/throw_in_catch", ExpectedResult = 0)]
     [TestCase("Interpreter/linked_list", ExpectedResult = 0)]
     [TestCase("Interpreter/ImportTest/import_root", ExpectedResult = 0)]
-    public object RunExampleFile(string filename, params object[] args)
+    public object RunExampleFile(string filename, params string[] args)
     {
         using MemoryStream outputStream = new MemoryStream();
         object result = RunProgramFile(Path.Combine("Examples//", filename) + ".crm", "main", args, null, outputStream);
@@ -41,7 +41,7 @@ public class FullInterpreterTests
         Assert.That(result, Is.EqualTo(1));
     }
     
-    public object RunProgramFile(string path, string entryPointName, object[] args, Stream? inputStream = null, Stream? outputStream = null)
+    public object RunProgramFile(string path, string entryPointName, string[] args, Stream? inputStream = null, Stream? outputStream = null)
     {
         ProgramRuntimeHandler runtimeHandler  = new ProgramRuntimeHandler();
         return runtimeHandler.RunFile(new FileInfo(path), entryPointName, args, inputStream, outputStream);
@@ -63,7 +63,7 @@ public class FullInterpreterTests
         InterpreterDebuggerHelper.RegisterLocation(40, 23);
 
         string path = Path.Combine("Examples//", "Interpreter/executionzoo") + ".crm";
-        object[] args = { new[] { "output1", "output2" } };
+        string[] args = { "output1", "output2" };
         RunProgramFile(path, "main", args, inputStream, outputStream);
         
         outputStream.Seek(0, SeekOrigin.Begin);

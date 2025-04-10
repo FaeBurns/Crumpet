@@ -91,6 +91,8 @@
     assert(-3 == -three);
     
     println("negation passed");
+    
+    return 1;
 }
 
 func void assertListNElements(int[]* list, int count){

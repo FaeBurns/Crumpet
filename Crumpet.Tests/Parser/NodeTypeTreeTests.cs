@@ -27,6 +27,6 @@ public class NodeTypeTreeTests
     {
         NodeTypeTree<CrumpetToken> tree = BuildTree();
         string treeOutput = tree.ToString();
-        Console.WriteLine(treeOutput);
+        System.Console.WriteLine(treeOutput);
     }
 }

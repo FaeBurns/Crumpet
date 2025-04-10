@@ -25,6 +25,44 @@ public class FunctionResolver
         }
     }
 
+    public Function GetEntryPoint(string name, string[] args)
+    {
+        try
+        {
+            // try get arguments as is
+            Function f = GetFunction(name, args.Select(a => new ParameterInfo(BuiltinTypeInfo.String, VariableModifier.COPY)), []);
+            return f;
+        }
+        catch
+        {
+            // ignored
+        }
+
+        try
+        {
+            // otherwise convert to string args
+            Function f = GetFunction(name, [new ParameterInfo(new ArrayTypeInfo(BuiltinTypeInfo.String), VariableModifier.COPY)], []);
+            return f;
+        }
+        catch
+        {
+            // ignore
+        }
+
+        if (m_functionTemplates.TryGetValue(name, out List<FunctionTemplate>? templates))
+        {
+            // matching param count and no type args
+            FunctionTemplate? template = templates.FirstOrDefault(f => f.Parameters.Count == args.Length && f.TypeParameters.Count == 0);
+            
+            if (template == null)
+                throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(name, $"count {args.Length}"));
+            
+            return template.Construct(m_typeResolver, []);
+        }
+        
+        throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(name, $"count {args.Length}"));
+    }
+
     public Function GetFunction(string functionName, IEnumerable<ParameterInfo> passingParameters, IReadOnlyList<TypeInfo> typeArgs)
     {
         // check in the cache before building from template
@@ -40,7 +78,10 @@ public class FunctionResolver
         if (template is null)
             throw new KeyNotFoundException(ExceptionConstants.FUNCTION_NOT_FOUND.Format(functionName, String.Join(", ", passingParameters.Select(p => p.ToString()))));
 
-        return template.Construct(m_typeResolver, typeArgs);
+        Function func = template.Construct(m_typeResolver, typeArgs);
+        m_builtFunctionCache.TryAdd(functionName, new List<Function>());
+        m_builtFunctionCache[functionName].Add(func);
+        return func;
     }
 
     private bool MatchTemplateParameters(FunctionTemplate template, IEnumerable<ParameterInfo> passingParameters, IReadOnlyList<TypeInfo> typeArgs)

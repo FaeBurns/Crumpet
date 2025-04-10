@@ -28,11 +28,11 @@ public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnTy
 
     public void OnPush(InterpreterExecutionContext context)
     {
-        if (unit.TypeArgs.Any())
+        if (Unit.TypeArgs.Any())
         {
-            context.TypeResolver.PushGenericArguments(new GenericTypeContext(unit.TypeArgs));
+            context.TypeResolver.PushGenericArguments(new GenericTypeContext(Unit.TypeArgs));
         }
-        else if (unit.BlocksScope)
+        else if (Unit.BlocksScope)
         {
             // push an empty context if it only blocks the scope
             // don't want type arguments being read from somewhere above
@@ -42,7 +42,7 @@ public class UnitExecutionContext(ExecutableUnit unit, TypeInfo expectedReturnTy
 
     public void OnPop(InterpreterExecutionContext context)
     {
-        if (unit.TypeArgs.Any())
+        if (Unit.TypeArgs.Any())
         {
             context.TypeResolver.PopGenericArguments();
         }

@@ -32,10 +32,8 @@ public class Variable
         {
             case VariableModifier.COPY:
                 return new Variable(existing.Type, existing.Type.CreateCopy(existing.GetValue()), VariableModifier.COPY);
-                break;
             case VariableModifier.POINTER:
                 return new Variable(existing.Type, existing.GetValue(), VariableModifier.POINTER);
-                break;
             default:
                 throw new UnreachableException();
         }

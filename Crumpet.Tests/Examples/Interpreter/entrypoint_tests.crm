@@ -1,0 +1,6 @@
+﻿func void test_string_array(string[] args){
+    for(int i = 0; i < count(args); i++){
+        println(args[i]);
+    }
+    return 1;
+}

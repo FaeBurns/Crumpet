@@ -11,7 +11,7 @@ namespace Crumpet;
 
 public class ProgramRuntimeHandler
 {
-    public object RunFile(FileInfo file, string entryPointName, object[] args, Stream? inputStream, Stream? outputStream)
+    public object RunFile(FileInfo file, string entryPointName, string[] args, Stream? inputStream, Stream? outputStream)
     {
         try
         {
@@ -22,7 +22,7 @@ public class ProgramRuntimeHandler
             object result = executor.StepUntilComplete().GetValue()!;
             return result;
         }
-        catch (InterpreterException r)
+        catch (InterpreterException)
         {
             throw;
         }
@@ -34,8 +34,6 @@ public class ProgramRuntimeHandler
             sw.WriteLine(e);
             throw;
         }
-
-        return -1;
     }
 
     private RootNonTerminalNode ConstructEncompassingRoot(FileInfo file)
