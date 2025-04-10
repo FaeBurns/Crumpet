@@ -28,6 +28,8 @@ public class FullInterpreterTests
     [TestCase("Interpreter/map_tests","test_map_add")]
     [TestCase("Interpreter/map_tests","test_map_remove")]
     [TestCase("Interpreter/map_tests","test_map_has")]
+    [TestCase("Interpreter/generics_tests", "TestConstructDoubleGenericTwoValues")]
+    [TestCase("Interpreter/generics_tests", "TestConstructDoubleGenericSingleValue")]
     public void RunTestInFile(string filename, string testName)
     {
         using MemoryStream outputStream = new MemoryStream();

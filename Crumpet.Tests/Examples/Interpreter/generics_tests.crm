@@ -1,1 +1,24 @@
-﻿
+﻿struct TestType<TA, TB>{
+    string name;
+    map<TA, TB> mapping;
+}
+
+struct TypeContainer<T>{
+    T* val;
+}
+
+func int TestConstructDoubleGenericTwoValues(){
+    TestType<int, string> test;
+    TypeContainer<TestType<int, string>> test2;
+    test2.val = &test;
+    
+    return 1;
+}
+
+func int TestConstructDoubleGenericSingleValue(){
+    TestType<int, int> test;
+    TypeContainer<TestType<int, int>> test2;
+    test2.val = &test;
+    
+    return 1;
+}

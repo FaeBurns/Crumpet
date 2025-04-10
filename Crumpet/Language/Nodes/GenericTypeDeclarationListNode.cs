@@ -13,19 +13,29 @@ public class GenericTypeDeclarationListNode : NonTerminalNode, INonTerminalNodeF
 {
     public IdentifierNode[] GenericTypeNames { get; }
 
-    public GenericTypeDeclarationListNode(IEnumerable<IdentifierNode>? genericTypeNames)
+    public GenericTypeDeclarationListNode(IdentifierNode? primary, IEnumerable<IdentifierNode>? secondaryNames)
     {
-        GenericTypeNames = genericTypeNames?.ToArray() ?? Array.Empty<IdentifierNode>();
+        if (primary is null)
+        {
+            GenericTypeNames = Array.Empty<IdentifierNode>();
+            return;
+        }
+
+        GenericTypeNames = [primary, ..secondaryNames ?? Enumerable.Empty<IdentifierNode>()];
         ImplicitChildren.AddRange(GenericTypeNames);
     }
     
     public static IEnumerable<NonTerminalDefinition> GetNonTerminals()
     {
         yield return new NonTerminalDefinition<GenericTypeDeclarationListNode>(
-            new ZeroOrMoreConstraint(new SequenceConstraint(
+            new OptionalConstraint(new SequenceConstraint(
                 new CrumpetRawTerminalConstraint(CrumpetToken.LESS),
                 new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER),
-                new CrumpetRawTerminalConstraint(CrumpetToken.GREATER))),
+                new ZeroOrMoreConstraint(new SequenceConstraint(
+                    new CrumpetRawTerminalConstraint(CrumpetToken.COMMA), 
+                    new CrumpetTerminalConstraint(CrumpetToken.IDENTIFIER))),
+                new CrumpetRawTerminalConstraint(CrumpetToken.GREATER)
+                )), 
             GetNodeConstructor<GenericTypeDeclarationListNode>());
     }
 }

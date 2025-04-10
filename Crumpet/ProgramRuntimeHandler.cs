@@ -32,6 +32,7 @@ public class ProgramRuntimeHandler
             StreamWriter sw = new StreamWriter(outputStream);
             sw.WriteLine("Fatal uncaught exception occured during precompilation/execution");
             sw.WriteLine(e);
+            throw;
         }
 
         return -1;
