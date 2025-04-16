@@ -41,7 +41,7 @@ public static class BuiltInFunctions
         // control
         yield return new BuiltInFunction("assert", AssertMessage, BuiltinTypeInfo.Bool.Copy(), BuiltinTypeInfo.String.Copy());
         yield return new BuiltInFunction("assert", Assert, BuiltinTypeInfo.Bool.Copy());
-        yield return new BuiltInFunction("exit", Exit, BuiltinTypeInfo.Int.Copy());
+        yield return new BuiltInFunction("exit", Exit, new AnyTypeInfo().Copy());
         yield return new BuiltInFunction("throw", Throw, BuiltinTypeInfo.String.Copy());
 
         // strings
@@ -152,7 +152,7 @@ public static class BuiltInFunctions
     public static void Exit(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)
     {
         Variable value = context.VariableStack.Pop();
-        context.Exit(value.GetValue<int>());
+        context.Exit(value);
     }
 
     public static void ListConstructor(InterpreterExecutionContext context, IReadOnlyList<TypeInfo> typeArgs)

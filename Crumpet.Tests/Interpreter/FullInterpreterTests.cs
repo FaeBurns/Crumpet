@@ -56,8 +56,8 @@ public class FullInterpreterTests
     {
         using MemoryStream inputStream = new MemoryStream();
         using StreamWriter inputStreamWriter = new StreamWriter(inputStream);
-        inputStreamWriter.WriteLine("0");
         inputStreamWriter.WriteLine("writeback");
+        inputStreamWriter.WriteLine("0");
         inputStreamWriter.Flush();
         inputStream.Seek(0, SeekOrigin.Begin);
 
@@ -72,7 +72,7 @@ public class FullInterpreterTests
 
         outputStream.Seek(0, SeekOrigin.Begin);
         using StreamReader outputReader = new StreamReader(outputStream);
-        Assert.That(outputReader.ReadToEnd(), Does.StartWith("output1\noutput2\nwriteback"));
+        Assert.That(outputReader.ReadToEnd(), Does.StartWith("output1\noutput2\ninput something\nwriteback"));
         outputStream.Seek(0, SeekOrigin.Begin);
         TestContext.Out.Write(outputReader.ReadToEnd());
     }

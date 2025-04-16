@@ -37,7 +37,7 @@ public class InterpreterExecutionContext
         // invalid if no unit is currently active
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
-        
+
         UnitExecutionContext searchingUnit = CurrentUnit;
 
         while (m_executionStack.Any())
@@ -52,8 +52,8 @@ public class InterpreterExecutionContext
                     return;
                 }
             }
-            
-            // pop from execution to search in the unit above 
+
+            // pop from execution to search in the unit above
             m_executionStack.Pop();
             searchingUnit = m_executionStack.Peek();
         }
@@ -69,7 +69,7 @@ public class InterpreterExecutionContext
         // invalid if no unit is currently active
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
-        
+
         // return type check
         if (value is not null)
         {
@@ -79,7 +79,7 @@ public class InterpreterExecutionContext
 
         // jump to the target return label
         JumpToInstructionOfType<ReturnLabelInstruction>(false);
-        
+
         // push the return value if its not a void function
         // do this after
         // as JumpToInstructionOfType will pop off the variable stack
@@ -88,8 +88,8 @@ public class InterpreterExecutionContext
         // push it for the AssertReturnTypeInstruction
         // but also set it as the return value on the current unit so it will still get pushed *after* the stack unwind
         CurrentUnit.ValueToPushOnPop = value;
-        
-        
+
+
         // record to execution result
         // this will not occur during a built in function but those should never be an entry point so it's ok?
         ExecutionResult = value;
@@ -98,7 +98,7 @@ public class InterpreterExecutionContext
         // this one was the one accepting the return
         // m_executionStack.Pop();
         // we're now outside of that function
-        
+
         // actually don't pop one off here as the pop in the loop will do that for us. If that was using the peek search method then yes a pop should be used here
     }
 
@@ -111,15 +111,15 @@ public class InterpreterExecutionContext
     {
         JumpToInstructionOfType<LoopBreakLabel>(true);
     }
-    
-    public void Exit(int exitCode)
+
+    public void Exit(Variable value)
     {
-        ExecutionResult = Variable.Create(BuiltinTypeInfo.Int, exitCode);
+        ExecutionResult = value;
         m_executionStack.Clear();
     }
-    
+
     /// <summary>
-    /// Throws an exception inside user code. 
+    /// Throws an exception inside user code.
     /// </summary>
     /// <param name="message">The exception message.</param>
     /// <exception cref="UncaughtRuntimeExceptionException">The exception was not caught by user code.</exception>
@@ -145,15 +145,15 @@ public class InterpreterExecutionContext
         // invalid if no unit is currently active
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
-        
+
         if (CurrentUnit.IsComplete)
             m_executionStack.Pop();
-        
+
         // then check again?
         // that may have been the last unit
         if (CurrentUnit == null || CurrentUnit.IsComplete)
             return null;
-        
+
         Instruction instruction = CurrentUnit.StepNextInstruction();
 
         return instruction;
@@ -188,7 +188,7 @@ public class InterpreterExecutionContext
         // invalid if no unit is currently active
         if (CurrentUnit == null)
             throw new InvalidOperationException(ExceptionConstants.NO_EXECUTING_UNIT);
-        
+
         UnitExecutionContext searchingUnit = CurrentUnit;
 
         while (m_executionStack.Any())
@@ -197,7 +197,7 @@ public class InterpreterExecutionContext
             {
                 if (instruction is ReturnLabelInstruction && blockedByReturn)
                     break;
-                
+
                 if (instruction is T)
                 {
                     // set instruction pointer to point to current instruction
@@ -206,8 +206,8 @@ public class InterpreterExecutionContext
                     return;
                 }
             }
-            
-            // pop from execution to search in the unit above 
+
+            // pop from execution to search in the unit above
             m_executionStack.Pop();
             // get the searching unit from the peek as we want the unit with the target instruction to be on the stack
             searchingUnit = CurrentUnit;
