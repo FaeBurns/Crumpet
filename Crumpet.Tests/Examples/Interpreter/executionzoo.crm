@@ -1,47 +1,52 @@
 ﻿func void main(string[] args){
+    if (count(args) == 0)
+        exit("Expects at least one argument");
+
     int i = 0 + 1 + 2;
     i = 0;
     while(i < count(args)){
         println(args[i]);
-        
+
         i = i + 1;
     }
-    
-    string inVal;
-    inVal = input();
+
+    println("input something");
     println(input());
+
+    println("select an argument via index");
+    string inVal = input();
     int index;
     index = pInt(inVal);
     println("Outputting value at index " + pString(index) + " " + args[index]);
-    
+
     assert(index == 0, "incorrect value received from input. Received " + inVal + " expected 0");
     test(index);
     test(inVal);
-    
+
     int[] arrayTest = _list<int>(5);
     for (int j = 0; j < count(arrayTest); j++){
         arrayTest[j] = j * 2;
         println("step " + pString(j));
     }
-    
+
     BREAK();
-    
+
     assert(count(arrayTest) == 5);
     assert(arrayTest[0] == 0);
     assert(arrayTest[1] == 2);
     assert(arrayTest[2] == 4);
     assert(arrayTest[3] == 6);
     assert(arrayTest[4] == 8);
-    
+
     assert(true);
     assert(true == true);
     assert(false != true);
     assert(!(false == true));
-    
+
     // chaining
     float addResult = addTwo(returnTest1(), returnTest2());
     assert(addResult == 7);
-    
+
     NestedLoops();
     TestReferences();
     TestWeirdLoopThingy();
@@ -75,11 +80,11 @@ func void NestedLoops(){
             if (total % 5 == 0){
                 println("Skipping at " + total);
             }
-            
+
             total++;
-        }    
+        }
     }
-    
+
     println("Again but with continue");
     total = 0;
     int realTotal = 0;
@@ -95,10 +100,10 @@ func void NestedLoops(){
         }
     }
 
-    // for every 5 realTotal has increased by, total should have increased by 4    
+    // for every 5 realTotal has increased by, total should have increased by 4
     assert(realTotal == 50);
     assert(total == 40);
-    
+
     total = 0;
     while(true){
         if (total == 30){
@@ -106,7 +111,7 @@ func void NestedLoops(){
         }
         total++;
     }
-    
+
     assert(total == 30);
 }
 
@@ -116,15 +121,15 @@ func void TestReferences(){
     assert(a == 10);
     int b = 20;
     int c = 30;
-    
+
     int[] array = _list<int>(3);
-    
+
     // assert that this does not change
     TestModifyArray(array);
     assert(array[0] == 0);
     assert(array[1] == 0);
     assert(array[2] == 0);
-    
+
     TestModifyReferenceArray(&array);
     assert(array[0] == 100);
     assert(array[1] == 200);
