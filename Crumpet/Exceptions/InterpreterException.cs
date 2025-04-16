@@ -16,6 +16,6 @@ public class InterpreterException : Exception
 
     private static string ConstructMessage(SourceLocation? location, string message, Exception inner)
     {
-        return (location ?? new SourceLocation()) + Environment.NewLine + message + Environment.NewLine + inner.Message.Split(Environment.NewLine).First();
+        return (location ?? new SourceLocation()) + Environment.NewLine + message + Environment.NewLine + inner.Message;
     }
 }
