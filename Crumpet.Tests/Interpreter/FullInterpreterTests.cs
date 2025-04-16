@@ -40,7 +40,7 @@ public class FullInterpreterTests
 
         Assert.That(result, Is.EqualTo(1));
     }
-    
+
     public object RunProgramFile(string path, string entryPointName, string[] args, Stream? inputStream = null, Stream? outputStream = null)
     {
         ProgramRuntimeHandler runtimeHandler  = new ProgramRuntimeHandler();
@@ -58,14 +58,14 @@ public class FullInterpreterTests
         inputStream.Seek(0, SeekOrigin.Begin);
 
         using MemoryStream outputStream = new MemoryStream();
-        
+
         InterpreterDebuggerHelper.RegisterFunction("returnTest1");
         InterpreterDebuggerHelper.RegisterLocation(40, 23);
 
         string path = Path.Combine("Examples//", "Interpreter/executionzoo") + ".crm";
         string[] args = { "output1", "output2" };
         RunProgramFile(path, "main", args, inputStream, outputStream);
-        
+
         outputStream.Seek(0, SeekOrigin.Begin);
         using StreamReader outputReader = new StreamReader(outputStream);
         Assert.That(outputReader.ReadToEnd(), Does.StartWith("output1\noutput2\nwriteback"));
@@ -83,6 +83,6 @@ public class FullInterpreterTests
     [Test]
     public void TestAssertShowsArgument()
     {
-        Assert.Throws<InterpreterException>(() => RunExampleFile("Interpreter/assert_shows_argument"));
+        Assert.Throws<InterpreterException>(() => RunExampleFile("Interpreter/assert_shows_argument"), "assert(val1 == val2)");
     }
 }
