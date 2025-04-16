@@ -9,6 +9,6 @@ del Crumpet.exe
 rename "Crumpet.Console.exe" "Crumpet.exe"
 cd ..
 
-robocopy Crumpet.Tests\Examples\Interpreter\ output\examples\ > nul
+robocopy Crumpet.Tests\Examples\Interpreter\ output\examples\ /E > nul
 
 @echo on
