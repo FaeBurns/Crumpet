@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Parsing;
+using Crumpet.Interpreter;
 
 namespace Crumpet.Console;
 
@@ -26,10 +27,11 @@ public static class Program
     private static void Entry(FileInfo targetFile, string entryPointName, string[] programArgs)
     {
         ProgramRuntimeHandler programRuntimeHandler = new ProgramRuntimeHandler();
-        object result = programRuntimeHandler.RunFile(targetFile, entryPointName, programArgs, System.Console.OpenStandardInput(), System.Console.OpenStandardOutput());
-        System.Console.WriteLine($"Program finished with result: {result}");
+        Result<object> result = programRuntimeHandler.RunFile(targetFile, entryPointName, programArgs, System.Console.OpenStandardInput(), System.Console.OpenStandardOutput());
+        result.Success(r => System.Console.WriteLine($"Program finished with result: {r}"));
+        result.Failure(e => System.Console.WriteLine($"Program encountered an uncaught error during execution: {e}"));
     }
-    
+
     private static void ValidateCrumpetFile(ArgumentResult arg)
     {
         FileInfo? fileInfo = arg.GetValueOrDefault<FileInfo>();
@@ -45,7 +47,7 @@ public static class Program
             arg.ErrorMessage = "Invalid file extension";
             return;
         }
-        
+
         arg.ErrorMessage = null;
     }
 }

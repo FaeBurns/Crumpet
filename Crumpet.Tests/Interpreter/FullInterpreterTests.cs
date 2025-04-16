@@ -44,7 +44,11 @@ public class FullInterpreterTests
     public object RunProgramFile(string path, string entryPointName, string[] args, Stream? inputStream = null, Stream? outputStream = null)
     {
         ProgramRuntimeHandler runtimeHandler  = new ProgramRuntimeHandler();
-        return runtimeHandler.RunFile(new FileInfo(path), entryPointName, args, inputStream, outputStream);
+        Result<object> result = runtimeHandler.RunFile(new FileInfo(path), entryPointName, args, inputStream, outputStream);
+        if (result.IsSuccess)
+            return result.Value!;
+
+        throw new Exception(result.ErrorMessage);
     }
 
     [Test]
@@ -77,12 +81,12 @@ public class FullInterpreterTests
     public void TestBlocksScope()
     {
         string path = Path.Combine("Examples//", "Interpreter/blocks_scope") + ".crm";
-        Assert.Throws<InterpreterException>(() => RunProgramFile(path, "main", []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
+        Assert.Throws<Exception>(() => RunProgramFile(path, "main", []), ExceptionConstants.UNCAUGHT_RUNTIME_EXCEPTION);
     }
 
     [Test]
     public void TestAssertShowsArgument()
     {
-        Assert.Throws<InterpreterException>(() => RunExampleFile("Interpreter/assert_shows_argument"), "assert(val1 == val2)");
+        Assert.Throws<Exception>(() => RunExampleFile("Interpreter/assert_shows_argument"), "assert(val1 == val2)");
     }
 }

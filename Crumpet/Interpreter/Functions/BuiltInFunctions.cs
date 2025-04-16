@@ -132,7 +132,7 @@ public static class BuiltInFunctions
                 fullSource.AsSpan().Slice(executeInstruction.Location.StartOffset, executeInstruction.Location.LengthOffset);
                 ReadOnlySpan<char> sourceSpan = fullSource.AsSpan().Slice(executeInstruction.Location.StartOffset, executeInstruction.Location.LengthOffset);
 
-                throw new RuntimeException(RuntimeExceptionNames.ASSERT, $"{sourceSpan}");
+                throw new RuntimeAssertationException(sourceSpan);
             }
 
             // should technically be unreachable but I don't like it potentially going without throwing
