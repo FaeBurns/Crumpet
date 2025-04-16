@@ -1,3 +1,4 @@
+git pull
 dotnet publish Crumpet.Console -r win-x64 -c Release -o output /p:IncludeAllContentForSelfExtract=true /p:SelfContained=true /p:PublishSingleFile=true
 @echo off
 del output\*.pdb
