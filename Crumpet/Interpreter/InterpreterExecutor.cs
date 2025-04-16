@@ -75,7 +75,7 @@ public class InterpreterExecutor
             try
             {
                 // catch again as this can throw
-                m_context.Throw(e.ToString());
+                m_context.Throw(e.Message);
             }
             catch (UncaughtRuntimeExceptionException r)
             {
