@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Examples\**\*.*">
+      <Content Include="Examples\**">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
